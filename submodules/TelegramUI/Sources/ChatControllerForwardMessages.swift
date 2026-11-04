@@ -27,7 +27,9 @@ extension ChatControllerImpl {
         })
     }
 
-    func forwardMessages(messages: [EngineRawMessage], options: ChatInterfaceForwardOptionsState? = nil, resetCurrent: Bool) {
+    func forwardMessages(messages: [EngineRawMessage], options requestedOptions: ChatInterfaceForwardOptionsState? = nil, resetCurrent: Bool) {
+        // Chitgram: "Special forward" hides the sender's name.
+        let options = chitgramForwardOptions(requestedOptions)
         let _ = self.presentVoiceMessageDiscardAlert(action: { [weak self] in
             guard let self else {
                 return

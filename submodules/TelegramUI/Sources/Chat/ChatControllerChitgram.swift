@@ -6,6 +6,18 @@ import AlertUI
 import PresentationDataUtils
 import ChitgramCore
 
+// Chitgram: set by "Special forward" in the message menu for the forward it starts (main thread only).
+var chitgramForwardHidingSender = false
+
+/// The options a forward runs with: "Special forward" (Android `special_forward`) hides the original sender's name.
+func chitgramForwardOptions(_ requested: ChatInterfaceForwardOptionsState?) -> ChatInterfaceForwardOptionsState? {
+    if chitgramForwardHidingSender {
+        chitgramForwardHidingSender = false
+        return ChatInterfaceForwardOptionsState(hideNames: true, hideCaptions: requested?.hideCaptions ?? false, unhideNamesOnCaptionChange: false)
+    }
+    return requested
+}
+
 // Chitgram: the chat screen's own additions, kept out of the upstream files except for one-line hooks.
 extension ChatControllerImpl {
     /// Android `ConfirmDialog`: "Chitgram" over "Do you really want to send?" with OK and Cancel. `completion`

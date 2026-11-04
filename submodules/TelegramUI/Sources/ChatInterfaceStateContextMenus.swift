@@ -1955,6 +1955,14 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                     interfaceInteraction.forwardMessages(selectAll || isImage ? messages : [message])
                     f(.dismissWithoutContent)
                 })))
+                // Chitgram: "Special forward" (Android: next to Forward) forwards without the sender's name.
+                actions.append(.action(ContextMenuActionItem(text: ChitgramStrings.get(255), icon: { theme in
+                    return generateTintedImage(image: UIImage(bundleImageName: "Chat/Context Menu/Forward"), color: theme.actionSheet.primaryTextColor)
+                }, action: { _, f in
+                    chitgramForwardHidingSender = true
+                    interfaceInteraction.forwardMessages(selectAll || isImage ? messages : [message])
+                    f(.dismissWithoutContent)
+                })))
             }
         }
         
