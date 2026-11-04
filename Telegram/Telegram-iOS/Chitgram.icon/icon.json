@@ -1,0 +1,37 @@
+{
+  "fill": {
+    "linear-gradient": [
+      "srgb:0.03922,0.51765,1.00000,1.00000",
+      "srgb:0.03922,0.51765,1.00000,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "blend-mode": "normal",
+      "layers": [
+        {
+          "blend-mode": "normal",
+          "glass": false,
+          "image-name": "Glyph.png",
+          "name": "Glyph"
+        }
+      ],
+      "lighting": "combined",
+      "shadow": {
+        "kind": "layer-color",
+        "opacity": 0.5
+      },
+      "specular": false,
+      "translucency": {
+        "enabled": false,
+        "value": 1
+      }
+    }
+  ],
+  "supported-platforms": {
+    "circles": [
+      "watchOS"
+    ],
+    "squares": "shared"
+  }
+}

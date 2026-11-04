@@ -341,7 +341,8 @@ alternate_icon_folders = [
     "PremiumTurbo",
 ]
 
-composer_icon_folders = ["Telegram"]
+# Chitgram: the home screen icon (Telegram-iOS/Chitgram.icon, made from the owner's logo).
+composer_icon_folders = ["Chitgram"]
 
 [
     filegroup(
