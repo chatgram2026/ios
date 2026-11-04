@@ -30,6 +30,8 @@ swift_library(
         "//submodules/TelegramCore/FlatBuffers",
         "//submodules/TelegramCore/FlatSerialization",
         "//submodules/MurMurHash32",
+        # Chitgram: the switches its hooks read (Foundation only).
+        "//submodules/ChitgramCore",
     ],
     visibility = [
         "//visibility:public",

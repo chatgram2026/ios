@@ -10,6 +10,8 @@ swift_library(
         "-warnings-as-errors",
     ],
     deps = [
+        # Chitgram: the "Save story" switch.
+        "//submodules/ChitgramCore",
         "//submodules/UrlWhitelist",
         "//submodules/Display",
         "//submodules/LottieSettings:LottieSettings",

@@ -63,6 +63,7 @@ import GlobalControlPanelsContext
 import AlertComponent
 import AlertHeaderComponent
 import AvatarComponent
+import ChitgramCore
 
 private final class ContextControllerContentSourceImpl: ContextControllerContentSource {
     let controller: ViewController
@@ -2185,7 +2186,14 @@ public class ChatListControllerImpl: TelegramBaseController, ChatListController 
             if self.previewing {
                 self.storiesReady.set(.single(true))
             } else {
-                self.storySubscriptionsDisposable = (self.context.engine.messages.storySubscriptions(isHidden: self.location == .chatList(groupId: .archive))
+                // Chitgram: "Hide stories" empties the tray, at once while the list is open.
+                self.storySubscriptionsDisposable = (combineLatest(
+                    self.context.engine.messages.storySubscriptions(isHidden: self.location == .chatList(groupId: .archive)),
+                    ChitgramPreferences.shared.boolSignal(.hideStory)
+                )
+                |> map { subscriptions, hideStories -> EngineStorySubscriptions in
+                    return hideStories ? EngineStorySubscriptions(accountItem: nil, items: [], hasMoreToken: nil) : subscriptions
+                }
                 |> deliverOnMainQueue).startStrict(next: { [weak self] rawStorySubscriptions in
                     guard let self else {
                         return

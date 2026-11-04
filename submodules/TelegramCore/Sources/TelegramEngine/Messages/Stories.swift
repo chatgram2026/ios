@@ -2,6 +2,7 @@ import Foundation
 import SwiftSignalKit
 import Postbox
 internal import TelegramApi
+import ChitgramCore
 
 public enum EngineStoryInputMedia {
     case image(dimensions: PixelDimensions, data: Data, stickers: [TelegramMediaFile])
@@ -2085,7 +2086,12 @@ func _internal_markStoryAsSeen(account: Account, peerId: PeerId, id: Int32, asPi
                 return .complete()
             }
             #endif
-            
+
+            // Chitgram: in ghost mode the author's view counter is not bumped.
+            if ChitgramPreferences.shared.hidesStoryViews {
+                return .complete()
+            }
+
             return account.network.request(Api.functions.stories.incrementStoryViews(peer: inputPeer, id: [id]))
             |> `catch` { _ -> Signal<Api.Bool, NoError> in
                 return .single(.boolFalse)
@@ -2102,7 +2108,10 @@ func _internal_markStoryAsSeen(account: Account, peerId: PeerId, id: Int32, asPi
             
             #if DEBUG && false
             #else
-            _internal_addSynchronizeViewStoriesOperation(peerId: peerId, storyId: id, transaction: transaction)
+            // Chitgram: in ghost mode the story is read here only; stories.readStories is what tells the author.
+            if !ChitgramPreferences.shared.hidesStoryViews {
+                _internal_addSynchronizeViewStoriesOperation(peerId: peerId, storyId: id, transaction: transaction)
+            }
             #endif
             
             return transaction.getPeer(peerId).flatMap(apiInputUser)

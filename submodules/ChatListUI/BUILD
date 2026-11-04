@@ -12,6 +12,8 @@ swift_library(
         "-warnings-as-errors",
     ],
     deps = [
+        # Chitgram: switches that change the chat list.
+        "//submodules/ChitgramCore",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",
         "//submodules/LottieSettings:LottieSettings",
         "//submodules/AsyncDisplayKit:AsyncDisplayKit",

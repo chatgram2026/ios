@@ -36,6 +36,13 @@ private enum ChitgramPlaceholderEntry: ItemListNodeEntry {
 ///
 /// App theme and App cache are Telegram's own screens; the Settings tab opens those itself.
 public func chitgramSectionController(context: AccountContext, row: ChitgramSectionRow) -> ViewController {
+    switch row {
+    case .settings:
+        return chitgramSettingsController(context: context)
+    default:
+        break
+    }
+
     let signal = context.sharedContext.presentationData
     |> map { presentationData -> (ItemListControllerState, (ItemListNodeState, Any)) in
         ChitgramStrings.setLanguageCode(presentationData.strings.primaryComponent.languageCode)

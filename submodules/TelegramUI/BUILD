@@ -64,6 +64,8 @@ swift_library(
         "-warnings-as-errors",
     ],
     deps = [
+        # Chitgram: settings store, configured at launch.
+        "//submodules/ChitgramCore",
         "//submodules/CrashReporting:CrashReporting",
         "//third-party/recaptcha:RecaptchaEnterprise",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",

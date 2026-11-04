@@ -54,6 +54,7 @@ import WalletSendScreen
 import PasscodeCore
 import LiquidGlassShapes
 import MTProtoRustEngine
+import ChitgramCore
 
 #if DEBUG
 import AlertComponent
@@ -570,6 +571,8 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         
         let baseAppBundleId = Bundle.main.bundleIdentifier!
         let appGroupName = "group.\(baseAppBundleId)"
+        // Chitgram: our switches live in the app group, where the extensions can read them.
+        ChitgramPreferences.shared.configure(appGroupName: appGroupName)
         try! PasscodeEnvironment.shared.configure(PasscodeConfiguration(appGroupIdentifier: appGroupName, processRole: .mainApp, biometricKeychainService: walletBiometricKeychainService), privateAccessGroup: {
             BuildConfig.keychainAccessGroup(baseAppBundleId: baseAppBundleId)
         })
