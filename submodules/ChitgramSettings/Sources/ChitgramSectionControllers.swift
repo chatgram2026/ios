@@ -39,6 +39,10 @@ public func chitgramSectionController(context: AccountContext, row: ChitgramSect
     switch row {
     case .settings:
         return chitgramSettingsController(context: context)
+    case .chatFinder:
+        return chitgramChatFinderController(context: context)
+    case .about:
+        return chitgramAboutController(context: context)
     default:
         break
     }

@@ -64,6 +64,7 @@ private enum ChitgramSettingsRow: Int32 {
     case downloadStop
     case autoAnswerActive
     case autoAnswerText
+    case keywordWatch
     case ghostMode
     case ghostRead
     case ghostOnline
@@ -89,7 +90,7 @@ private enum ChitgramSettingsRow: Int32 {
             return .messages
         case .downloadStop:
             return .download
-        case .autoAnswerActive, .autoAnswerText:
+        case .autoAnswerActive, .autoAnswerText, .keywordWatch:
             return .autoAnswer
         case .ghostMode, .ghostRead, .ghostOnline, .ghostTyping, .ghostUpload, .ghostButton, .hideSponsored:
             return .privacy
@@ -126,6 +127,8 @@ private enum ChitgramSettingsRow: Int32 {
             return 6
         case .autoAnswerText:
             return 7
+        case .keywordWatch:
+            return 39
         case .ghostMode:
             return 22
         case .ghostRead:
@@ -181,6 +184,8 @@ private enum ChitgramSettingsRow: Int32 {
         case .autoAnswerText:
             // A button: its title only.
             return (238, -1)
+        case .keywordWatch:
+            return (568, -1)
         case .ghostMode:
             return (32, 245)
         case .ghostRead:
@@ -263,7 +268,7 @@ private enum ChitgramSettingsRow: Int32 {
             return nil
         case .apkShield:
             return .apkShield
-        case .deleteSave, .downloadStop, .autoAnswerText:
+        case .deleteSave, .downloadStop, .autoAnswerText, .keywordWatch:
             return nil
         }
     }
@@ -374,6 +379,7 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
     header(.autoAnswer)
     toggle(.autoAnswerActive)
     button(.autoAnswerText)
+    button(.keywordWatch)
 
     header(.privacy)
     toggle(.ghostMode)
@@ -442,6 +448,8 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
             pushControllerImpl?(chitgramAutoAnswerTextController(context: context))
         case .reminderDelay:
             pushControllerImpl?(chitgramReminderDelayController(context: context))
+        case .keywordWatch:
+            pushControllerImpl?(chitgramKeywordWatchController(context: context))
         default:
             break
         }

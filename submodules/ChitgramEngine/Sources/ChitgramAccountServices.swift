@@ -7,11 +7,13 @@ public final class ChitgramAccountServices {
     private let autoAnswer: ChitgramAutoAnswer
     private let autoAcceptJoin: ChitgramAutoAcceptJoin
     private let messageReminder: ChitgramMessageReminder
+    private let keywordWatch: ChitgramKeywordWatch
 
     public init(context: AccountContext) {
         self.autoAnswer = ChitgramAutoAnswer(context: context)
         self.autoAcceptJoin = ChitgramAutoAcceptJoin(context: context)
         self.messageReminder = ChitgramMessageReminder(context: context)
+        self.keywordWatch = ChitgramKeywordWatch(context: context)
         // Starts listening for the auto answer switch, which clears the answered chats when turned off.
         let _ = ChitgramAnsweredChats.shared
     }
