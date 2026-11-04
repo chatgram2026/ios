@@ -94,6 +94,15 @@ public final class ChitgramPreferences {
         self.lock.unlock()
     }
 
+    /// The defaults behind the store, for Chitgram data that is not a switch (lists kept under Android's keys).
+    public var userDefaults: UserDefaults {
+        self.lock.lock()
+        defer {
+            self.lock.unlock()
+        }
+        return self.defaults
+    }
+
     private func value(_ key: Key) -> Any {
         self.lock.lock()
         defer {

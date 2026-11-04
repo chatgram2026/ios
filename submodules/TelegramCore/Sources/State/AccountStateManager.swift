@@ -246,6 +246,12 @@ public final class AccountStateManager {
         public var notificationMessages: Signal<[([Message], PeerGroupId, Bool, MessageHistoryThreadData?)], NoError> {
             return self.notificationMessagesPipe.signal()
         }
+
+        // Chitgram: every new incoming message, muted chats included (notificationMessages leaves those out).
+        private let chitgramIncomingMessagesPipe = ValuePipe<[Message]>()
+        public var chitgramIncomingMessages: Signal<[Message], NoError> {
+            return self.chitgramIncomingMessagesPipe.signal()
+        }
         
         private let reactionNotificationsPipe = ValuePipe<[(reactionAuthor: Peer, reaction: MessageReaction.Reaction, message: Message, timestamp: Int32)]>()
         public var reactionNotifications: Signal<[(reactionAuthor: Peer, reaction: MessageReaction.Reaction, message: Message, timestamp: Int32)], NoError> {
@@ -1230,6 +1236,17 @@ public final class AccountStateManager {
                     let _ = self.delayNotificatonsUntil.swap(events.delayNotificatonsUntil)
                 }
                 
+                // Chitgram: every new incoming message, for the auto answer.
+                if !events.addedIncomingMessageIds.isEmpty {
+                    let incomingIds = events.addedIncomingMessageIds
+                    let _ = (self.postbox.transaction { transaction -> [Message] in
+                        return incomingIds.compactMap { transaction.getMessage($0) }
+                    }
+                    |> deliverOn(self.queue)).start(next: { [weak self] messages in
+                        self?.chitgramIncomingMessagesPipe.putNext(messages)
+                    })
+                }
+
                 let signal = self.postbox.transaction { transaction -> [([Message], PeerGroupId, Bool, MessageHistoryThreadData?)] in
                     var messageList: [([Message], PeerGroupId, Bool, MessageHistoryThreadData?)] = []
                     
@@ -1940,6 +1957,15 @@ public final class AccountStateManager {
         }
     }
     
+    // Chitgram: every new incoming message, muted chats included; for the auto answer.
+    public var chitgramIncomingMessages: Signal<[EngineMessage], NoError> {
+        return self.impl.signalWith { impl, subscriber in
+            return impl.chitgramIncomingMessages.start(next: { messages in
+                subscriber.putNext(messages.map { EngineMessage($0) })
+            }, error: subscriber.putError, completed: subscriber.putCompletion)
+        }
+    }
+
     public var reactionNotifications: Signal<[(reactionAuthor: Peer, reaction: MessageReaction.Reaction, message: Message, timestamp: Int32)], NoError> {
         return self.impl.signalWith { impl, subscriber in
             return impl.reactionNotifications.start(next: subscriber.putNext, error: subscriber.putError, completed: subscriber.putCompletion)

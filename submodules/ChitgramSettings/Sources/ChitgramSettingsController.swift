@@ -15,6 +15,7 @@ private enum ChitgramSettingsSection: Int32 {
     case stories
     case messages
     case download
+    case autoAnswer
 
     /// Android string id of the section header.
     var titleId: Int {
@@ -25,6 +26,8 @@ private enum ChitgramSettingsSection: Int32 {
             return 234
         case .download:
             return 237
+        case .autoAnswer:
+            return 228
         }
     }
 }
@@ -38,6 +41,8 @@ private enum ChitgramSettingsRow: Int32 {
     case editSave
     case deleteSave
     case downloadStop
+    case autoAnswerActive
+    case autoAnswerText
 
     var section: ChitgramSettingsSection {
         switch self {
@@ -47,6 +52,8 @@ private enum ChitgramSettingsRow: Int32 {
             return .messages
         case .downloadStop:
             return .download
+        case .autoAnswerActive, .autoAnswerText:
+            return .autoAnswer
         }
     }
 
@@ -64,6 +71,10 @@ private enum ChitgramSettingsRow: Int32 {
             return 21
         case .downloadStop:
             return 5
+        case .autoAnswerActive:
+            return 6
+        case .autoAnswerText:
+            return 7
         }
     }
 
@@ -82,6 +93,11 @@ private enum ChitgramSettingsRow: Int32 {
             return (31, 235)
         case .downloadStop:
             return (183, 196)
+        case .autoAnswerActive:
+            return (228, 239)
+        case .autoAnswerText:
+            // A button: its title only.
+            return (238, -1)
         }
     }
 }
@@ -107,27 +123,34 @@ private struct ChitgramSettingsState {
         case .downloadStop:
             // Android: stopped when every network preset is off (`FenixSettings.isAutoDownloadStopped`).
             return !self.autoDownload.cellular.enabled && !self.autoDownload.wifi.enabled
+        case .autoAnswerActive:
+            return preferences.bool(.autoAnswerActive)
+        case .autoAnswerText:
+            return false
         }
     }
 }
 
 private final class ChitgramSettingsArguments {
     let toggle: (ChitgramSettingsRow, Bool) -> Void
+    let open: (ChitgramSettingsRow) -> Void
 
-    init(toggle: @escaping (ChitgramSettingsRow, Bool) -> Void) {
+    init(toggle: @escaping (ChitgramSettingsRow, Bool) -> Void, open: @escaping (ChitgramSettingsRow) -> Void) {
         self.toggle = toggle
+        self.open = open
     }
 }
 
 private enum ChitgramSettingsEntry: ItemListNodeEntry {
     case header(ChitgramSettingsSection, String)
     case toggle(ChitgramSettingsRow, title: String, text: String, value: Bool)
+    case button(ChitgramSettingsRow, title: String)
 
     var section: ItemListSectionId {
         switch self {
         case let .header(section, _):
             return section.rawValue
-        case let .toggle(row, _, _, _):
+        case let .toggle(row, _, _, _), let .button(row, _):
             return row.section.rawValue
         }
     }
@@ -136,7 +159,7 @@ private enum ChitgramSettingsEntry: ItemListNodeEntry {
         switch self {
         case let .header(section, _):
             return section.rawValue * 1000
-        case let .toggle(row, _, _, _):
+        case let .toggle(row, _, _, _), let .button(row, _):
             return row.section.rawValue * 1000 + 1 + row.rawValue
         }
     }
@@ -154,6 +177,10 @@ private enum ChitgramSettingsEntry: ItemListNodeEntry {
             return ItemListSwitchItem(presentationData: presentationData, systemStyle: .glass, title: title, text: text, value: value, maximumNumberOfLines: 2, sectionId: self.section, style: .blocks, updated: { value in
                 arguments.toggle(row, value)
             })
+        case let .button(row, title):
+            return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, title: title, label: "", sectionId: self.section, style: .blocks, action: {
+                arguments.open(row)
+            })
         }
     }
 }
@@ -168,6 +195,9 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
         let (titleId, textId) = row.titleAndTextIds
         entries.append(.toggle(row, title: ChitgramStrings.get(titleId), text: ChitgramStrings.get(textId), value: state.isOn(row)))
     }
+    func button(_ row: ChitgramSettingsRow) {
+        entries.append(.button(row, title: ChitgramStrings.get(row.titleAndTextIds.0)))
+    }
 
     header(.stories)
     toggle(.storyGhost)
@@ -181,12 +211,17 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
     header(.download)
     toggle(.downloadStop)
 
+    header(.autoAnswer)
+    toggle(.autoAnswerActive)
+    button(.autoAnswerText)
+
     return entries
 }
 
 /// Chitgram ▸ Sozlamalar (Android `FenixSettings`): Chitgram's switches, grouped and ordered as on Android.
 public func chitgramSettingsController(context: AccountContext) -> ViewController {
     let preferences = ChitgramPreferences.shared
+    var pushControllerImpl: ((ViewController) -> Void)?
     let arguments = ChitgramSettingsArguments(toggle: { row, value in
         switch row {
         case .storyGhost:
@@ -207,6 +242,17 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
                 settings.wifi.enabled = !value
                 return settings
             }).startStandalone()
+        case .autoAnswerActive:
+            preferences.set(value, for: .autoAnswerActive)
+        case .autoAnswerText:
+            break
+        }
+    }, open: { row in
+        switch row {
+        case .autoAnswerText:
+            pushControllerImpl?(chitgramAutoAnswerTextController(context: context))
+        default:
+            break
         }
     })
 
@@ -233,5 +279,9 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
         )
         return (controllerState, (listState, arguments))
     }
-    return ItemListController(context: context, state: signal)
+    let controller = ItemListController(context: context, state: signal)
+    pushControllerImpl = { [weak controller] c in
+        controller?.push(c)
+    }
+    return controller
 }

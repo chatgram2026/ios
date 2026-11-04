@@ -28,6 +28,7 @@ import AppBundle
 import LottieSettings
 import DirectMediaImageCache
 import WalletContext
+import ChitgramEngine
 import WalletConnectScreen
 import AlertUI
 import MetalEngine
@@ -217,6 +218,8 @@ public final class AccountContextImpl: AccountContext {
     }
 
     private var tonGiftStickersDisposable: Disposable?
+    // Chitgram: auto answer and the other per-account services.
+    private var chitgramServices: ChitgramAccountServices?
     public private(set) var tonGiftStickersValue: [Int32: StickerPackItem] = [:]
     private let tonGiftStickersPromise = Promise<[Int32: StickerPackItem]>()
     public var tonGiftStickers: Signal<[Int32: StickerPackItem], NoError> {
@@ -686,6 +689,11 @@ public final class AccountContextImpl: AccountContext {
                 }
                 return try await requestPasscodeAuthentication(context: self, scope: .resource(namespace: request.namespace), lifetime: request.lifetime, biometricReason: self.sharedContext.currentPresentationData.with { $0 }.strings.Wallet_AuthenticationReason, authenticateBiometrics: authenticateBiometrics)
             }
+        }
+        
+        // Chitgram: the per-account services (auto answer, …), in the main app only.
+        if sharedContext.applicationBindings.isMainApp && !temp {
+            self.chitgramServices = ChitgramAccountServices(context: self)
         }
     }
 

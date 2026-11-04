@@ -148,6 +148,7 @@ import GlobalControlPanelsContext
 import ChatSearchNavigationContentNode
 import ChatAgeRestrictionAlertController
 import TextProcessingScreen
+import ChitgramEngine
 
 public final class ChatControllerOverlayPresentationData {
     public let expandData: (ASDisplayNode?, () -> Void)
@@ -7872,6 +7873,11 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
         
         self.didAppear = true
         
+        // Chitgram: opening a chat makes it answerable by the auto answer again (Android `ChatActivity.createView`).
+        if let peerId = self.chatLocation.peerId {
+            ChitgramAnsweredChats.shared.forget(peerId.toInt64())
+        }
+
         self.chatDisplayNode.historyNode.experimentalSnapScrollToItem = false
         self.chatDisplayNode.historyNode.canReadHistory.set(self.computedCanReadHistoryPromise.get())
         self.chatDisplayNode.historyNode.areContentAnimationsEnabled = true
