@@ -2,6 +2,7 @@ import Foundation
 import Postbox
 import SwiftSignalKit
 internal import TelegramApi
+import ChitgramCore
 
 private class AdMessagesHistoryContextImpl {
     final class CachedMessage: Equatable, Codable {
@@ -491,7 +492,8 @@ private class AdMessagesHistoryContextImpl {
             return transaction.getPeer(peerId).flatMap(apiInputPeer)
         }
         |> mapToSignal { inputPeer -> Signal<(interPostInterval: Int32?, startDelay: Int32?, betweenDelay: Int32?, messages: [Message]), NoError> in
-            guard let inputPeer else {
+            // Chitgram: "Hide Telegram ads" never asks for them, so nothing about them is reported back either.
+            guard let inputPeer, !ChitgramPreferences.shared.bool(.hideSponsored) else {
                 return .single((nil, nil, nil, []))
             }
             var flags: Int32 = 0

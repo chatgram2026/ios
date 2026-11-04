@@ -444,6 +444,8 @@ func synchronizePeerReadState(network: Network, postbox: Postbox, stateManager: 
         var signal: Signal<Never, PeerReadStateValidationError> = .complete()
         if push {
             signal = signal
+            // Chitgram: in ghost mode the read receipt waits until ghost mode ends.
+            |> then(chitgramReadReceiptsGate())
             |> then(pushPeerReadState(network: network, postbox: postbox, stateManager: stateManager, peerId: peerId, willValidate: validate))
         }
         if validate {

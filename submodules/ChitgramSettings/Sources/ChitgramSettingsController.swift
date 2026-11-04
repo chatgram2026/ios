@@ -16,6 +16,7 @@ private enum ChitgramSettingsSection: Int32 {
     case messages
     case download
     case autoAnswer
+    case privacy
 
     /// Android string id of the section header.
     var titleId: Int {
@@ -28,6 +29,8 @@ private enum ChitgramSettingsSection: Int32 {
             return 237
         case .autoAnswer:
             return 228
+        case .privacy:
+            return 244
         }
     }
 }
@@ -43,6 +46,12 @@ private enum ChitgramSettingsRow: Int32 {
     case downloadStop
     case autoAnswerActive
     case autoAnswerText
+    case ghostMode
+    case ghostRead
+    case ghostOnline
+    case ghostTyping
+    case ghostUpload
+    case hideSponsored
 
     var section: ChitgramSettingsSection {
         switch self {
@@ -54,6 +63,8 @@ private enum ChitgramSettingsRow: Int32 {
             return .download
         case .autoAnswerActive, .autoAnswerText:
             return .autoAnswer
+        case .ghostMode, .ghostRead, .ghostOnline, .ghostTyping, .ghostUpload, .hideSponsored:
+            return .privacy
         }
     }
 
@@ -75,6 +86,18 @@ private enum ChitgramSettingsRow: Int32 {
             return 6
         case .autoAnswerText:
             return 7
+        case .ghostMode:
+            return 22
+        case .ghostRead:
+            return 34
+        case .ghostOnline:
+            return 35
+        case .ghostTyping:
+            return 36
+        case .ghostUpload:
+            return 37
+        case .hideSponsored:
+            return 38
         }
     }
 
@@ -98,6 +121,48 @@ private enum ChitgramSettingsRow: Int32 {
         case .autoAnswerText:
             // A button: its title only.
             return (238, -1)
+        case .ghostMode:
+            return (32, 245)
+        case .ghostRead:
+            return (558, 559)
+        case .ghostOnline:
+            return (560, 561)
+        case .ghostTyping:
+            return (562, 563)
+        case .ghostUpload:
+            return (564, 565)
+        case .hideSponsored:
+            return (566, 567)
+        }
+    }
+
+    /// The Chitgram switch behind the row, for rows that are a plain switch.
+    var preferenceKey: ChitgramPreferences.Key? {
+        switch self {
+        case .storyGhost:
+            return .ghostStory
+        case .storyHide:
+            return .hideStory
+        case .storyDownload:
+            return .storyDownload
+        case .editSave:
+            return .saveEdited
+        case .autoAnswerActive:
+            return .autoAnswerActive
+        case .ghostMode:
+            return .ghost
+        case .ghostRead:
+            return .ghostHideRead
+        case .ghostOnline:
+            return .ghostHideOnline
+        case .ghostTyping:
+            return .ghostHideTyping
+        case .ghostUpload:
+            return .ghostHideUpload
+        case .hideSponsored:
+            return .hideSponsored
+        case .deleteSave, .downloadStop, .autoAnswerText:
+            return nil
         }
     }
 }
@@ -108,24 +173,17 @@ private struct ChitgramSettingsState {
 
     func isOn(_ row: ChitgramSettingsRow) -> Bool {
         let preferences = ChitgramPreferences.shared
+        if let key = row.preferenceKey {
+            return preferences.bool(key)
+        }
         switch row {
-        case .storyGhost:
-            return preferences.bool(.ghostStory)
-        case .storyHide:
-            return preferences.bool(.hideStory)
-        case .storyDownload:
-            return preferences.bool(.storyDownload)
-        case .editSave:
-            return preferences.bool(.saveEdited)
         case .deleteSave:
             // Android stores this one as a mode number (`delete_check_key`).
             return preferences.int(.deletedCheckType) != ChitgramPreferences.DeletedCheckType.off.rawValue
         case .downloadStop:
             // Android: stopped when every network preset is off (`FenixSettings.isAutoDownloadStopped`).
             return !self.autoDownload.cellular.enabled && !self.autoDownload.wifi.enabled
-        case .autoAnswerActive:
-            return preferences.bool(.autoAnswerActive)
-        case .autoAnswerText:
+        default:
             return false
         }
     }
@@ -215,6 +273,18 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
     toggle(.autoAnswerActive)
     button(.autoAnswerText)
 
+    header(.privacy)
+    toggle(.ghostMode)
+    // With the master switch on everything below it is hidden anyway, so the four rows show only while it is off
+    // (on Android too: checked rows that change nothing when tapped read as broken).
+    if !state.isOn(.ghostMode) {
+        toggle(.ghostRead)
+        toggle(.ghostOnline)
+        toggle(.ghostTyping)
+        toggle(.ghostUpload)
+    }
+    toggle(.hideSponsored)
+
     return entries
 }
 
@@ -223,15 +293,11 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
     let preferences = ChitgramPreferences.shared
     var pushControllerImpl: ((ViewController) -> Void)?
     let arguments = ChitgramSettingsArguments(toggle: { row, value in
+        if let key = row.preferenceKey {
+            preferences.set(value, for: key)
+            return
+        }
         switch row {
-        case .storyGhost:
-            preferences.set(value, for: .ghostStory)
-        case .storyHide:
-            preferences.set(value, for: .hideStory)
-        case .storyDownload:
-            preferences.set(value, for: .storyDownload)
-        case .editSave:
-            preferences.set(value, for: .saveEdited)
         case .deleteSave:
             preferences.set(value ? ChitgramPreferences.DeletedCheckType.keep.rawValue : ChitgramPreferences.DeletedCheckType.off.rawValue, for: .deletedCheckType)
         case .downloadStop:
@@ -242,9 +308,7 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
                 settings.wifi.enabled = !value
                 return settings
             }).startStandalone()
-        case .autoAnswerActive:
-            preferences.set(value, for: .autoAnswerActive)
-        case .autoAnswerText:
+        default:
             break
         }
     }, open: { row in

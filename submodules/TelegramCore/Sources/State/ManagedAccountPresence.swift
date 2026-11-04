@@ -3,6 +3,7 @@ internal import TelegramApi
 import Postbox
 import SwiftSignalKit
 import MtProtoKit
+import ChitgramCore
 
 private typealias SignalKitTimer = SwiftSignalKit.Timer
 
@@ -22,7 +23,11 @@ private final class AccountPresenceManagerImpl {
         self.queue = queue
         self.network = network
         
-        self.shouldKeepOnlinePresenceDisposable = (shouldKeepOnlinePresence
+        // Chitgram: ghost mode keeps the account offline; turning it on while online says offline at once.
+        self.shouldKeepOnlinePresenceDisposable = (combineLatest(shouldKeepOnlinePresence, ChitgramPreferences.shared.hidesOnlineSignal())
+        |> map { keepOnline, hidesOnline -> Bool in
+            return keepOnline && !hidesOnline
+        }
         |> distinctUntilChanged
         |> deliverOn(self.queue)).start(next: { [weak self] value in
             guard let `self` = self else {
