@@ -7,8 +7,9 @@ public extension ChitgramPreferences {
     func boolSignal(_ key: Key) -> Signal<Bool, NoError> {
         return Signal { subscriber in
             subscriber.putNext(self.bool(key))
-            let observer = NotificationCenter.default.addObserver(forName: ChitgramPreferences.didChangeNotification, object: self, queue: nil, using: { [weak self] notification in
-                guard let self, (notification.userInfo?["key"] as? String) == key.rawValue else {
+            // Strong: the store is a process-wide singleton, and the observer goes with the subscription.
+            let observer = NotificationCenter.default.addObserver(forName: ChitgramPreferences.didChangeNotification, object: self, queue: nil, using: { notification in
+                guard (notification.userInfo?["key"] as? String) == key.rawValue else {
                     return
                 }
                 subscriber.putNext(self.bool(key))
