@@ -33,6 +33,7 @@ import ChatSendMessageActionUI
 import ChatControllerInteraction
 import LottieComponent
 import GlassBackgroundComponent
+import ChitgramCore
 
 private func storeUneditedVideoMessage(
     path: String,
@@ -995,7 +996,8 @@ public class VideoMessageCameraScreen: ViewController {
             self.previewContainerView.addSubview(self.previewContainerContentView)
                         
             let isDualCameraEnabled = cameraImpl.isDualCameraSupported(forRoundVideo: true)
-            let isFrontPosition = "".isEmpty
+            // Chitgram: round videos start on the camera chosen in Chitgram ▸ Sozlamalar (front by default).
+            let isFrontPosition = ChitgramPreferences.shared.bool(.roundCameraFront)
             
             self.mainPreviewView = cameraImpl.makeCameraSimplePreviewView(frame: .zero, main: true, roundVideo: true)
             self.additionalPreviewView = cameraImpl.makeCameraSimplePreviewView(frame: .zero, main: false, roundVideo: true)

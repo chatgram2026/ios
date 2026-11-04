@@ -10,6 +10,8 @@ swift_library(
         "-warnings-as-errors",
     ],
     deps = [
+        # Chitgram: the round video camera switch.
+        "//submodules/ChitgramCore",
         "//submodules/AsyncDisplayKit",
         "//submodules/LottieSettings:LottieSettings",
         "//submodules/Display",

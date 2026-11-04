@@ -149,6 +149,7 @@ import ChatSearchNavigationContentNode
 import ChatAgeRestrictionAlertController
 import TextProcessingScreen
 import ChitgramEngine
+import ChitgramCore
 
 public final class ChatControllerOverlayPresentationData {
     public let expandData: (ASDisplayNode?, () -> Void)
@@ -253,6 +254,8 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
     let showsUnreadChatsBackBadge: Bool
 
     var didSetupDropToPaste: Bool = false
+    // Chitgram: set while a send the user just confirmed re-enters its own path (see chitgramConfirmSend).
+    var chitgramSendConfirmed: Bool = false
     
     let context: AccountContext
     public internal(set) var chatLocation: ChatLocation
@@ -2394,6 +2397,19 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
             guard let strongSelf = self else {
                 return false
             }
+
+            // Chitgram: "Confirm stickers" asks first, then sends the same sticker again.
+            if ChitgramPreferences.shared.bool(.confirmSticker) && !strongSelf.chitgramSendConfirmed {
+                strongSelf.chitgramConfirmSend(completion: { [weak strongSelf] in
+                    guard let strongSelf else {
+                        return
+                    }
+                    strongSelf.chitgramSendConfirmed = true
+                    let _ = strongSelf.controllerInteraction?.sendSticker(fileReference, silentPosting, schedule, query, clearInput, sourceView, sourceRect, sourceLayer, bubbleUpEmojiOrStickersets)
+                    strongSelf.chitgramSendConfirmed = false
+                })
+                return false
+            }
             
             if let _ = strongSelf.presentationInterfaceState.slowmodeState, strongSelf.presentationInterfaceState.subject != .scheduledMessages {
                 if let sourceView, let sourceRect {
@@ -2670,6 +2686,19 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
             }
         }, sendGif: { [weak self] fileReference, sourceView, sourceRect, silentPosting, schedule in
             if let strongSelf = self {
+                // Chitgram: "Confirm GIFs" asks first, then sends the same GIF again.
+                if ChitgramPreferences.shared.bool(.confirmGif) && !strongSelf.chitgramSendConfirmed {
+                    strongSelf.chitgramConfirmSend(completion: { [weak strongSelf] in
+                        guard let strongSelf else {
+                            return
+                        }
+                        strongSelf.chitgramSendConfirmed = true
+                        let _ = strongSelf.controllerInteraction?.sendGif(fileReference, sourceView, sourceRect, silentPosting, schedule)
+                        strongSelf.chitgramSendConfirmed = false
+                    })
+                    return false
+                }
+
                 if let _ = strongSelf.presentationInterfaceState.slowmodeState, strongSelf.presentationInterfaceState.subject != .scheduledMessages {
                     strongSelf.interfaceInteraction?.displaySlowmodeTooltip(sourceView, sourceRect)
                     return false

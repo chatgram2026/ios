@@ -17,6 +17,8 @@ private enum ChitgramSettingsSection: Int32 {
     case download
     case autoAnswer
     case privacy
+    case confirmations
+    case roundVideo
 
     /// Android string id of the section header.
     var titleId: Int {
@@ -31,6 +33,10 @@ private enum ChitgramSettingsSection: Int32 {
             return 228
         case .privacy:
             return 244
+        case .confirmations:
+            return 190
+        case .roundVideo:
+            return 353
         }
     }
 }
@@ -53,6 +59,10 @@ private enum ChitgramSettingsRow: Int32 {
     case ghostUpload
     case ghostButton
     case hideSponsored
+    case confirmSticker
+    case confirmVoice
+    case confirmGif
+    case roundCameraFront
 
     var section: ChitgramSettingsSection {
         switch self {
@@ -66,6 +76,10 @@ private enum ChitgramSettingsRow: Int32 {
             return .autoAnswer
         case .ghostMode, .ghostRead, .ghostOnline, .ghostTyping, .ghostUpload, .ghostButton, .hideSponsored:
             return .privacy
+        case .confirmSticker, .confirmVoice, .confirmGif:
+            return .confirmations
+        case .roundCameraFront:
+            return .roundVideo
         }
     }
 
@@ -101,6 +115,14 @@ private enum ChitgramSettingsRow: Int32 {
             return 26
         case .hideSponsored:
             return 38
+        case .confirmSticker:
+            return 8
+        case .confirmVoice:
+            return 9
+        case .confirmGif:
+            return 10
+        case .roundCameraFront:
+            return 27
         }
     }
 
@@ -138,6 +160,15 @@ private enum ChitgramSettingsRow: Int32 {
             return (342, 343)
         case .hideSponsored:
             return (566, 567)
+        case .confirmSticker:
+            return (210, 191)
+        case .confirmVoice:
+            return (211, 192)
+        case .confirmGif:
+            return (212, 193)
+        case .roundCameraFront:
+            // Titled "Front camera"; off means the rear one.
+            return (113, 354)
         }
     }
 
@@ -168,6 +199,14 @@ private enum ChitgramSettingsRow: Int32 {
             return .ghostButton
         case .hideSponsored:
             return .hideSponsored
+        case .confirmSticker:
+            return .confirmSticker
+        case .confirmVoice:
+            return .confirmVoice
+        case .confirmGif:
+            return .confirmGif
+        case .roundCameraFront:
+            return .roundCameraFront
         case .deleteSave, .downloadStop, .autoAnswerText:
             return nil
         }
@@ -292,6 +331,14 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
     }
     toggle(.ghostButton)
     toggle(.hideSponsored)
+
+    header(.confirmations)
+    toggle(.confirmSticker)
+    toggle(.confirmVoice)
+    toggle(.confirmGif)
+
+    header(.roundVideo)
+    toggle(.roundCameraFront)
 
     return entries
 }

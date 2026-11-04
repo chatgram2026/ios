@@ -9,6 +9,7 @@ import MobileCoreServices
 import Intents
 import LegacyComponents
 import TelegramPresentationData
+import ChitgramCore
 import TelegramUIPreferences
 import DeviceAccess
 import TextFormat
@@ -263,6 +264,12 @@ extension ChatControllerImpl {
             sendImmediately = true
         }
         
+        // Chitgram: with "Confirm voice messages" on, a released recording stops on its preview and asks first.
+        if case .send = action, self.audioRecorderValue != nil, ChitgramPreferences.shared.bool(.confirmVoice) {
+            updatedAction = .preview
+            sendImmediately = true
+        }
+
         if let audioRecorderValue = self.audioRecorderValue {
             switch action {
             case .pause:
@@ -693,6 +700,19 @@ extension ChatControllerImpl {
             return
         }
         
+        // Chitgram: "Confirm voice messages" asks before a voice message goes out.
+        if case .audio = recordedMediaPreview, ChitgramPreferences.shared.bool(.confirmVoice), !self.chitgramSendConfirmed {
+            self.chitgramConfirmSend(completion: { [weak self] in
+                guard let self else {
+                    return
+                }
+                self.chitgramSendConfirmed = true
+                self.sendMediaRecording(silentPosting: silentPosting, scheduleTime: scheduleTime, repeatPeriod: repeatPeriod, viewOnce: viewOnce, messageEffect: messageEffect, postpone: postpone)
+                self.chitgramSendConfirmed = false
+            })
+            return
+        }
+
         switch recordedMediaPreview {
         case let .audio(audio):
             self.audioRecorder.set(.single(nil))
