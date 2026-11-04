@@ -1,3 +1,84 @@
+# Chitgram iOS — notes for Claude (read this first)
+
+Chitgram iOS is the iOS port of **Chitgram**, an Uzbek fork of Telegram. This tree is Telegram-iOS `release-13.1.2`
+(commit 279f89e4), cloned shallow (`--depth 1`, no history, **submodules not fetched yet**) on branch `chitgram`.
+The upstream Telegram-iOS notes follow below this section — they are the authority on how this codebase works.
+
+The Android original is the source of truth for features: `C:\Users\shohj\Documents\Chatgram` (package
+`com.chatgram.messenger`). Its own code lives in `TMessagesProj/src/main/java/org/fenixuz/` (ads, analytics, archive,
+autopost, badge, bigfile, cloud, folders, keywords, premium, proxy, roulette, share, ui, update, utils, web); upstream
+Telegram code there is changed only at hook points commented `Chitgram:`. Read its `CLAUDE.md` (protocols, roulette
+backend, demo login) and `README.md` ("What Chitgram adds").
+
+## The owner
+
+Writes in Uzbek, often quick and phonetic. **Answer in Uzbek, plainly.** Not a programmer: say what changed and what
+they must do, give exact commands, never ask them to read code.
+
+## Goal
+
+The owner's words: "funksiyalari joylashuvi android bilan bir xil bo'lsin". Every Chitgram feature, **in the same
+place in the UI as on Android**: the same settings section, rows and order, the same menus and toolbar buttons, the
+same names. Texts come from the Android `org/fenixuz/utils/LanguageCode.kt` (`TitleLanguages(id, en, uz, ru)`); keep
+the same ids so the two apps can be compared line by line.
+
+## Decisions the owner made (2026-11-04)
+
+- **Roulettes included** (voice roulette and the video chat roulette), although App Store guideline 1.2 names
+  "Chatroulette-style experiences, random or anonymous chat". Owner accepted the risk.
+- **Premium the same as Android** (Telegram Stars paid reaction in @chitgram_org; the app reads its own Stars
+  history), although guideline 3.1.1 asks for in-app purchase. Owner accepted the risk.
+- **Apple Developer account: the owner has one.** Never type their Apple ID or password; for signing / TestFlight
+  ask them for an App Store Connect API key, added as a CI secret by them or read from a file without printing it.
+- **Budget is $25.** So:
+  1. Compile checks for free on GitHub Actions in a **public** repo (owner agreed): fork
+     `TelegramMessenger/Telegram-iOS` to **`chatgram2026/ios`** (`gh repo fork … --org chatgram2026 --fork-name ios`;
+     the fork has upstream history, so this shallow clone can push its branch there), enable Actions on the fork,
+     add our workflow on runner label **`xcode-27`** (macOS 27.0.1, Xcode 27.1 default — matches `versions.json`).
+     Standard runners on public repos are free; jobs stop at 6 h, so cache the Bazel cache between runs.
+  2. When the code compiles, rent a **Scaleway Mac mini M4** (€0.22/h, 24 h minimum, Hourly billing, zone PAR-1) for
+     1–3 days for the simulator and TestFlight. The owner signs up and pays; they send only IP and user name, never
+     a password. SSH key on this PC: `~/.ssh/chitgram_mac` (the public half was given to the owner). Remind them to
+     **Delete** the Mac when done — billing runs until then.
+- First get an **unmodified** build green in CI (baseline), so later failures are known to be ours.
+
+## Secrets
+
+- `TELEGRAM_APP_ID` / `TELEGRAM_APP_HASH` are in the Android `local.properties` (gitignored). Never commit, print or
+  upload them, except as GitHub Actions secrets set with `gh secret set` reading the value from the file.
+- The real build configuration JSON lives **outside** the repo (e.g. `D:\ChitgramIOS\config\`), never committed.
+  Template: `build-system/template_minimal_development_configuration.json`.
+- Demo login for App Review (Android `org/fenixuz/utils/DemoNumber.kt`): numbers and code URLs are only in the Android
+  `local.properties` (`DEMO_PHONE_NUMBER`, `DEMO_PHONE_NUMBER_2`, `DEMO_CODE_URL`); never in committed files.
+- Bundle id is not decided yet — ask the owner (it must be registered in their Apple account).
+
+## How we change this tree
+
+- Chitgram code goes into its own Bazel modules under `submodules/Chitgram…` (for example `ChitgramCore`,
+  `ChitgramSettings`, `ChitgramRoulette`). Upstream files change only at small hook points marked `// Chitgram:`,
+  the same rule as on Android, so upstream updates stay mergeable.
+- This PC is Windows: **no Swift compiler or Xcode here.** Code cannot be built locally; every check goes through CI
+  or the rented Mac. Write against the real APIs in this tree: read the neighbouring code and the upstream sections
+  below (Postbox → TelegramEngine, view frame ownership, Swift 6.4 pitfalls, …) before writing.
+- Bash on this machine mangles backslashes in heredocs: write Python edit scripts with the Write tool instead.
+- Drive C is nearly full (the Windows pagefile keeps growing): keep everything on D:. `core.longpaths=true` is set.
+
+## Git
+
+- Branch `chitgram` (from `release-13.1.2`). Remote `upstream` = TelegramMessenger/Telegram-iOS; `origin` will be
+  `chatgram2026/ios` after the fork. Push only there.
+- Commit style: imperative summary, a short "why" body, `Co-Authored-By: Claude …`.
+
+## Suggested order
+
+1. Map the Android features and where each sits in the UI → `docs/chitgram/feature-map.md`; tell the owner the plan
+   in short Uzbek.
+2. Fork, CI workflow, secrets, baseline build green.
+3. Branding: name "Chitgram", icon (from the Android resources), bundle id, Uzbek strings.
+4. Features in the Android order, each built in CI before starting the next.
+
+---
+
 # CLAUDE.md
 
 This file provides guidance to AI assistants when working with code in this repository.
