@@ -10,6 +10,9 @@ swift_library(
         "-warnings-as-errors",
     ],
     deps = [
+        # Chitgram: the "Chitgram" section of the Settings tab.
+        "//submodules/ChitgramCore",
+        "//submodules/ChitgramSettings",
         "//submodules/UrlWhitelist",
         "//submodules/TelegramUI/Components/NavigationBarNode",
         "//submodules/TelegramUI/Components/NavigationBarComponent",

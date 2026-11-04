@@ -13,11 +13,15 @@ import DeviceAccess
 import TelegramStringFormatting
 import PeerNameColorItem
 import WalletContext
+import ChitgramCore
+import ChitgramSettings
 
 enum SettingsSection: Int, CaseIterable {
     case edit
     case phone
     case accounts
+    // Chitgram: our own section sits right under the accounts block, as on Android.
+    case chitgram
     case myProfile
     case wallet
     case proxy
@@ -148,7 +152,16 @@ func settingsItems(data: PeerInfoScreenData?, context: AccountContext, presentat
                 interaction.openSettings(.addAccount)
             }))
         }
-        
+
+        // Chitgram: the "Chitgram" section, its rows in Android's order.
+        ChitgramStrings.setLanguageCode(presentationData.strings.primaryComponent.languageCode)
+        items[.chitgram]!.append(PeerInfoScreenHeaderItem(id: "chitgram_header", text: chitgramSectionTitle))
+        for row in ChitgramSectionRow.allCases {
+            items[.chitgram]!.append(PeerInfoScreenDisclosureItem(id: row.rawValue, text: row.title, icon: row.icon, action: {
+                interaction.openSettings(.chitgram(row))
+            }))
+        }
+
         items[.myProfile]!.append(PeerInfoScreenDisclosureItem(id: 0, text: presentationData.strings.Settings_MyProfile, icon: PresentationResourcesSettings.myProfile, action: {
             interaction.openSettings(.profile)
         }))

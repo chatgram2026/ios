@@ -17,6 +17,8 @@ import PasswordSetupUI
 import InstantPageCache
 import WalletContext
 import UndoUI
+import StorageUsageScreen
+import ChitgramSettings
 
 extension PeerInfoScreenNode {
     func openSettings(section: PeerInfoSettingsSection) {
@@ -307,6 +309,19 @@ extension PeerInfoScreenNode {
                 return
             }
             push(self.context.sharedContext.makeWalletScreen(context: self.context))
+        case let .chitgram(row):
+            // Chitgram: App theme and App cache are Telegram's own screens; the other rows are ours.
+            switch row {
+            case .appTheme:
+                push(themeSettingsController(context: self.context))
+            case .appCache:
+                let context = self.context
+                push(StorageUsageScreen(context: context, makeStorageUsageExceptionsScreen: { category in
+                    return storageUsageExceptionsScreen(context: context, category: category)
+                }))
+            default:
+                push(chitgramSectionController(context: self.context, row: row))
+            }
         }
     }
 

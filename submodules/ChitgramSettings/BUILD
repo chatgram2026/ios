@@ -1,0 +1,25 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+# Chitgram's screens in the Settings tab: the "Chitgram" section and what its rows open.
+swift_library(
+    name = "ChitgramSettings",
+    module_name = "ChitgramSettings",
+    srcs = glob([
+        "Sources/**/*.swift",
+    ]),
+    copts = [
+        "-warnings-as-errors",
+    ],
+    deps = [
+        "//submodules/ChitgramCore",
+        "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",
+        "//submodules/Display:Display",
+        "//submodules/TelegramPresentationData:TelegramPresentationData",
+        "//submodules/ItemListUI:ItemListUI",
+        "//submodules/PresentationDataUtils:PresentationDataUtils",
+        "//submodules/AccountContext:AccountContext",
+    ],
+    visibility = [
+        "//visibility:public",
+    ],
+)

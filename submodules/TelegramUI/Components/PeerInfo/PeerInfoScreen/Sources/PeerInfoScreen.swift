@@ -10,6 +10,7 @@ import PeerWalletScreen
 import WalletGiftStickerMediaComponent
 import WalletSendScreen
 import TelegramPresentationData
+import ChitgramSettings
 import TelegramUIPreferences
 import AvatarNode
 import TelegramStringFormatting
@@ -197,6 +198,8 @@ enum PeerInfoSettingsSection {
     case stars
     case ton
     case wallet
+    // Chitgram: a row of the "Chitgram" section.
+    case chitgram(ChitgramSectionRow)
 }
 
 enum PeerInfoReportType {
