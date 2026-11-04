@@ -1289,6 +1289,9 @@ extension PeerInfoScreenNode {
                     }
                 }
                 
+                // Chitgram: the chat menu items from Android, after Telegram's own.
+                items.append(contentsOf: strongSelf.chitgramMoreMenuItems(peer: peer))
+
                 return .single(items)
             }
             

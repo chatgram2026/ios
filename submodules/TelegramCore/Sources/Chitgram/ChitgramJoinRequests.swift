@@ -32,6 +32,11 @@ public final class ChitgramPendingJoinRequests {
 /// Approves every pending join request of the chat in one call (`messages.hideAllChatJoinRequests`); the server
 /// refuses it unless the account may invite there, and a refusal is dropped.
 public func chitgramApproveAllJoinRequests(account: Account, peerId: EnginePeer.Id) -> Signal<Never, NoError> {
+    return chitgramProcessAllJoinRequests(account: account, peerId: peerId, approve: true)
+}
+
+/// Approves or declines every pending join request of the chat (Android `JoinRequestsSheet`, "All").
+public func chitgramProcessAllJoinRequests(account: Account, peerId: EnginePeer.Id, approve: Bool) -> Signal<Never, NoError> {
     return account.postbox.transaction { transaction -> Api.InputPeer? in
         return transaction.getPeer(peerId).flatMap(apiInputPeer)
     }
@@ -39,7 +44,7 @@ public func chitgramApproveAllJoinRequests(account: Account, peerId: EnginePeer.
         guard let inputPeer else {
             return .complete()
         }
-        return account.network.request(Api.functions.messages.hideAllChatJoinRequests(flags: 1 << 0, peer: inputPeer, link: nil))
+        return account.network.request(Api.functions.messages.hideAllChatJoinRequests(flags: approve ? (1 << 0) : 0, peer: inputPeer, link: nil))
         |> map(Optional.init)
         |> `catch` { _ -> Signal<Api.Updates?, NoError> in
             return .single(nil)

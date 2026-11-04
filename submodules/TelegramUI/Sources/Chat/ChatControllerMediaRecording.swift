@@ -690,10 +690,12 @@ extension ChatControllerImpl {
         silentPosting: Bool? = nil,
         scheduleTime: Int32? = nil,
         repeatPeriod: Int32? = nil,
-        viewOnce: Bool = false,
+        viewOnce requestedViewOnce: Bool = false,
         messageEffect: ChatSendMessageEffect? = nil,
         postpone: Bool = false
     ) {
+        // Chitgram: in a chat with "One-time voice & video" on, voice messages go out view-once.
+        let viewOnce = requestedViewOnce || (self.chatLocation.peerId.flatMap { ChitgramPerChat.isOneTimeMedia($0.toInt64()) } ?? false)
         self.chatDisplayNode.updateRecordedMediaDeleted(false)
         
         guard let recordedMediaPreview = self.presentationInterfaceState.interfaceState.mediaDraftState else {

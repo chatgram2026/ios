@@ -13,6 +13,7 @@ swift_library(
         # Chitgram: the "Chitgram" section of the Settings tab.
         "//submodules/ChitgramCore",
         "//submodules/ChitgramSettings",
+        "//submodules/ChitgramChat",
         "//submodules/UrlWhitelist",
         "//submodules/TelegramUI/Components/NavigationBarNode",
         "//submodules/TelegramUI/Components/NavigationBarComponent",
