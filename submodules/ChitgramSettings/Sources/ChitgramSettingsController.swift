@@ -3,6 +3,7 @@ import UIKit
 import Display
 import SwiftSignalKit
 import TelegramPresentationData
+import TelegramUIPreferences
 import ItemListUI
 import PresentationDataUtils
 import AccountContext
@@ -13,6 +14,7 @@ import ChitgramCore
 private enum ChitgramSettingsSection: Int32 {
     case stories
     case messages
+    case download
 
     /// Android string id of the section header.
     var titleId: Int {
@@ -21,6 +23,8 @@ private enum ChitgramSettingsSection: Int32 {
             return 135
         case .messages:
             return 234
+        case .download:
+            return 237
         }
     }
 }
@@ -33,6 +37,7 @@ private enum ChitgramSettingsRow: Int32 {
     case storyDownload
     case editSave
     case deleteSave
+    case downloadStop
 
     var section: ChitgramSettingsSection {
         switch self {
@@ -40,6 +45,8 @@ private enum ChitgramSettingsRow: Int32 {
             return .stories
         case .editSave, .deleteSave:
             return .messages
+        case .downloadStop:
+            return .download
         }
     }
 
@@ -55,6 +62,8 @@ private enum ChitgramSettingsRow: Int32 {
             return 20
         case .deleteSave:
             return 21
+        case .downloadStop:
+            return 5
         }
     }
 
@@ -71,40 +80,33 @@ private enum ChitgramSettingsRow: Int32 {
             return (23, 72)
         case .deleteSave:
             return (31, 235)
+        case .downloadStop:
+            return (183, 196)
         }
     }
+}
 
-    var key: ChitgramPreferences.Key {
-        switch self {
+/// What the switches show: Chitgram's own preferences, plus the Telegram settings some rows drive.
+private struct ChitgramSettingsState {
+    var autoDownload: MediaAutoDownloadSettings
+
+    func isOn(_ row: ChitgramSettingsRow) -> Bool {
+        let preferences = ChitgramPreferences.shared
+        switch row {
         case .storyGhost:
-            return .ghostStory
+            return preferences.bool(.ghostStory)
         case .storyHide:
-            return .hideStory
+            return preferences.bool(.hideStory)
         case .storyDownload:
-            return .storyDownload
+            return preferences.bool(.storyDownload)
         case .editSave:
-            return .saveEdited
+            return preferences.bool(.saveEdited)
         case .deleteSave:
-            return .deletedCheckType
-        }
-    }
-
-    /// Android stores "Save deleted messages" as a mode number (`delete_check_key`), the rest as booleans.
-    func isOn(_ preferences: ChitgramPreferences) -> Bool {
-        switch self {
-        case .deleteSave:
-            return preferences.int(self.key) != ChitgramPreferences.DeletedCheckType.off.rawValue
-        default:
-            return preferences.bool(self.key)
-        }
-    }
-
-    func set(_ value: Bool, _ preferences: ChitgramPreferences) {
-        switch self {
-        case .deleteSave:
-            preferences.set(value ? ChitgramPreferences.DeletedCheckType.keep.rawValue : ChitgramPreferences.DeletedCheckType.off.rawValue, for: self.key)
-        default:
-            preferences.set(value, for: self.key)
+            // Android stores this one as a mode number (`delete_check_key`).
+            return preferences.int(.deletedCheckType) != ChitgramPreferences.DeletedCheckType.off.rawValue
+        case .downloadStop:
+            // Android: stopped when every network preset is off (`FenixSettings.isAutoDownloadStopped`).
+            return !self.autoDownload.cellular.enabled && !self.autoDownload.wifi.enabled
         }
     }
 }
@@ -156,35 +158,64 @@ private enum ChitgramSettingsEntry: ItemListNodeEntry {
     }
 }
 
-private func chitgramSettingsEntries() -> [ChitgramSettingsEntry] {
-    let preferences = ChitgramPreferences.shared
+private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramSettingsEntry] {
     var entries: [ChitgramSettingsEntry] = []
 
+    func header(_ section: ChitgramSettingsSection) {
+        entries.append(.header(section, ChitgramStrings.get(section.titleId)))
+    }
     func toggle(_ row: ChitgramSettingsRow) {
         let (titleId, textId) = row.titleAndTextIds
-        entries.append(.toggle(row, title: ChitgramStrings.get(titleId), text: ChitgramStrings.get(textId), value: row.isOn(preferences)))
+        entries.append(.toggle(row, title: ChitgramStrings.get(titleId), text: ChitgramStrings.get(textId), value: state.isOn(row)))
     }
 
-    entries.append(.header(.stories, ChitgramStrings.get(ChitgramSettingsSection.stories.titleId)))
+    header(.stories)
     toggle(.storyGhost)
     toggle(.storyHide)
     toggle(.storyDownload)
 
-    entries.append(.header(.messages, ChitgramStrings.get(ChitgramSettingsSection.messages.titleId)))
+    header(.messages)
     toggle(.editSave)
     toggle(.deleteSave)
+
+    header(.download)
+    toggle(.downloadStop)
 
     return entries
 }
 
 /// Chitgram ▸ Sozlamalar (Android `FenixSettings`): Chitgram's switches, grouped and ordered as on Android.
 public func chitgramSettingsController(context: AccountContext) -> ViewController {
+    let preferences = ChitgramPreferences.shared
     let arguments = ChitgramSettingsArguments(toggle: { row, value in
-        row.set(value, ChitgramPreferences.shared)
+        switch row {
+        case .storyGhost:
+            preferences.set(value, for: .ghostStory)
+        case .storyHide:
+            preferences.set(value, for: .hideStory)
+        case .storyDownload:
+            preferences.set(value, for: .storyDownload)
+        case .editSave:
+            preferences.set(value, for: .saveEdited)
+        case .deleteSave:
+            preferences.set(value ? ChitgramPreferences.DeletedCheckType.keep.rawValue : ChitgramPreferences.DeletedCheckType.off.rawValue, for: .deletedCheckType)
+        case .downloadStop:
+            // Telegram's own automatic download, off (or back on) for mobile data and Wi-Fi at once.
+            let _ = updateMediaDownloadSettingsInteractively(accountManager: context.sharedContext.accountManager, { settings in
+                var settings = settings
+                settings.cellular.enabled = !value
+                settings.wifi.enabled = !value
+                return settings
+            }).startStandalone()
+        }
     })
 
-    let signal = combineLatest(queue: .mainQueue(), context.sharedContext.presentationData, ChitgramPreferences.shared.changes)
-    |> map { presentationData, _ -> (ItemListControllerState, (ItemListNodeState, Any)) in
+    let signal = combineLatest(queue: .mainQueue(),
+        context.sharedContext.presentationData,
+        context.sharedContext.automaticMediaDownloadSettings,
+        preferences.changes
+    )
+    |> map { presentationData, autoDownload, _ -> (ItemListControllerState, (ItemListNodeState, Any)) in
         ChitgramStrings.setLanguageCode(presentationData.strings.primaryComponent.languageCode)
 
         let controllerState = ItemListControllerState(
@@ -196,7 +227,7 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
         )
         let listState = ItemListNodeState(
             presentationData: ItemListPresentationData(presentationData),
-            entries: chitgramSettingsEntries(),
+            entries: chitgramSettingsEntries(state: ChitgramSettingsState(autoDownload: autoDownload)),
             style: .blocks,
             animateChanges: true
         )
