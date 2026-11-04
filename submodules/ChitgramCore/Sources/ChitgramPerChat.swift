@@ -2,6 +2,44 @@ import Foundation
 
 /// Chitgram's per-chat choices (Android `ChatFenixSettings`), kept by chat id under Android's keys.
 public enum ChitgramPerChat {
+    /// Android `AutoTextAppender`: a chat's signature, added to the end of every text message sent there while on.
+    public struct AutoText: Codable, Equatable {
+        public var active: Bool
+        public var text: String
+
+        public init(active: Bool, text: String) {
+            self.active = active
+            self.text = text
+        }
+    }
+
+    private static func autoTextKey(_ chatId: Int64) -> String {
+        return "chitgram_auto_text_\(chatId)"
+    }
+
+    public static func autoText(_ chatId: Int64) -> AutoText {
+        guard let data = ChitgramPreferences.shared.userDefaults.data(forKey: self.autoTextKey(chatId)), let value = try? JSONDecoder().decode(AutoText.self, from: data) else {
+            return AutoText(active: false, text: "")
+        }
+        return value
+    }
+
+    public static func setAutoText(_ chatId: Int64, _ value: AutoText) {
+        if let data = try? JSONEncoder().encode(value) {
+            ChitgramPreferences.shared.userDefaults.set(data, forKey: self.autoTextKey(chatId))
+        }
+        NotificationCenter.default.post(name: ChitgramPreferences.didChangeNotification, object: ChitgramPreferences.shared, userInfo: ["key": self.autoTextKey(chatId)])
+    }
+
+    /// The text to add to an outgoing message in this chat, if any.
+    public static func signature(_ chatId: Int64) -> String? {
+        let value = self.autoText(chatId)
+        if value.active && !value.text.isEmpty {
+            return value.text
+        }
+        return nil
+    }
+
     /// Android `OneTimeVoice`, key `one_time_media_ids`: voice messages in these chats default to view-once.
     private static let oneTimeKey = "one_time_media_ids"
     private static let lock = NSLock()
