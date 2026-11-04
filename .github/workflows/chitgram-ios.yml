@@ -86,10 +86,13 @@ jobs:
           mkdir -p "$CACHE_DIR/disk" "$CACHE_DIR/repo"
           du -sh "$CACHE_DIR" || true
           # 3 cores and 7 GB of RAM: keep Bazel from starting more Swift compiles than fit in memory.
+          # Simulator builds need no provisioning profile, and the fake ones in build-system/fake-codesigning
+          # expired on 2026-10-30 (rules_apple refuses an expired profile), so leave profiles out.
           cat > "$HOME/.bazelrc" <<EOF
           build --repository_cache=$CACHE_DIR/repo
           build --jobs=4
           build --local_resources=memory=HOST_RAM*.75
+          build --//Telegram:disableProvisioningProfiles
           EOF
           cat "$HOME/.bazelrc"
 
