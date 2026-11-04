@@ -36,10 +36,15 @@ the same ids so the two apps can be compared line by line.
      the fork has upstream history, so this shallow clone can push its branch there), enable Actions on the fork,
      add our workflow on runner label **`xcode-27`** (macOS 27.0.1, Xcode 27.1 default — matches `versions.json`).
      Standard runners on public repos are free; jobs stop at 6 h, so cache the Bazel cache between runs.
-  2. When the code compiles, rent a **Scaleway Mac mini M4** (€0.22/h, 24 h minimum, Hourly billing, zone PAR-1) for
-     1–3 days for the simulator and TestFlight. The owner signs up and pays; they send only IP and user name, never
-     a password. SSH key on this PC: `~/.ssh/chitgram_mac` (the public half was given to the owner). Remind them to
-     **Delete** the Mac when done — billing runs until then.
+  2. **Signed builds and TestFlight go through Codemagic** (owner's choice, 2026-11-04, replacing the rented Mac):
+     `codemagic.yaml`, workflow `testflight`, started by hand (free plan: 500 M2 minutes a month, 120 min a build,
+     3 GB cache), image Xcode 27.1 on macOS 27.0.1. The owner adds the App Store Connect API key there as the
+     Developer Portal integration `chitgram`, and the variable group `chitgram` (`TELEGRAM_APP_ID`,
+     `TELEGRAM_APP_HASH`, `TELEGRAM_TEAM_ID`, `CERTIFICATE_PRIVATE_KEY`); the values to paste are prepared in
+     `D:\ChitgramIOS\config\codemagic-variables.txt` and `ios_distribution_private_key`, never in the repo. The app
+     group and the seven App IDs are made by hand in the developer portal (the API cannot attach an app group).
+     Keep compile checks on GitHub so Codemagic minutes go only to uploads. (Fallback if Codemagic fails: a
+     Scaleway Mac mini M4, €0.22/h with a 24 h minimum; SSH key `~/.ssh/chitgram_mac`; owner deletes it after.)
 - First get an **unmodified** build green in CI (baseline), so later failures are known to be ours.
 - CI compile checks (`.github/workflows/chitgram-ios.yml`) keep upstream's `appstore-configuration.json` and
   `build-system/fake-codesigning`: the bundle id and API keys do not change what compiles, and the fake profiles

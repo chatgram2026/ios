@@ -1,0 +1,152 @@
+# Chitgram: signed build for TestFlight on Codemagic (the owner's choice, 2026-11-04).
+#
+# GitHub Actions keeps doing the free compile checks on every push (.github/workflows/chitgram-ios.yml). This
+# workflow has no trigger: it is started by hand in Codemagic when a build should reach phones, so the monthly
+# free minutes go only to builds that are uploaded.
+#
+# It needs, in Codemagic (Teams > Integrations / Environment variables):
+#   - the App Store Connect API key, added as a Developer Portal integration named "chitgram";
+#   - a variable group "chitgram" holding TELEGRAM_APP_ID, TELEGRAM_APP_HASH, TELEGRAM_TEAM_ID and
+#     CERTIFICATE_PRIVATE_KEY (an RSA key: the distribution certificate is made with it once and then reused).
+# And in the Apple Developer account, made by hand first because the API cannot attach an app group to an App ID:
+# the app group group.com.chatgram.messenger and the seven App IDs below, each with that app group, the main one
+# also with Push Notifications.
+workflows:
+  testflight:
+    name: Chitgram TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 120
+    integrations:
+      app_store_connect: chitgram
+    environment:
+      xcode: 27.1
+      groups:
+        - chitgram
+      vars:
+        BUNDLE_ID: com.chatgram.messenger
+        CONFIGURATION: release_arm64
+        CACHE_DIR: /Users/builder/telegram-bazel-cache
+        # Codemagic keeps 3 GB of cache per build; the disk cache compresses to about a third.
+        CACHE_LIMIT_MB: "7000"
+    cache:
+      cache_paths:
+        - /Users/builder/telegram-bazel-cache
+    scripts:
+      - name: Fetch submodules
+        script: |
+          set -euo pipefail
+          git submodule sync --recursive
+          git submodule update --init --depth 1 --jobs 8 --recursive
+          git submodule status --recursive | cut -c1-120
+          df -h /
+          sysctl -n hw.ncpu hw.memsize
+          xcodebuild -version
+
+      - name: Write the build configuration
+        script: |
+          set -euo pipefail
+          mkdir -p "$HOME/chitgram-config"
+          python3 - <<'EOF'
+          import json
+          import os
+
+          configuration = {
+              "bundle_id": os.environ["BUNDLE_ID"],
+              "api_id": os.environ["TELEGRAM_APP_ID"].strip(),
+              "api_hash": os.environ["TELEGRAM_APP_HASH"].strip(),
+              "team_id": os.environ["TELEGRAM_TEAM_ID"].strip(),
+              "app_center_id": "0",
+              "is_internal_build": "false",
+              "is_appstore_build": "true",
+              "appstore_id": "0",
+              "app_specific_url_scheme": "tg",
+              "premium_iap_product_id": "",
+              "enable_siri": False,
+              "enable_icloud": False,
+          }
+          with open(os.path.expanduser("~/chitgram-config/configuration.json"), "w") as file:
+              json.dump(configuration, file, indent=2)
+          print("configuration written for", configuration["bundle_id"])
+          EOF
+
+      - name: Signing files
+        script: |
+          set -euo pipefail
+          keychain initialize
+          # Creates the distribution certificate on the first build and an App Store profile for every App ID
+          # that has none yet; later builds download them.
+          for suffix in "" .Share .NotificationContent .NotificationService .SiriIntents .Widget .BroadcastUpload; do
+            app-store-connect fetch-signing-files "$BUNDLE_ID$suffix" \
+              --type IOS_APP_STORE \
+              --certificate-key=@env:CERTIFICATE_PRIVATE_KEY \
+              --create
+          done
+          keychain add-certificates
+          # Make.py reads the profiles from <dir>/profiles and names them by their bundle id.
+          rm -rf "$HOME/chitgram-signing"
+          mkdir -p "$HOME/chitgram-signing/profiles" "$HOME/chitgram-signing/certs"
+          cp "$HOME/Library/MobileDevice/Provisioning Profiles/"*.mobileprovision "$HOME/chitgram-signing/profiles/"
+          ls -l "$HOME/chitgram-signing/profiles"
+
+      - name: Build
+        script: |
+          set -uo pipefail
+          mkdir -p "$CACHE_DIR/disk" "$CACHE_DIR/repo" "$CM_BUILD_DIR/build"
+          du -sh "$CACHE_DIR" || true
+          # 8 cores and 12 GB of RAM: keep Bazel from starting more Swift compiles than fit in memory.
+          cat > "$HOME/.bazelrc" <<EOF
+          build --repository_cache=$CACHE_DIR/repo
+          build --jobs=6
+          build --local_resources=memory=HOST_RAM*.75
+          EOF
+          python3 -u build-system/Make/Make.py \
+            --overrideXcodeVersion \
+            --cacheDir="$CACHE_DIR/disk" \
+            build \
+            --configurationPath="$HOME/chitgram-config/configuration.json" \
+            --codesigningInformationPath="$HOME/chitgram-signing" \
+            --configuration="$CONFIGURATION" \
+            --buildNumber="$((BUILD_NUMBER + 1))" \
+            --outputBuildArtifactsPath="$CM_BUILD_DIR/build/artifacts" 2>&1 | tee "$CM_BUILD_DIR/build/build.log"
+          status=${PIPESTATUS[0]}
+          # Trimmed even after a failure, so the next build starts warm and the cache stays inside the limit.
+          python3 - <<'EOF'
+          import os
+
+          root = os.environ["CACHE_DIR"]
+          limit = int(os.environ["CACHE_LIMIT_MB"]) * 1024 * 1024
+          files = []
+          for base, _, names in os.walk(root):
+              for name in names:
+                  path = os.path.join(base, name)
+                  try:
+                      st = os.lstat(path)
+                  except OSError:
+                      continue
+                  files.append((max(st.st_atime, st.st_mtime), st.st_size, path))
+          total = sum(f[1] for f in files)
+          print("cache before: %.1f GB in %d files" % (total / 2**30, len(files)))
+          files.sort()
+          for _, size, path in files:
+              if total <= limit:
+                  break
+              if "/repo/" in path:
+                  continue
+              os.remove(path)
+              total -= size
+          print("cache after: %.1f GB" % (total / 2**30))
+          EOF
+          if [ "$status" -ne 0 ]; then
+            grep -E "(error:|ERROR:)" "$CM_BUILD_DIR/build/build.log" | grep -v "^INFO" | sort -u | head -n 100
+          fi
+          exit "$status"
+
+    artifacts:
+      - build/artifacts/Telegram.ipa
+      - build/artifacts/Telegram.DSYMs.zip
+      - build/build.log
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
