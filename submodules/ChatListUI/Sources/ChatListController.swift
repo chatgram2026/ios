@@ -6825,6 +6825,10 @@ private func chatListHeaderOverflowInfo(strings: PresentationStrings) -> [AnyHas
     ]
 }
 
+// Chitgram: the ghost button's two looks (an eye, struck through while ghost mode is on).
+private let chitgramGhostOnIcon: UIImage = UIImage(systemName: "eye.slash", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18.0, weight: .medium))?.withRenderingMode(.alwaysTemplate) ?? UIImage()
+private let chitgramGhostOffIcon: UIImage = UIImage(systemName: "eye", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18.0, weight: .medium))?.withRenderingMode(.alwaysTemplate) ?? UIImage()
+
 private final class ChatListLocationContext {
     let context: AccountContext
     let location: ChatListControllerLocation
@@ -6843,6 +6847,7 @@ private final class ChatListLocationContext {
     var rightButton: NavigationBarComponent.Button?
     var proxyButton: NavigationBarComponent.Button?
     var storyButton: NavigationBarComponent.Button?
+    private var chitgramPreferencesDisposable: Disposable?
     
     var rightButtons: [NavigationBarComponent.Button] {
         var result: [NavigationBarComponent.Button] = []
@@ -6854,6 +6859,16 @@ private final class ChatListLocationContext {
         }
         if let proxyButton = self.proxyButton {
             result.append(proxyButton)
+        }
+        // Chitgram: the ghost-mode toggle on the main chat list, when "Ghost button" is on (Android: the action bar).
+        if case .chatList(.root) = self.location, self.rightButton != nil, ChitgramPreferences.shared.bool(.ghostButton) {
+            let isGhost = ChitgramPreferences.shared.bool(.ghost)
+            result.append(NavigationBarComponent.Button(id: "chitgram_ghost",
+                content: .image(isGhost ? chitgramGhostOnIcon : chitgramGhostOffIcon),
+                action: { _ in
+                    ChitgramPreferences.shared.set(!ChitgramPreferences.shared.bool(.ghost), for: .ghost)
+                }
+            ))
         }
         return result
     }
@@ -6888,6 +6903,12 @@ private final class ChatListLocationContext {
         self.location = location
         self.parentController = parentController
         
+        // Chitgram: the ghost button follows the switches at once, wherever they are flipped.
+        self.chitgramPreferencesDisposable = (ChitgramPreferences.shared.changes
+        |> deliverOnMainQueue).startStrict(next: { [weak self] _ in
+            self?.parentController?.requestLayout(transition: .immediate)
+        })
+
         let hasProxy = context.sharedContext.accountManager.sharedData(keys: [SharedDataKeys.proxySettings])
         |> map { sharedData -> (Bool, Bool) in
             if let settings = sharedData.entries[SharedDataKeys.proxySettings]?.get(ProxySettings.self) {
@@ -7206,6 +7227,7 @@ private final class ChatListLocationContext {
     deinit {
         self.titleDisposable?.dispose()
         self.stateDisposable?.dispose()
+        self.chitgramPreferencesDisposable?.dispose()
     }
     
     private func updateChatList(

@@ -51,6 +51,7 @@ private enum ChitgramSettingsRow: Int32 {
     case ghostOnline
     case ghostTyping
     case ghostUpload
+    case ghostButton
     case hideSponsored
 
     var section: ChitgramSettingsSection {
@@ -63,7 +64,7 @@ private enum ChitgramSettingsRow: Int32 {
             return .download
         case .autoAnswerActive, .autoAnswerText:
             return .autoAnswer
-        case .ghostMode, .ghostRead, .ghostOnline, .ghostTyping, .ghostUpload, .hideSponsored:
+        case .ghostMode, .ghostRead, .ghostOnline, .ghostTyping, .ghostUpload, .ghostButton, .hideSponsored:
             return .privacy
         }
     }
@@ -96,6 +97,8 @@ private enum ChitgramSettingsRow: Int32 {
             return 36
         case .ghostUpload:
             return 37
+        case .ghostButton:
+            return 26
         case .hideSponsored:
             return 38
         }
@@ -131,6 +134,8 @@ private enum ChitgramSettingsRow: Int32 {
             return (562, 563)
         case .ghostUpload:
             return (564, 565)
+        case .ghostButton:
+            return (342, 343)
         case .hideSponsored:
             return (566, 567)
         }
@@ -159,6 +164,8 @@ private enum ChitgramSettingsRow: Int32 {
             return .ghostHideTyping
         case .ghostUpload:
             return .ghostHideUpload
+        case .ghostButton:
+            return .ghostButton
         case .hideSponsored:
             return .hideSponsored
         case .deleteSave, .downloadStop, .autoAnswerText:
@@ -283,6 +290,7 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
         toggle(.ghostTyping)
         toggle(.ghostUpload)
     }
+    toggle(.ghostButton)
     toggle(.hideSponsored)
 
     return entries
