@@ -41,6 +41,8 @@ public final class ChitgramPreferences {
         case folderIconMode = "folder_icon_mode"
         case folderIcons = "folder_icons"
         case hideTabs = "hide_tabs"
+        // Channels
+        case autoAcceptJoin = "auto_accept_join"
         // Reminder
         case reminderEnabled = "reminder_enabled"
         case reminderDelayMin = "reminder_delay_min"

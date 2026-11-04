@@ -1923,6 +1923,10 @@ private func finalStateWithUpdatesAndServerTime(accountPeerId: PeerId, postbox: 
                 })
             case let .updatePendingJoinRequests(updatePendingJoinRequestsData):
                 let (peer, requestsPending) = (updatePendingJoinRequestsData.peer, updatePendingJoinRequestsData.requestsPending)
+                // Chitgram: the auto-accept of join requests hears of it here.
+                if requestsPending > 0 {
+                    ChitgramPendingJoinRequests.shared.note(accountPeerId: accountPeerId, peerId: peer.peerId)
+                }
                 updatedState.updateCachedPeerData(peer.peerId, { current in
                     if peer.peerId.namespace == Namespaces.Peer.CloudGroup {
                         let previous: CachedGroupData

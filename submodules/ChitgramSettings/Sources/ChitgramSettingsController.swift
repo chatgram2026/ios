@@ -19,6 +19,10 @@ private enum ChitgramSettingsSection: Int32 {
     case privacy
     case confirmations
     case roundVideo
+    case folders
+    case channels
+    case reminder
+    case security
 
     /// Android string id of the section header.
     var titleId: Int {
@@ -37,6 +41,14 @@ private enum ChitgramSettingsSection: Int32 {
             return 190
         case .roundVideo:
             return 353
+        case .folders:
+            return 240
+        case .channels:
+            return 262
+        case .reminder:
+            return 269
+        case .security:
+            return 318
         }
     }
 }
@@ -63,6 +75,11 @@ private enum ChitgramSettingsRow: Int32 {
     case confirmVoice
     case confirmGif
     case roundCameraFront
+    case hideTabs
+    case autoAcceptJoin
+    case reminderEnabled
+    case reminderDelay
+    case apkShield
 
     var section: ChitgramSettingsSection {
         switch self {
@@ -80,6 +97,14 @@ private enum ChitgramSettingsRow: Int32 {
             return .confirmations
         case .roundCameraFront:
             return .roundVideo
+        case .hideTabs:
+            return .folders
+        case .autoAcceptJoin:
+            return .channels
+        case .reminderEnabled, .reminderDelay:
+            return .reminder
+        case .apkShield:
+            return .security
         }
     }
 
@@ -123,6 +148,16 @@ private enum ChitgramSettingsRow: Int32 {
             return 10
         case .roundCameraFront:
             return 27
+        case .hideTabs:
+            return 12
+        case .autoAcceptJoin:
+            return 13
+        case .reminderEnabled:
+            return 14
+        case .reminderDelay:
+            return 15
+        case .apkShield:
+            return 28
         }
     }
 
@@ -169,6 +204,17 @@ private enum ChitgramSettingsRow: Int32 {
         case .roundCameraFront:
             // Titled "Front camera"; off means the rear one.
             return (113, 354)
+        case .hideTabs:
+            return (260, 261)
+        case .autoAcceptJoin:
+            return (263, 264)
+        case .reminderEnabled:
+            return (270, 271)
+        case .reminderDelay:
+            // A button; its title carries the value (see the entries).
+            return (272, -1)
+        case .apkShield:
+            return (378, 379)
         }
     }
 
@@ -207,6 +253,16 @@ private enum ChitgramSettingsRow: Int32 {
             return .confirmGif
         case .roundCameraFront:
             return .roundCameraFront
+        case .hideTabs:
+            return .hideTabs
+        case .autoAcceptJoin:
+            return .autoAcceptJoin
+        case .reminderEnabled:
+            return .reminderEnabled
+        case .reminderDelay:
+            return nil
+        case .apkShield:
+            return .apkShield
         case .deleteSave, .downloadStop, .autoAnswerText:
             return nil
         }
@@ -340,6 +396,20 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
     header(.roundVideo)
     toggle(.roundCameraFront)
 
+    header(.folders)
+    toggle(.hideTabs)
+
+    header(.channels)
+    toggle(.autoAcceptJoin)
+
+    header(.reminder)
+    toggle(.reminderEnabled)
+    // Android: "Eslatma vaqti: 5 daq".
+    entries.append(.button(.reminderDelay, title: "\(ChitgramStrings.get(272)): \(ChitgramPreferences.shared.int(.reminderDelayMin)) \(ChitgramStrings.get(273))"))
+
+    header(.security)
+    toggle(.apkShield)
+
     return entries
 }
 
@@ -370,6 +440,8 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
         switch row {
         case .autoAnswerText:
             pushControllerImpl?(chitgramAutoAnswerTextController(context: context))
+        case .reminderDelay:
+            pushControllerImpl?(chitgramReminderDelayController(context: context))
         default:
             break
         }

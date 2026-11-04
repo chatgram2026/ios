@@ -27,8 +27,40 @@ import StoryContainerScreen
 import WallpaperGalleryScreen
 import BrowserUI
 import PeerMessagesMediaPlaylist
+import ChitgramCore
+
+// Chitgram: set for the one open that follows "Open anyway" on the APK warning.
+private var chitgramApkWarningConfirmed = false
+
+/// Chitgram "Block APK files" (Android `ApkShield`): an app installer someone sent.
+private func chitgramIsBlockedApk(_ message: EngineRawMessage) -> Bool {
+    guard ChitgramPreferences.shared.bool(.apkShield), message.flags.contains(.Incoming) else {
+        return false
+    }
+    for media in message.media {
+        if let file = media as? TelegramMediaFile {
+            if file.mimeType == "application/vnd.android.package-archive" || (file.fileName?.lowercased().hasSuffix(".apk") ?? false) {
+                return true
+            }
+        }
+    }
+    return false
+}
 
 func openChatMessageImpl(_ params: OpenChatMessageParams) -> Bool {
+    // Chitgram: an incoming .apk opens only past a warning (Android `ApkCard`: "Suspicious file").
+    if chitgramApkWarningConfirmed {
+        chitgramApkWarningConfirmed = false
+    } else if chitgramIsBlockedApk(params.message) {
+        params.present(textAlertController(context: params.context, title: ChitgramStrings.get(579), text: ChitgramStrings.get(580), actions: [
+            TextAlertAction(type: .genericAction, title: ChitgramStrings.get(582), action: {
+                chitgramApkWarningConfirmed = true
+                let _ = openChatMessageImpl(params)
+            }),
+            TextAlertAction(type: .defaultAction, title: ChitgramStrings.get(581), action: {})
+        ]), nil, .window(.root))
+        return true
+    }
     var story: TelegramMediaStory?
     for media in params.message.media {
         if let media = media as? TelegramMediaStory {

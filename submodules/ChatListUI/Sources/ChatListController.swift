@@ -4040,7 +4040,20 @@ public class ChatListControllerImpl: TelegramBaseController, ChatListController 
     
     private var initializedFilters = false
     private func reloadFilters(firstUpdate: (() -> Void)? = nil) {
-        let filterItems = chatListFilterItems(context: self.context)
+        // Chitgram: "Hide folder tabs" keeps only All chats, so the tab row goes and the list shows every chat.
+        let filterItems = combineLatest(chatListFilterItems(context: self.context), ChitgramPreferences.shared.boolSignal(.hideTabs))
+        |> map { countAndFilterItems, hideTabs -> (Int, [(ChatListFilter, Int, Bool)]) in
+            if !hideTabs {
+                return countAndFilterItems
+            }
+            return (countAndFilterItems.0, countAndFilterItems.1.filter { item in
+                if case .allChats = item.0 {
+                    return true
+                } else {
+                    return false
+                }
+            })
+        }
         var notifiedFirstUpdate = false
         self.filterDisposable.set((combineLatest(queue: .mainQueue(),
             filterItems,
