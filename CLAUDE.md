@@ -41,6 +41,10 @@ the same ids so the two apps can be compared line by line.
      a password. SSH key on this PC: `~/.ssh/chitgram_mac` (the public half was given to the owner). Remind them to
      **Delete** the Mac when done — billing runs until then.
 - First get an **unmodified** build green in CI (baseline), so later failures are known to be ours.
+- CI compile checks (`.github/workflows/chitgram-ios.yml`) keep upstream's `appstore-configuration.json` and
+  `build-system/fake-codesigning`: the bundle id and API keys do not change what compiles, and the fake profiles
+  only match `ph.telegra.Telegraph`. The real configuration (`com.chatgram.messenger`, the API id/hash) is made
+  only for signed builds, outside the repo.
 
 ## Secrets
 
@@ -50,7 +54,9 @@ the same ids so the two apps can be compared line by line.
   Template: `build-system/template_minimal_development_configuration.json`.
 - Demo login for App Review (Android `org/fenixuz/utils/DemoNumber.kt`): numbers and code URLs are only in the Android
   `local.properties` (`DEMO_PHONE_NUMBER`, `DEMO_PHONE_NUMBER_2`, `DEMO_CODE_URL`); never in committed files.
-- Bundle id is not decided yet — ask the owner (it must be registered in their Apple account).
+- Bundle id: **`com.chatgram.messenger`** (owner, 2026-11-04), the same as the Android package. It must be
+  registered in the owner's Apple account (with the `.Share`, `.NotificationService`, … extension ids and the
+  `group.com.chatgram.messenger` app group) before signing.
 
 ## How we change this tree
 
