@@ -12,6 +12,8 @@ swift_library(
     ],
     deps = [
         "//submodules/ChitgramCore",
+        "//submodules/ChitgramEngine",
+        "//submodules/UndoUI:UndoUI",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",
         "//submodules/Display:Display",
         "//submodules/TelegramPresentationData:TelegramPresentationData",

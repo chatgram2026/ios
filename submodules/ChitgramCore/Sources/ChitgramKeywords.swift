@@ -47,9 +47,11 @@ public final class ChitgramKeywords {
         return stored.split(separator: "\n").map(String.init).filter { !$0.isEmpty }
     }
 
+    /// Set by ChitgramEngine from the account's Chitgram Premium.
+    public var isPremium: Bool = false
+
     public var maxWords: Int {
-        // Raised to premiumWords once Chitgram Premium is ported.
-        return ChitgramKeywords.freeWords
+        return self.isPremium ? ChitgramKeywords.premiumWords : ChitgramKeywords.freeWords
     }
 
     /// Adds a word; false when it is empty, already there, or over the limit.

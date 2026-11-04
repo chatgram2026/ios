@@ -37,6 +37,8 @@ private enum ChitgramPlaceholderEntry: ItemListNodeEntry {
 /// App theme and App cache are Telegram's own screens; the Settings tab opens those itself.
 public func chitgramSectionController(context: AccountContext, row: ChitgramSectionRow) -> ViewController {
     switch row {
+    case .premium:
+        return chitgramPremiumController(context: context)
     case .settings:
         return chitgramSettingsController(context: context)
     case .chatFinder:
