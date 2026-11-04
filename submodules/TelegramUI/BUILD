@@ -64,8 +64,9 @@ swift_library(
         "-warnings-as-errors",
     ],
     deps = [
-        # Chitgram: settings store, configured at launch.
+        # Chitgram: settings store, configured at launch; screens opened from chats.
         "//submodules/ChitgramCore",
+        "//submodules/ChitgramChat",
         "//submodules/CrashReporting:CrashReporting",
         "//third-party/recaptcha:RecaptchaEnterprise",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",

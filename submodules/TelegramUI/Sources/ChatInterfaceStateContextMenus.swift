@@ -39,6 +39,8 @@ import ChatMessageBubbleItemNode
 import AdsInfoScreen
 import AdsReportScreen
 import WalletContext
+import ChitgramCore
+import ChitgramChat
  
 private struct MessageContextMenuData {
     let starStatus: Bool?
@@ -2110,6 +2112,17 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                     }
                 })))
             }
+        }
+
+        // Chitgram: "Edit history" on a message whose earlier versions were kept (Android: the message menu).
+        let chitgramEditVersions = ChitgramEditHistory.shared.versions(ChitgramEditHistory.MessageKey(accountPeerId: context.account.peerId, messageId: message.id))
+        if !chitgramEditVersions.isEmpty {
+            actions.append(.action(ContextMenuActionItem(text: ChitgramStrings.get(390), icon: { theme in
+                return generateTintedImage(image: UIImage(bundleImageName: "Chat/Context Menu/Edit"), color: theme.actionSheet.primaryTextColor)
+            }, action: { _, f in
+                f(.dismissWithoutContent)
+                controllerInteraction.navigationController()?.pushViewController(chitgramEditHistoryController(context: context, currentText: message.text, currentDate: message.editedTime ?? message.timestamp, versions: chitgramEditVersions))
+            })))
         }
 
         if hasEphemeralMessages {

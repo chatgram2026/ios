@@ -12,12 +12,15 @@ import ChitgramCore
 /// when its first feature is ported.
 private enum ChitgramSettingsSection: Int32 {
     case stories
+    case messages
 
     /// Android string id of the section header.
     var titleId: Int {
         switch self {
         case .stories:
             return 135
+        case .messages:
+            return 234
         }
     }
 }
@@ -28,11 +31,15 @@ private enum ChitgramSettingsRow: Int32 {
     case storyGhost
     case storyHide
     case storyDownload
+    case editSave
+    case deleteSave
 
     var section: ChitgramSettingsSection {
         switch self {
         case .storyGhost, .storyHide, .storyDownload:
             return .stories
+        case .editSave, .deleteSave:
+            return .messages
         }
     }
 
@@ -44,6 +51,10 @@ private enum ChitgramSettingsRow: Int32 {
             return 2
         case .storyDownload:
             return 17
+        case .editSave:
+            return 20
+        case .deleteSave:
+            return 21
         }
     }
 
@@ -56,6 +67,10 @@ private enum ChitgramSettingsRow: Int32 {
             return (136, 137)
         case .storyDownload:
             return (297, 298)
+        case .editSave:
+            return (23, 72)
+        case .deleteSave:
+            return (31, 235)
         }
     }
 
@@ -67,6 +82,29 @@ private enum ChitgramSettingsRow: Int32 {
             return .hideStory
         case .storyDownload:
             return .storyDownload
+        case .editSave:
+            return .saveEdited
+        case .deleteSave:
+            return .deletedCheckType
+        }
+    }
+
+    /// Android stores "Save deleted messages" as a mode number (`delete_check_key`), the rest as booleans.
+    func isOn(_ preferences: ChitgramPreferences) -> Bool {
+        switch self {
+        case .deleteSave:
+            return preferences.int(self.key) != ChitgramPreferences.DeletedCheckType.off.rawValue
+        default:
+            return preferences.bool(self.key)
+        }
+    }
+
+    func set(_ value: Bool, _ preferences: ChitgramPreferences) {
+        switch self {
+        case .deleteSave:
+            preferences.set(value ? ChitgramPreferences.DeletedCheckType.keep.rawValue : ChitgramPreferences.DeletedCheckType.off.rawValue, for: self.key)
+        default:
+            preferences.set(value, for: self.key)
         }
     }
 }
@@ -124,7 +162,7 @@ private func chitgramSettingsEntries() -> [ChitgramSettingsEntry] {
 
     func toggle(_ row: ChitgramSettingsRow) {
         let (titleId, textId) = row.titleAndTextIds
-        entries.append(.toggle(row, title: ChitgramStrings.get(titleId), text: ChitgramStrings.get(textId), value: preferences.bool(row.key)))
+        entries.append(.toggle(row, title: ChitgramStrings.get(titleId), text: ChitgramStrings.get(textId), value: row.isOn(preferences)))
     }
 
     entries.append(.header(.stories, ChitgramStrings.get(ChitgramSettingsSection.stories.titleId)))
@@ -132,13 +170,17 @@ private func chitgramSettingsEntries() -> [ChitgramSettingsEntry] {
     toggle(.storyHide)
     toggle(.storyDownload)
 
+    entries.append(.header(.messages, ChitgramStrings.get(ChitgramSettingsSection.messages.titleId)))
+    toggle(.editSave)
+    toggle(.deleteSave)
+
     return entries
 }
 
 /// Chitgram ▸ Sozlamalar (Android `FenixSettings`): Chitgram's switches, grouped and ordered as on Android.
 public func chitgramSettingsController(context: AccountContext) -> ViewController {
     let arguments = ChitgramSettingsArguments(toggle: { row, value in
-        ChitgramPreferences.shared.set(value, for: row.key)
+        row.set(value, ChitgramPreferences.shared)
     })
 
     let signal = combineLatest(queue: .mainQueue(), context.sharedContext.presentationData, ChitgramPreferences.shared.changes)

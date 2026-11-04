@@ -127,6 +127,7 @@ import TextProcessingScreen
 import CreateBotScreen
 import EmojiStatusSelectionComponent
 import EntityKeyboard
+import ChitgramCore
 
 private final class AccountUserInterfaceInUseContext {
     let subscribers = Bag<(Bool) -> Void>()
@@ -370,6 +371,8 @@ public final class SharedAccountContextImpl: SharedAccountContext {
         }
         
         self._currentPresentationData = Atomic(value: initialPresentationDataAndSettings.presentationData)
+        // Chitgram: our strings follow the app language.
+        ChitgramStrings.setLanguageCode(initialPresentationDataAndSettings.presentationData.strings.primaryComponent.languageCode)
         self.currentAutomaticMediaDownloadSettings = initialPresentationDataAndSettings.automaticMediaDownloadSettings
         self.currentAutodownloadSettings = Atomic(value: initialPresentationDataAndSettings.autodownloadSettings)
         self.currentMediaInputSettings = Atomic(value: initialPresentationDataAndSettings.mediaInputSettings)
@@ -448,6 +451,7 @@ public final class SharedAccountContextImpl: SharedAccountContext {
         self.presentationDataDisposable.set((self.presentationData
         |> deliverOnMainQueue).start(next: { [weak self] next in
             if let strongSelf = self {
+                ChitgramStrings.setLanguageCode(next.strings.primaryComponent.languageCode)
                 var stringsUpdated = false
                 var themeUpdated = false
                 var themeNameUpdated = false

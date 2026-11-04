@@ -4621,7 +4621,9 @@ func replayFinalState(
                 upsertEphemeralReplacement(transaction: transaction, anchorMessageId: anchorMessageId, message: message)
             case let .DeleteEphemeralMessages(peerId, ids):
                 deleteEphemeralMessages(transaction: transaction, peerId: peerId, ids: ids)
-            case let .DeleteMessagesWithGlobalIds(ids):
+            case let .DeleteMessagesWithGlobalIds(allIds):
+                // Chitgram: with "Save deleted messages" on, what the other side deletes stays, marked as deleted.
+                let ids = chitgramGlobalIdsToDelete(transaction: transaction, globalIds: allIds)
                 var resourceIds: [MediaResourceId] = []
                 transaction.deleteMessagesWithGlobalIds(ids, forEachMedia: { media in
                     addMessageMediaResourceIdsToRemove(media: media, resourceIds: &resourceIds)
@@ -4630,7 +4632,9 @@ func replayFinalState(
                     let _ = mediaBox.removeCachedResources(Array(Set(resourceIds)), force: true).start()
                 }
                 deletedMessageIds.append(contentsOf: ids.map { .global($0) })
-            case let .DeleteMessages(ids):
+            case let .DeleteMessages(allIds):
+                // Chitgram: as above.
+                let ids = chitgramMessageIdsToDelete(transaction: transaction, ids: allIds)
                 _internal_deleteMessages(transaction: transaction, mediaBox: mediaBox, ids: ids, manualAddMessageThreadStatsDifference: { id, add, remove in
                     addMessageThreadStatsDifference(threadKey: id, remove: remove, addedMessagePeer: nil, addedMessageId: nil, isOutgoing: false)
                 })
@@ -4680,6 +4684,9 @@ func replayFinalState(
                         generatedEvent = reactionGeneratedEvent(previousMessage.reactionsAttribute, message.reactionsAttribute, message: message, transaction: transaction)
                     }
                     
+                    // Chitgram: keep the text it had before, for "Save edited messages".
+                    chitgramRecordEdit(accountPeerId: accountPeerId, previous: previousMessage, updated: message)
+
                     return .update(mergedServerMessageUpdate(previous: previousMessage, updated: message))
                 })
                 if let generatedEvent = generatedEvent {

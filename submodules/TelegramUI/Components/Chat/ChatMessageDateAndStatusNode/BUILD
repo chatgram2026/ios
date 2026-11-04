@@ -12,6 +12,8 @@ swift_library(
         "-warnings-as-errors",
     ],
     deps = [
+        # Chitgram: the "deleted" mark and its strings.
+        "//submodules/ChitgramCore",
         "//submodules/AsyncDisplayKit",
         "//submodules/TelegramCore",
         "//submodules/Display",

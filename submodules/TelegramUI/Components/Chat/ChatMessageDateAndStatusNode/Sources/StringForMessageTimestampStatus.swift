@@ -6,6 +6,7 @@ import TelegramStringFormatting
 import TextFormat
 import LocalizedPeerData
 import AccountContext
+import ChitgramCore
 
 public enum MessageTimestampStatusFormat {
     case full
@@ -251,5 +252,12 @@ public func stringForMessageTimestampStatus(
         }
     }
     
+    // Chitgram: a deleted message that "Save deleted messages" kept says so by its time, as on Android.
+    if let deleted = message.attributes.first(where: { $0 is ChitgramDeletedMessageAttribute }) as? ChitgramDeletedMessageAttribute {
+        let language = ChitgramStrings.Language(languageCode: strings.primaryComponent.languageCode)
+        let label = ChitgramStrings.get(deleted.deletedBy == .channel ? 111 : 110, language: language)
+        dateText = "\u{1F5D1} \(label) \(dateText)"
+    }
+
     return dateText
 }
