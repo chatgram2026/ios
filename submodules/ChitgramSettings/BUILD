@@ -27,6 +27,7 @@ swift_library(
         "//submodules/ItemListUI:ItemListUI",
         "//submodules/PresentationDataUtils:PresentationDataUtils",
         "//submodules/AccountContext:AccountContext",
+        "//submodules/BuildConfig:BuildConfig",
     ],
     visibility = [
         "//visibility:public",

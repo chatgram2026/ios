@@ -59,7 +59,8 @@ workflows:
               "app_center_id": "0",
               "is_internal_build": "false",
               "is_appstore_build": "true",
-              "appstore_id": "0",
+              # The app's Apple ID from App Store Connect (App Information), once the app record exists.
+              "appstore_id": os.environ.get("CHITGRAM_APPSTORE_ID", "").strip() or "0",
               "app_specific_url_scheme": "tg",
               "premium_iap_product_id": "",
               "enable_siri": False,

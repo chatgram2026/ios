@@ -2391,6 +2391,7 @@ public class ChatListControllerImpl: TelegramBaseController, ChatListController 
                 self?.chitgramOpenSecretFolder()
             }
             self.chitgramRefreshSecretChats()
+            ChitgramAppRating.onChatListShown(view: self.view)
         }
                 
         if self.powerSavingMonitoringDisposable == nil {
