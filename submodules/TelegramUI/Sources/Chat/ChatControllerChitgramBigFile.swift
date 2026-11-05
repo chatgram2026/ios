@@ -101,7 +101,7 @@ extension ChatControllerImpl {
         let threadId = self.chatLocation.threadId
         let replyToMessageId = self.presentationInterfaceState.interfaceState.replyMessageSubject?.subjectModel
 
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let accessing = url.startAccessingSecurityScopedResource()
             var paths: [(path: String, size: Int64)] = []
             var failed = false
@@ -151,7 +151,7 @@ extension ChatControllerImpl {
             let didFail = failed
             let parts = paths
 
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async {
                 status.dismiss()
                 guard let self else {
                     return
@@ -244,7 +244,7 @@ extension ChatControllerImpl {
         let status = OverlayStatusController(theme: self.presentationData.theme, type: .loading(cancelled: nil))
         self.present(status, in: .window(.root))
         let sources = paths.compactMap { $0 }
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             var ok = true
             do {
                 try FileManager.default.createDirectory(atPath: directory, withIntermediateDirectories: true, attributes: nil)
@@ -275,7 +275,7 @@ extension ChatControllerImpl {
                 ok = false
             }
             let joined = ok
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async {
                 status.dismiss()
                 guard let self else {
                     return
