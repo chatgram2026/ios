@@ -5361,12 +5361,17 @@ class ChatControllerNode: ASDisplayNode, ASScrollViewDelegate {
                             // Chitgram: ".heart" alone goes out as a red heart (Android HeartAnimator); the chat's auto text, when on,
                             // ends the last piece (Android AutoTextAppender).
                             var chitgramText = text.string
+                            var chitgramAttributes = attributes
                             if textMessages.pieces.count == 1 && chitgramText.trimmingCharacters(in: .whitespacesAndNewlines) == ".heart" {
                                 chitgramText = "\u{2764}\u{FE0F}"
-                            } else if chitgramPieceIndex == textMessages.pieces.count - 1, let chitgramPeerId = self.chatLocation.peerId, let signature = ChitgramPerChat.signature(chitgramPeerId.toInt64()) {
-                                chitgramText += signature
+                            } else {
+                                if chitgramPieceIndex == textMessages.pieces.count - 1, let chitgramPeerId = self.chatLocation.peerId, let signature = ChitgramPerChat.signature(chitgramPeerId.toInt64()) {
+                                    chitgramText += signature
+                                }
+                                // Chitgram: the default text style (Android TextStyleDialog) over the whole message.
+                                chitgramAttributes = chitgramApplyTextStyle(attributes, text: chitgramText)
                             }
-                            messages.append(.message(text: chitgramText, attributes: attributes, inlineStickers: inlineStickers, mediaReference: mediaReference, threadId: self.chatLocation.threadId, replyToMessageId: self.chatPresentationInterfaceState.interfaceState.replyMessageSubject?.subjectModel, replyToStoryId: nil, localGroupingKey: nil, correlationId: nil, bubbleUpEmojiOrStickersets: bubbleUpEmojiOrStickersets))
+                            messages.append(.message(text: chitgramText, attributes: chitgramAttributes, inlineStickers: inlineStickers, mediaReference: mediaReference, threadId: self.chatLocation.threadId, replyToMessageId: self.chatPresentationInterfaceState.interfaceState.replyMessageSubject?.subjectModel, replyToStoryId: nil, localGroupingKey: nil, correlationId: nil, bubbleUpEmojiOrStickersets: bubbleUpEmojiOrStickersets))
                             mediaReference = nil
                         }
                     }

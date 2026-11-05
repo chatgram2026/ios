@@ -2,6 +2,7 @@ import Foundation
 import UIKit
 import Display
 import AccountContext
+import TelegramCore
 import AlertUI
 import PresentationDataUtils
 import ChitgramCore
@@ -83,4 +84,56 @@ extension ChatControllerImpl {
             self.chitgramLockOverlay = nil
         })
     }
+}
+
+/// The default text style (Android `TextStyleDialog.changeTextStyle`): any formatting is cleared, then the chosen
+/// style covers the whole message; Regular only clears.
+func chitgramApplyTextStyle(_ attributes: [EngineMessage.Attribute], text: String) -> [EngineMessage.Attribute] {
+    let style = ChitgramTextStyle.selected
+    if style == ChitgramTextStyle.none || text.isEmpty {
+        return attributes
+    }
+    var entities: [MessageTextEntity] = []
+    var result: [EngineMessage.Attribute] = []
+    for attribute in attributes {
+        if let attribute = attribute as? TextEntitiesMessageAttribute {
+            entities = attribute.entities
+        } else {
+            result.append(attribute)
+        }
+    }
+    entities = entities.filter { entity in
+        switch entity.type {
+        case .Bold, .Italic, .Code, .Strikethrough, .Underline, .Spoiler, .BlockQuote:
+            return false
+        default:
+            return true
+        }
+    }
+    let type: MessageTextEntityType?
+    switch style {
+    case ChitgramTextStyle.bold:
+        type = .Bold
+    case ChitgramTextStyle.italic:
+        type = .Italic
+    case ChitgramTextStyle.mono:
+        type = .Code
+    case ChitgramTextStyle.strikethrough:
+        type = .Strikethrough
+    case ChitgramTextStyle.underline:
+        type = .Underline
+    case ChitgramTextStyle.spoiler:
+        type = .Spoiler
+    case ChitgramTextStyle.quote:
+        type = .BlockQuote(isCollapsed: false)
+    default:
+        type = nil
+    }
+    if let type {
+        entities.append(MessageTextEntity(range: 0 ..< (text as NSString).length, type: type))
+    }
+    if !entities.isEmpty {
+        result.append(TextEntitiesMessageAttribute(entities: entities))
+    }
+    return result
 }

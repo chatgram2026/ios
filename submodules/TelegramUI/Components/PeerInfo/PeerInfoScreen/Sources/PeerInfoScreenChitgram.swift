@@ -17,6 +17,14 @@ extension PeerInfoScreenNode {
     func chitgramMoreMenuItems(peer: EnginePeer) -> [ContextMenuItem] {
         var items: [ContextMenuItem] = [.separator]
 
+        // Default text style for every message sent (Android `TextStyleDialog`).
+        items.append(.action(ContextMenuActionItem(text: ChitgramStrings.get(166), icon: { theme in
+            return generateTintedImage(image: UIImage(systemName: "textformat"), color: theme.contextMenu.primaryColor)
+        }, action: { [weak self] _, f in
+            f(.dismissWithoutContent)
+            self?.chitgramOpenTextStyle()
+        })))
+
         // Chat id as the row's label; tapping copies it (Android `show_chat_id`).
         let chatId = chitgramRecognizableId(peer.id)
         items.append(.action(ContextMenuActionItem(text: chatId, icon: { theme in
@@ -64,6 +72,28 @@ extension PeerInfoScreenNode {
             }
         }
         return items
+    }
+
+    private func chitgramOpenTextStyle() {
+        let actionSheet = ActionSheetController(presentationData: self.presentationData)
+        let selected = ChitgramTextStyle.selected
+        var items: [ActionSheetItem] = [ActionSheetTextItem(title: ChitgramStrings.get(175), parseMarkdown: false)]
+        for choice in ChitgramTextStyle.choices {
+            let title = (choice.style == selected ? "\u{2713} " : "") + ChitgramStrings.get(choice.titleId)
+            items.append(ActionSheetButtonItem(title: title, color: .accent, action: { [weak actionSheet] in
+                actionSheet?.dismissAnimated()
+                ChitgramTextStyle.setSelected(choice.style)
+            }))
+        }
+        actionSheet.setItemGroups([
+            ActionSheetItemGroup(items: items),
+            ActionSheetItemGroup(items: [
+                ActionSheetButtonItem(title: ChitgramStrings.get(177), color: .accent, font: .bold, action: { [weak actionSheet] in
+                    actionSheet?.dismissAnimated()
+                })
+            ])
+        ])
+        self.controller?.present(actionSheet, in: .window(.root))
     }
 
     private func chitgramOpenJoinRequests(peerId: EnginePeer.Id) {
