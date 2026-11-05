@@ -17,8 +17,8 @@ import ChitgramCore
 ///    Telegram answer FLOOD_WAIT.
 ///  - Telegram keeps at most 100 scheduled messages per chat, so a task never queues more than `perChatLimit`.
 ///
-/// Everything here runs on the main queue. Chats are stored as `EnginePeer.Id.toInt64()`. Tasks stay on this
-/// device for now; Android's cloud copy (`AutoPostCloud`) is not ported yet, so every task is this device's own.
+/// Everything here runs on the main queue. Chats are stored as `EnginePeer.Id.toInt64()`. Tasks are shared with the
+/// account's other devices through `ChitgramAutoPostCloud`; only the device that owns a task fills its queue.
 public enum ChitgramAutoPost {
     public static let modeCopy = 0
     public static let modeForward = 1
@@ -49,6 +49,8 @@ public enum ChitgramAutoPost {
     private static let targetSpacingSeconds: Int32 = 25
     /// Telegram refuses a schedule_date that is not safely in the future, so "now" means a few seconds ahead.
     private static let firstSendDelaySeconds: Int32 = 20
+    /// A task whose owner device has not refilled it for this long is taken over (Android `TAKEOVER_AFTER_SECONDS`).
+    private static let takeoverAfterSeconds: Int32 = 20 * 60 * 60
 
     // Codes kept in Task.lastError; the screens turn them into words.
     public static let errFlood = "FLOOD"
@@ -194,7 +196,7 @@ public enum ChitgramAutoPost {
         return self.tasks(accountPeerId: accountPeerId).contains(where: { $0.targets.contains(value) })
     }
 
-    private static func save(_ tasks: [Task], accountPeerId: EnginePeer.Id) {
+    static func save(_ tasks: [Task], accountPeerId: EnginePeer.Id) {
         if let data = try? JSONEncoder().encode(tasks) {
             self.defaults.set(data, forKey: self.tasksKey(accountPeerId))
         }
@@ -399,7 +401,10 @@ public enum ChitgramAutoPost {
             return
         }
         self.defaults.set(now, forKey: key)
-        self.refillNow(context: context)
+        // Read the cloud first: another device may have edited, taken over or deleted a task meanwhile.
+        ChitgramAutoPostCloud.pull(context: context, done: {
+            self.refillNow(context: context)
+        })
     }
 
     public static func refillNow(context: AccountContext) {
@@ -418,7 +423,11 @@ public enum ChitgramAutoPost {
         }
         let budget = max(20, self.requestBudget / active.count)
         for task in active {
-            self.fill(context: context, id: task.id, budget: budget)
+            if self.isMine(task) {
+                self.fill(context: context, id: task.id, budget: budget)
+            } else if now - task.ownerSeen > self.takeoverAfterSeconds {
+                self.takeOver(context: context, id: task.id, budget: budget)
+            }
         }
     }
 
@@ -470,6 +479,75 @@ public enum ChitgramAutoPost {
         self.snapshot(&task, now: now)
         tasks[index] = task
         self.save(tasks, accountPeerId: accountPeerId)
+        ChitgramAutoPostCloud.push(context: context, id: id, force: false)
+    }
+
+    // MARK: Taking over from a silent device
+
+    /// The owner device has not refilled this task for a long time (lost, logged out, uninstalled). Before queueing
+    /// anything, find what it already queued so this device continues after it instead of on top of it.
+    private static func takeOver(context: AccountContext, id: Int64, budget: Int) {
+        guard let snapshot = self.task(accountPeerId: context.account.peerId, id: id) else {
+            return
+        }
+        self.sweep(context: context, task: snapshot, completion: { found in
+            let now = self.now(context)
+            self.update(accountPeerId: context.account.peerId, id: id, { task in
+                task.owner = self.installId()
+                task.rev = self.millis()
+                task.ownerSeen = now
+                task.scheduled = found.map { "\($0.peerId):\($0.messageId):\($0.date)" }
+                if let last = found.map({ $0.date }).max(), last > task.lastSlot {
+                    task.lastSlot = last
+                }
+            })
+            self.fill(context: context, id: id, budget: budget)
+            // Ownership moved: say so at once, so the old owner stands down if it comes back.
+            ChitgramAutoPostCloud.push(context: context, id: id, force: true)
+        })
+    }
+
+    /// The task's messages in its chats' scheduled lists, recognised by content: the task's text with no media, or
+    /// the same text and kind of media as one of its source messages.
+    private static func sweep(context: AccountContext, task: Task, completion: @escaping ([(peerId: Int64, messageId: Int32, date: Int32)]) -> Void) {
+        let account = context.account
+        let sources: Signal<[ChitgramChannelPost], NoError>
+        if task.sourceIds.isEmpty {
+            sources = .single([])
+        } else {
+            sources = chitgramPostsById(account: account, peerId: EnginePeer.Id(task.sourceDialogId), ids: task.sourceIds)
+        }
+        let _ = (sources
+        |> deliverOnMainQueue).startStandalone(next: { sources in
+            var found: [(peerId: Int64, messageId: Int32, date: Int32)] = []
+            var remaining = task.targets
+            func next() {
+                if remaining.isEmpty {
+                    completion(found)
+                    return
+                }
+                let target = remaining.removeFirst()
+                let _ = (chitgramScheduledPosts(account: account, peerId: EnginePeer.Id(target))
+                |> deliverOnMainQueue).startStandalone(next: { posts in
+                    for post in posts ?? [] where self.matches(post, task: task, sources: sources) {
+                        found.append((target, post.id, post.date))
+                    }
+                    next()
+                })
+            }
+            next()
+        })
+    }
+
+    private static func matches(_ post: ChitgramChannelPost, task: Task, sources: [ChitgramChannelPost]) -> Bool {
+        if post.text.contains(ChitgramAutoPostCloud.tag) {
+            // Our own settings copy in Saved Messages.
+            return false
+        }
+        if task.sourceIds.isEmpty {
+            return post.media == .none && task.texts.contains(post.text)
+        }
+        return sources.contains(where: { $0.text == post.text && $0.media == post.media })
     }
 
     /// The next round after `lastSlot`, following the task's schedule; 0 = none. `minGap` keeps fixed times at least
@@ -669,12 +747,14 @@ public enum ChitgramAutoPost {
                         task.enabled = false
                     }
                 })
+                ChitgramAutoPostCloud.push(context: context, id: taskId, force: true)
             })
         } else {
             self.update(accountPeerId: accountPeerId, id: taskId, { task in
                 task.lastError = "\(self.errOther):\(error)"
             })
         }
+        ChitgramAutoPostCloud.push(context: context, id: taskId, force: true)
     }
 
     /// Pauses every task after Telegram asked to wait; they resume by themselves on a later refill.
@@ -722,6 +802,7 @@ public enum ChitgramAutoPost {
             task.ownerSeen = now
         })
         self.fill(context: context, id: id, budget: self.requestBudget)
+        ChitgramAutoPostCloud.push(context: context, id: id, force: true)
     }
 
     /// Deletes a task: its queue and the stored copy.
@@ -729,6 +810,8 @@ public enum ChitgramAutoPost {
         self.cancelQueue(context: context, id: id)
         let accountPeerId = context.account.peerId
         self.save(self.tasks(accountPeerId: accountPeerId).filter { $0.id != id }, accountPeerId: accountPeerId)
+        // The "deleted" marker for the other devices, and no reviving from the cloud copy meanwhile.
+        ChitgramAutoPostCloud.forget(context: context, id: id)
     }
 
     /// A brand-new task the user left without choosing anything is not worth keeping.
@@ -758,7 +841,7 @@ public enum ChitgramAutoPost {
         self.addPendingDeletes(context: context, [(peerId, messageId)])
     }
 
-    private static func addPendingDeletes(context: AccountContext, _ entries: [(Int64, Int32)]) {
+    static func addPendingDeletes(context: AccountContext, _ entries: [(Int64, Int32)]) {
         if entries.isEmpty {
             return
         }

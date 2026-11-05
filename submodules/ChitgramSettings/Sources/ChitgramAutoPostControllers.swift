@@ -221,6 +221,8 @@ private enum ChitgramAutoPostListEntry: ItemListNodeEntry {
 /// Auto messenger task list. Reached from the chat list menu, the message menu and the Premium page.
 public func chitgramAutoPostController(context: AccountContext) -> ViewController {
     let accountPeerId = context.account.peerId
+    // Android AutoPostActivity: the tasks other devices of the account keep come in when the list opens.
+    ChitgramAutoPostCloud.pull(context: context)
     var pushImpl: ((ViewController) -> Void)?
     var presentImpl: ((ViewController) -> Void)?
 

@@ -81,6 +81,32 @@ public func chitgramPinnedPosts(account: Account, peerId: EnginePeer.Id) -> Sign
     }
 }
 
+/// The messages with these ids in the chat (any kind of chat); ones that cannot be read are left out.
+public func chitgramPostsById(account: Account, peerId: EnginePeer.Id, ids: [Int32]) -> Signal<[ChitgramChannelPost], NoError> {
+    if ids.isEmpty {
+        return .single([])
+    }
+    return chitgramInputPeer(account: account, peerId: peerId)
+    |> mapToSignal { inputPeer -> Signal<[ChitgramChannelPost], NoError> in
+        guard let inputPeer else {
+            return .single([])
+        }
+        let requests = ids.map { id -> Signal<[ChitgramChannelPost], NoError> in
+            return account.network.request(Api.functions.messages.getHistory(peer: inputPeer, offsetId: id + 1, offsetDate: 0, addOffset: 0, limit: 1, maxId: Int32.max, minId: 0, hash: 0))
+            |> map { result -> [ChitgramChannelPost] in
+                return chitgramPosts(result).filter { $0.id == id }
+            }
+            |> `catch` { _ -> Signal<[ChitgramChannelPost], NoError> in
+                return .single([])
+            }
+        }
+        return combineLatest(requests)
+        |> map { results -> [ChitgramChannelPost] in
+            return results.flatMap { $0 }
+        }
+    }
+}
+
 /// The channel's latest posts, newest first.
 public func chitgramRecentPosts(account: Account, peerId: EnginePeer.Id, limit: Int32) -> Signal<[ChitgramChannelPost], NoError> {
     return chitgramInputPeer(account: account, peerId: peerId)
