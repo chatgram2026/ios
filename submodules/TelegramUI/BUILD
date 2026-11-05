@@ -68,6 +68,7 @@ swift_library(
         "//submodules/ChitgramCore",
         "//submodules/ChitgramChat",
         "//submodules/ChitgramEngine",
+        "//submodules/ChitgramSettings",
         "//submodules/CrashReporting:CrashReporting",
         "//third-party/recaptcha:RecaptchaEnterprise",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",

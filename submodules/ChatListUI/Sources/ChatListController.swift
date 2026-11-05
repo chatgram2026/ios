@@ -6883,6 +6883,15 @@ private final class ChatListLocationContext {
                 }
             ))
         }
+        // Chitgram: the chat list menu (Android: the header ⋮ menu): auto messenger, hide stories, roulettes.
+        if case .chatList(.root) = self.location, self.rightButton != nil {
+            result.append(NavigationBarComponent.Button(id: "chitgram_more",
+                content: .more,
+                action: { [weak self] sourceView in
+                    self?.parentController?.chitgramOpenMenu(sourceView: sourceView)
+                }
+            ))
+        }
         return result
     }
     

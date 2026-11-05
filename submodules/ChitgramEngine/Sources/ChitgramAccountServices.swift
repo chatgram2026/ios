@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import SwiftSignalKit
 import AccountContext
 import ChitgramCore
@@ -10,6 +11,7 @@ public final class ChitgramAccountServices {
     private let autoAcceptJoin: ChitgramAutoAcceptJoin
     private let messageReminder: ChitgramMessageReminder
     private let keywordWatch: ChitgramKeywordWatch
+    private var foregroundObserver: NSObjectProtocol?
 
     public init(context: AccountContext) {
         self.autoAnswer = ChitgramAutoAnswer(context: context)
@@ -25,6 +27,21 @@ public final class ChitgramAccountServices {
         |> then(ChitgramPremium.refresh(context: context) |> map { _ -> Bool in return true })
         |> deliverOnMainQueue).startStandalone(completed: {
             ChitgramKeywords.shared.isPremium = ChitgramPremium.isActive(accountPeerId: accountPeerId)
+            // Auto messenger: tops the server queue up; the limits it applies depend on Premium.
+            ChitgramAutoPost.refill(context: context)
         })
+        // Android refills on every resume (throttled to once in 10 minutes).
+        self.foregroundObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main, using: { [weak context] _ in
+            guard let context else {
+                return
+            }
+            ChitgramAutoPost.refill(context: context)
+        })
+    }
+
+    deinit {
+        if let foregroundObserver = self.foregroundObserver {
+            NotificationCenter.default.removeObserver(foregroundObserver)
+        }
     }
 }

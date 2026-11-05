@@ -4,14 +4,41 @@ import SwiftSignalKit
 import MtProtoKit
 internal import TelegramApi
 
-/// A channel post as Chitgram reads it: the price pin of @chitgram_org, the post a Premium payment reacts to.
+/// A channel post as Chitgram reads it: the price pin of @chitgram_org, the post a Premium payment reacts to, a
+/// Saved Messages post the auto messenger sends.
 public struct ChitgramChannelPost: Equatable {
+    public enum MediaKind: Equatable {
+        case none
+        case photo
+        case video
+        case file
+        case other
+    }
+
     public let id: Int32
     public let date: Int32
     public let text: String
+    public let media: MediaKind
 }
 
-private func chitgramPosts(_ result: Api.messages.Messages) -> [ChitgramChannelPost] {
+private func chitgramMediaKind(_ media: Api.MessageMedia?) -> ChitgramChannelPost.MediaKind {
+    guard let media else {
+        return .none
+    }
+    switch media {
+    case .messageMediaEmpty, .messageMediaWebPage:
+        return .none
+    case .messageMediaPhoto:
+        return .photo
+    case let .messageMediaDocument(documentData):
+        // video:flags.6, round:flags.7
+        return (documentData.flags & ((1 << 6) | (1 << 7))) != 0 ? .video : .file
+    default:
+        return .other
+    }
+}
+
+func chitgramPosts(_ result: Api.messages.Messages) -> [ChitgramChannelPost] {
     let messages: [Api.Message]
     switch result {
     case let .messages(messagesData):
@@ -26,13 +53,13 @@ private func chitgramPosts(_ result: Api.messages.Messages) -> [ChitgramChannelP
     var posts: [ChitgramChannelPost] = []
     for message in messages {
         if case let .message(messageData) = message {
-            posts.append(ChitgramChannelPost(id: messageData.id, date: messageData.date, text: messageData.message))
+            posts.append(ChitgramChannelPost(id: messageData.id, date: messageData.date, text: messageData.message, media: chitgramMediaKind(messageData.media)))
         }
     }
     return posts.sorted(by: { $0.date > $1.date })
 }
 
-private func chitgramInputPeer(account: Account, peerId: EnginePeer.Id) -> Signal<Api.InputPeer?, NoError> {
+func chitgramInputPeer(account: Account, peerId: EnginePeer.Id) -> Signal<Api.InputPeer?, NoError> {
     return account.postbox.transaction { transaction -> Api.InputPeer? in
         return transaction.getPeer(peerId).flatMap(apiInputPeer)
     }

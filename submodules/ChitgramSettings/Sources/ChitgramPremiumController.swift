@@ -16,11 +16,13 @@ private final class ChitgramPremiumArguments {
     let selectPlan: (Int) -> Void
     let pay: () -> Void
     let restore: () -> Void
+    let openPerk: (Int) -> Void
 
-    init(selectPlan: @escaping (Int) -> Void, pay: @escaping () -> Void, restore: @escaping () -> Void) {
+    init(selectPlan: @escaping (Int) -> Void, pay: @escaping () -> Void, restore: @escaping () -> Void, openPerk: @escaping (Int) -> Void) {
         self.selectPlan = selectPlan
         self.pay = pay
         self.restore = restore
+        self.openPerk = openPerk
     }
 }
 
@@ -94,8 +96,16 @@ private enum ChitgramPremiumEntry: ItemListNodeEntry {
             return ItemListActionItem(presentationData: presentationData, systemStyle: .glass, title: title, kind: .generic, alignment: .center, sectionId: self.section, style: .blocks, action: {
                 arguments.restore()
             })
-        case let .perk(_, title, text):
-            return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, title: title, label: text, labelStyle: .multilineDetailText, sectionId: self.section, style: .blocks, disclosureStyle: .none, action: nil)
+        case let .perk(index, title, text):
+            // The first two perks open their screens (auto messenger, keyword watch), as on Android.
+            let opens = index < 2
+            var action: (() -> Void)?
+            if opens {
+                action = {
+                    arguments.openPerk(index)
+                }
+            }
+            return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, title: title, label: text, labelStyle: .multilineDetailText, sectionId: self.section, style: .blocks, disclosureStyle: opens ? .arrow : .none, action: action)
         }
     }
 }
@@ -164,6 +174,12 @@ func chitgramPremiumController(context: AccountContext) -> ViewController {
                 showResult(ChitgramStrings.get(442))
             }
         })
+    }, openPerk: { index in
+        if index == 0 {
+            pushImpl?(chitgramAutoPostController(context: context))
+        } else {
+            pushImpl?(chitgramKeywordWatchController(context: context))
+        }
     })
 
     // The prices may have changed since the last look.

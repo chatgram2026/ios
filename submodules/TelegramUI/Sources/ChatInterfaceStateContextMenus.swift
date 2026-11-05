@@ -41,6 +41,7 @@ import AdsReportScreen
 import WalletContext
 import ChitgramCore
 import ChitgramChat
+import ChitgramSettings
  
 private struct MessageContextMenuData {
     let starStatus: Bool?
@@ -1962,6 +1963,13 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                     chitgramForwardHidingSender = true
                     interfaceInteraction.forwardMessages(selectAll || isImage ? messages : [message])
                     f(.dismissWithoutContent)
+                })))
+                // Chitgram: "Add to auto messenger" makes this message the template of an auto messenger task.
+                actions.append(.action(ContextMenuActionItem(text: ChitgramStrings.get(483), icon: { theme in
+                    return generateTintedImage(image: UIImage(systemName: "clock.arrow.circlepath"), color: theme.actionSheet.primaryTextColor)
+                }, action: { _, f in
+                    f(.dismissWithoutContent)
+                    controllerInteraction.navigationController()?.pushViewController(chitgramAutoPostController(context: context, messageId: message.id))
                 })))
             }
         }

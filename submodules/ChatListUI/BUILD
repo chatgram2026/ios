@@ -14,6 +14,7 @@ swift_library(
     deps = [
         # Chitgram: switches that change the chat list.
         "//submodules/ChitgramCore",
+        "//submodules/ChitgramSettings",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",
         "//submodules/LottieSettings:LottieSettings",
         "//submodules/AsyncDisplayKit:AsyncDisplayKit",
