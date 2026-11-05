@@ -21,6 +21,26 @@ public final class ChitgramBadges {
 
     public static let shared = ChitgramBadges()
 
+    /// Stands for the Chitgram mark in the verification icon slot (Android `LOGO_ICON`); real document ids are positive.
+    public static let markFileId: Int64 = -0x4347_4D41_524B
+
+    /// Official Chitgram peers: @chitgram_bot (a user) and @chitgram_org (a channel), as on Android.
+    private static let officialUsers: Set<Int64> = [8654927238]
+    private static let officialChats: Set<Int64> = [4295910076]
+
+    public static func isOfficialChat(_ channelId: Int64) -> Bool {
+        return self.officialChats.contains(channelId)
+    }
+
+    /// The mark before the name: a Chitgram Premium member (a badge in force) or an official account.
+    public func hasMark(userId: Int64) -> Bool {
+        if ChitgramBadges.officialUsers.contains(userId) {
+            return true
+        }
+        self.want(userId)
+        return self.active(userId: userId) != nil
+    }
+
     /// Posted on the main queue when looked-up badges changed.
     public static let didUpdateNotification = Notification.Name("ChitgramBadgesDidUpdate")
 

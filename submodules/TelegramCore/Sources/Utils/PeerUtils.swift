@@ -342,9 +342,23 @@ public extension Peer {
     var verificationIconFileId: Int64? {
         switch self {
         case let user as TelegramUser:
-            return user.verificationIconFileId
+            // Chitgram: the Chitgram mark before the names of Chitgram Premium members and official Chitgram
+            // accounts, seen only in Chitgram (Android ChitgramBadges); a real icon wins.
+            if let fileId = user.verificationIconFileId {
+                return fileId
+            }
+            if user.id.namespace == Namespaces.Peer.CloudUser, ChitgramBadges.shared.hasMark(userId: user.id.id._internalGetInt64Value()) {
+                return ChitgramBadges.markFileId
+            }
+            return nil
         case let channel as TelegramChannel:
-            return channel.verificationIconFileId
+            if let fileId = channel.verificationIconFileId {
+                return fileId
+            }
+            if ChitgramBadges.isOfficialChat(channel.id.id._internalGetInt64Value()) {
+                return ChitgramBadges.markFileId
+            }
+            return nil
         default:
             return nil
         }
