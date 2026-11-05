@@ -39,6 +39,16 @@ public enum ChitgramAdminFolders {
             return String((ChitgramAdminFolders.marker + ChitgramStrings.get(self.titleId)).prefix(ChitgramAdminFolders.maxFolderName))
         }
 
+        /// The folder's emoji, shown by "Folder icons" and by Telegram where it shows folder icons.
+        var emoticon: String {
+            switch self {
+            case .groupOwner, .groupAdmin:
+                return "\u{1F465}"
+            case .channelOwner, .channelAdmin:
+                return "\u{1F4E2}"
+            }
+        }
+
         /// Every title a folder of this kind could carry, in each of the app's languages.
         var knownTitles: Set<String> {
             var result = Set<String>()
@@ -228,7 +238,7 @@ public enum ChitgramAdminFolders {
         data.excludeArchived = false
         data.includePeers.setPeers(peers)
         data.excludePeers.removeAll(where: { peers.contains($0) })
-        return .filter(id: id, title: ChatFolderTitle(text: kind.title, entities: [], enableAnimations: true), emoticon: nil, data: data)
+        return .filter(id: id, title: ChatFolderTitle(text: kind.title, entities: [], enableAnimations: true), emoticon: kind.emoticon, data: data)
     }
 
     // MARK: Create and refresh

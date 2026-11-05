@@ -4048,8 +4048,9 @@ public class ChatListControllerImpl: TelegramBaseController, ChatListController 
     private var initializedFilters = false
     private func reloadFilters(firstUpdate: (() -> Void)? = nil) {
         // Chitgram: "Hide folder tabs" keeps only All chats, so the tab row goes and the list shows every chat.
-        let filterItems = combineLatest(chatListFilterItems(context: self.context), ChitgramPreferences.shared.boolSignal(.hideTabs))
-        |> map { countAndFilterItems, hideTabs -> (Int, [(ChatListFilter, Int, Bool)]) in
+        // ("Folder icons" is only listened to here, so the tabs are rebuilt when it changes.)
+        let filterItems = combineLatest(chatListFilterItems(context: self.context), ChitgramPreferences.shared.boolSignal(.hideTabs), ChitgramPreferences.shared.boolSignal(.folderIconMode))
+        |> map { countAndFilterItems, hideTabs, _ -> (Int, [(ChatListFilter, Int, Bool)]) in
             if !hideTabs {
                 return countAndFilterItems
             }
@@ -4086,8 +4087,10 @@ public class ChatListControllerImpl: TelegramBaseController, ChatListController 
                         } else {
                             filterItems.append(.all(unreadCount: 0))
                         }
-                    case let .filter(id, title, _, _):
-                        filterItems.append(.filter(id: id, text: title, unread: ChatListFilterTabEntryUnreadCount(value: unreadCount, hasUnmuted: hasUnmutedUnread)))
+                    case let .filter(id, title, emoticon, data):
+                        // Chitgram: "Folder icons" shows a folder's icon on its tab instead of its name.
+                        let shownTitle = ChitgramPreferences.shared.bool(.folderIconMode) ? ChatFolderTitle(text: chitgramFolderIcon(emoticon: emoticon, categories: data.categories), entities: [], enableAnimations: true) : title
+                        filterItems.append(.filter(id: id, text: shownTitle, unread: ChatListFilterTabEntryUnreadCount(value: unreadCount, hasUnmuted: hasUnmutedUnread)))
                 }
             }
             

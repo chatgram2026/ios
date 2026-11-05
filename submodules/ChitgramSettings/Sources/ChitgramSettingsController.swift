@@ -84,6 +84,7 @@ private enum ChitgramSettingsRow: Int32 {
     case confirmVoice
     case confirmGif
     case roundCameraFront
+    case folderIcons
     case hideTabs
     case tabBar
     case adminFolders
@@ -112,7 +113,7 @@ private enum ChitgramSettingsRow: Int32 {
             return .confirmations
         case .roundCameraFront:
             return .roundVideo
-        case .hideTabs, .tabBar, .adminFolders, .adminFoldersRefresh:
+        case .folderIcons, .hideTabs, .tabBar, .adminFolders, .adminFoldersRefresh:
             return .folders
         case .autoAcceptJoin:
             return .channels
@@ -173,6 +174,8 @@ private enum ChitgramSettingsRow: Int32 {
             return 12
         case .tabBar:
             return 32
+        case .folderIcons:
+            return 11
         case .adminFolders:
             return 30
         case .adminFoldersRefresh:
@@ -243,6 +246,8 @@ private enum ChitgramSettingsRow: Int32 {
             return (260, 261)
         case .tabBar:
             return (406, -1)
+        case .folderIcons:
+            return (240, 241)
         case .adminFolders:
             return (391, 392)
         case .adminFoldersRefresh:
@@ -298,6 +303,8 @@ private enum ChitgramSettingsRow: Int32 {
             return .roundCameraFront
         case .hideTabs:
             return .hideTabs
+        case .folderIcons:
+            return .folderIconMode
         case .autoAcceptJoin:
             return .autoAcceptJoin
         case .reminderEnabled:
@@ -460,6 +467,7 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
     toggle(.roundCameraFront)
 
     header(.folders)
+    toggle(.folderIcons)
     toggle(.hideTabs)
     button(.tabBar)
     toggle(.adminFolders)

@@ -91,3 +91,21 @@ extension ChatListControllerImpl {
         })
     }
 }
+
+/// A folder's icon for "Folder icons" (Android `FolderIcons`): its own emoji when it has one, otherwise one for the
+/// kind of chats it gathers.
+func chitgramFolderIcon(emoticon: String?, categories: ChatListFilterPeerCategories) -> String {
+    if let emoticon, !emoticon.isEmpty {
+        return emoticon
+    }
+    if categories == .channels {
+        return "\u{1F4E2}"
+    } else if categories == .bots {
+        return "\u{1F916}"
+    } else if categories == .groups {
+        return "\u{1F465}"
+    } else if categories == .contacts || categories == .nonContacts || categories == [.contacts, .nonContacts] {
+        return "\u{1F464}"
+    }
+    return "\u{1F4C1}"
+}
