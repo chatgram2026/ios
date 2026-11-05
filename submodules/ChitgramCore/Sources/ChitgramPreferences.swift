@@ -186,4 +186,51 @@ public final class ChitgramPreferences {
     }
 
     private static let changeTimesKey = "chitgram_cloud_times"
+
+    /// When each raw key was last changed on this device, in milliseconds; for the settings sync.
+    public func changeTimes() -> [String: Int64] {
+        let defaults = self.userDefaults
+        var result: [String: Int64] = [:]
+        for (key, value) in defaults.dictionary(forKey: ChitgramPreferences.changeTimesKey) ?? [:] {
+            if let number = value as? NSNumber {
+                result[key] = number.int64Value
+            }
+        }
+        return result
+    }
+
+    /// Records a change of a raw key that is not set through `set(_:for:)` (e.g. the text style).
+    public func setChangeTime(_ rawKey: String, _ at: Int64) {
+        let defaults = self.userDefaults
+        var times = defaults.dictionary(forKey: ChitgramPreferences.changeTimesKey) ?? [:]
+        times[rawKey] = at
+        defaults.set(times, forKey: ChitgramPreferences.changeTimesKey)
+    }
+
+    /// Writes a value that came from another device with that device's change time; nil removes it. Posted with
+    /// `userInfo["synced"] = true`, so the sync does not echo it back.
+    public func applySynced(rawKey: String, value: Any?, at: Int64) {
+        self.lock.lock()
+        if let value {
+            self.cache[rawKey] = value
+        } else {
+            self.cache.removeValue(forKey: rawKey)
+        }
+        let defaults = self.defaults
+        self.lock.unlock()
+        if let value {
+            defaults.set(value, forKey: rawKey)
+        } else {
+            defaults.removeObject(forKey: rawKey)
+        }
+        self.setChangeTime(rawKey, at)
+        let notify = {
+            NotificationCenter.default.post(name: ChitgramPreferences.didChangeNotification, object: self, userInfo: ["key": rawKey, "synced": true])
+        }
+        if Thread.isMainThread {
+            notify()
+        } else {
+            DispatchQueue.main.async(execute: notify)
+        }
+    }
 }

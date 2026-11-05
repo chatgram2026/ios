@@ -24,6 +24,7 @@ public enum ChitgramTextStyle {
 
     public static func setSelected(_ style: Int) {
         ChitgramPreferences.shared.userDefaults.set(style, forKey: "selected_style")
+        ChitgramPreferences.shared.setChangeTime("selected_style", Int64(Date().timeIntervalSince1970 * 1000.0))
         ChitgramPreferences.shared.notifyChanged()
     }
 }

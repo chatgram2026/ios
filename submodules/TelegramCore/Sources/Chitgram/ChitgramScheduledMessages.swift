@@ -104,3 +104,24 @@ public func chitgramDeleteScheduledMessages(account: Account, peerId: EnginePeer
         }
     }
 }
+
+/// The chat's scheduled messages (id, send date, text), or nil when they could not be read (offline). The cloud copy
+/// of Chitgram's settings lives in Saved Messages' scheduled list (Android `SavedCloud.fetch`).
+public func chitgramScheduledPosts(account: Account, peerId: EnginePeer.Id) -> Signal<[ChitgramChannelPost]?, NoError> {
+    return chitgramInputPeer(account: account, peerId: peerId)
+    |> mapToSignal { inputPeer -> Signal<[ChitgramChannelPost]?, NoError> in
+        guard let inputPeer else {
+            return .single(nil)
+        }
+        return account.network.request(Api.functions.messages.getScheduledHistory(peer: inputPeer, hash: 0))
+        |> map { result -> [ChitgramChannelPost]? in
+            if case .messagesNotModified = result {
+                return nil
+            }
+            return chitgramPosts(result)
+        }
+        |> `catch` { _ -> Signal<[ChitgramChannelPost]?, NoError> in
+            return .single(nil)
+        }
+    }
+}
