@@ -85,6 +85,7 @@ private enum ChitgramSettingsRow: Int32 {
     case confirmGif
     case roundCameraFront
     case hideTabs
+    case tabBar
     case adminFolders
     case adminFoldersRefresh
     case autoAcceptJoin
@@ -111,7 +112,7 @@ private enum ChitgramSettingsRow: Int32 {
             return .confirmations
         case .roundCameraFront:
             return .roundVideo
-        case .hideTabs, .adminFolders, .adminFoldersRefresh:
+        case .hideTabs, .tabBar, .adminFolders, .adminFoldersRefresh:
             return .folders
         case .autoAcceptJoin:
             return .channels
@@ -170,6 +171,8 @@ private enum ChitgramSettingsRow: Int32 {
             return 27
         case .hideTabs:
             return 12
+        case .tabBar:
+            return 32
         case .adminFolders:
             return 30
         case .adminFoldersRefresh:
@@ -238,6 +241,8 @@ private enum ChitgramSettingsRow: Int32 {
             return (113, 354)
         case .hideTabs:
             return (260, 261)
+        case .tabBar:
+            return (406, -1)
         case .adminFolders:
             return (391, 392)
         case .adminFoldersRefresh:
@@ -297,7 +302,7 @@ private enum ChitgramSettingsRow: Int32 {
             return .autoAcceptJoin
         case .reminderEnabled:
             return .reminderEnabled
-        case .reminderDelay, .reminderSound, .adminFolders, .adminFoldersRefresh, .secretChat, .changeCommonPassword:
+        case .reminderDelay, .reminderSound, .tabBar, .adminFolders, .adminFoldersRefresh, .secretChat, .changeCommonPassword:
             return nil
         case .apkShield:
             return .apkShield
@@ -456,6 +461,7 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
 
     header(.folders)
     toggle(.hideTabs)
+    button(.tabBar)
     toggle(.adminFolders)
     // Refresh exists once the folders do: the sync keeps them current but keeps the user's own edits, so this is
     // the one way to say "rebuild from my rights".
@@ -593,6 +599,8 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
             pushControllerImpl?(chitgramKeywordWatchController(context: context))
         case .autoAcceptJoin:
             pushControllerImpl?(chitgramAutoAcceptController(context: context))
+        case .tabBar:
+            pushControllerImpl?(chitgramTabBarController(context: context))
         case .changeCommonPassword:
             // The current passcode first, then the new one.
             chitgramUnlock(context: context, title: ChitgramStrings.get(252), push: { c in

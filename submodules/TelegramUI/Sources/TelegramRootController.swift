@@ -81,6 +81,10 @@ public final class TelegramRootController: NavigationController, TelegramRootCon
     public var chatListController: ChatListController?
     public var accountSettingsController: PeerInfoScreen?
     public var newsController: NewsScreen?
+    // Chitgram: what the bar was last built from, to rebuild it when the Tab bar settings change.
+    var chitgramShowCallsTab: Bool = false
+    var chitgramShowNewsTab: Bool = false
+    var chitgramTabsObserver: NSObjectProtocol?
     
     private var permissionsDisposable: Disposable?
     private var presentationDataDisposable: Disposable?
@@ -242,8 +246,12 @@ public final class TelegramRootController: NavigationController, TelegramRootCon
         accountSettingsController.parentController = self
         controllers.append(accountSettingsController)
                 
-        let chatsIndex = controllers.firstIndex(where: { $0 === chatListController }) ?? 0
-        tabBarController.setControllers(controllers, selectedIndex: restoreSettignsController != nil ? (controllers.count - 1) : chatsIndex)
+        // Chitgram: the user's tab order and visibility, and the tab to open on (Settings ▸ Chitgram ▸ Tab bar).
+        controllers = self.chitgramArrangeTabs(controllers, contacts: contactsController, calls: callListController, chats: chatListController, settings: accountSettingsController)
+        self.chitgramObserveTabs(showCallsTab: showCallsTab, showNewsTab: showNewsTab)
+        let chatsIndex = self.chitgramStartIndex(controllers, contacts: contactsController, calls: callListController, chats: chatListController, settings: accountSettingsController) ?? controllers.firstIndex(where: { $0 === chatListController }) ?? 0
+        let settingsIndex = controllers.firstIndex(where: { $0 === accountSettingsController }) ?? (controllers.count - 1)
+        tabBarController.setControllers(controllers, selectedIndex: restoreSettignsController != nil ? settingsIndex : chatsIndex)
         
         self.contactsController = contactsController
         self.callListController = callListController
@@ -268,6 +276,10 @@ public final class TelegramRootController: NavigationController, TelegramRootCon
             controllers.append(newsController)
         }
         controllers.append(self.accountSettingsController!)
+        // Chitgram: the user's tab order and visibility (Settings ▸ Chitgram ▸ Tab bar).
+        self.chitgramShowCallsTab = showCallsTab
+        self.chitgramShowNewsTab = showNewsTab
+        controllers = self.chitgramArrangeTabs(controllers, contacts: self.contactsController, calls: self.callListController, chats: self.chatListController, settings: self.accountSettingsController)
 
         // A removed selected tab would otherwise fall back to index 0 (Contacts): select Chats instead.
         var selectedIndex: Int?
