@@ -324,6 +324,8 @@ final class AuthorizationSequencePhoneEntryControllerNode: ASDisplayNode {
     private var chitgramBrandLabel: UILabel?
     private var chitgramQrButton: UIButton?
     private var chitgramQrCard: UIView?
+    private var chitgramBotLoginButton: UIButton?
+    private let chitgramBotLoginDisposable = MetaDisposable()
     private let exportTokenDisposable = MetaDisposable()
     private let tokenEventsDisposable = MetaDisposable()
     var accountUpdated: ((UnauthorizedAccount) -> Void)?
@@ -503,6 +505,7 @@ final class AuthorizationSequencePhoneEntryControllerNode: ASDisplayNode {
     deinit {
         self.exportTokenDisposable.dispose()
         self.tokenEventsDisposable.dispose()
+        self.chitgramBotLoginDisposable.dispose()
     }
     
     override func didLoad() {
@@ -524,6 +527,17 @@ final class AuthorizationSequencePhoneEntryControllerNode: ASDisplayNode {
         qrButton.addTarget(self, action: #selector(self.chitgramQrPressed), for: .touchUpInside)
         self.view.addSubview(qrButton)
         self.chitgramQrButton = qrButton
+        // Chitgram: "Log in with bot token" under the phone field (Android `BotLoginController`); only when logging
+        // in, not when changing the number.
+        if self.account != nil {
+            let botButton = UIButton(type: .system)
+            botButton.setTitle(ChitgramStrings.get(265), for: .normal)
+            botButton.titleLabel?.font = UIFont.systemFont(ofSize: 15.0)
+            botButton.setTitleColor(self.theme.list.itemAccentColor, for: .normal)
+            botButton.addTarget(self, action: #selector(self.chitgramBotLoginPressed), for: .touchUpInside)
+            self.view.addSubview(botButton)
+            self.chitgramBotLoginButton = botButton
+        }
         #if DEBUG && false
         self.noticeNode.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.debugQrTap(_:))))
         #endif
@@ -698,6 +712,12 @@ final class AuthorizationSequencePhoneEntryControllerNode: ASDisplayNode {
         let _ = layoutAuthorizationItems(bounds: CGRect(origin: CGPoint(x: bandMinX, y: insets.top), size: CGSize(width: bandWidth, height: layout.size.height - insets.top - insets.bottom - additionalBottomInset)), items: items, transition: transition, failIfDoesNotFit: false)
         
         transition.updateFrame(node: self.managedAnimationNode, frame: self.animationNode.frame)
+
+        // Chitgram: the bot token link right under the phone field (or the contact sync switch).
+        if let botButton = self.chitgramBotLoginButton {
+            let anchorY = self.hasOtherAccounts ? self.contactSyncNode.frame.maxY : self.phoneAndCountryNode.frame.maxY
+            transition.updateFrame(view: botButton, frame: CGRect(x: bandMinX + inset, y: anchorY + 8.0, width: bandWidth - inset * 2.0, height: 36.0))
+        }
         
         self.titleActivateAreaNode.frame = self.titleNode.frame
         self.noticeActivateAreaNode.accessibilityLabel = self.noticeNode.attributedText?.string ?? ""
@@ -784,6 +804,59 @@ final class AuthorizationSequencePhoneEntryControllerNode: ASDisplayNode {
         self.view.endEditing(true)
 
         self.refreshQrToken()
+    }
+
+    /// Chitgram: the token asked for in an alert; a token that cannot be one is caught before any request, and the
+    /// alert comes back with it so nothing typed is lost.
+    @objc private func chitgramBotLoginPressed() {
+        self.chitgramAskBotToken(text: "")
+    }
+
+    private func chitgramAskBotToken(text: String) {
+        guard self.account != nil else {
+            return
+        }
+        let alert = UIAlertController(title: ChitgramStrings.get(265), message: ChitgramStrings.get(267), preferredStyle: .alert)
+        alert.addTextField(configurationHandler: { field in
+            field.placeholder = ChitgramStrings.get(266)
+            field.text = text
+            field.autocorrectionType = .no
+            field.autocapitalizationType = .none
+            field.spellCheckingType = .no
+        })
+        alert.addAction(UIAlertAction(title: ChitgramStrings.get(80), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: ChitgramStrings.get(4), style: .default, handler: { [weak self, weak alert] _ in
+            let token = (alert?.textFields?.first?.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            self?.chitgramLogInAsBot(token: token)
+        }))
+        self.sharedContext.applicationBindings.presentNativeController(alert)
+    }
+
+    private func chitgramLogInAsBot(token: String) {
+        guard let account = self.account else {
+            return
+        }
+        if !chitgramIsValidBotToken(token) {
+            self.chitgramShowBotLoginError(ChitgramStrings.get(268), token: token)
+            return
+        }
+        self.view.endEditing(true)
+        self.chitgramBotLoginDisposable.set((chitgramAuthorizeWithBotToken(accountManager: self.sharedContext.accountManager, account: account, token: token, syncContacts: false)
+        |> deliverOnMainQueue).startStrict(error: { [weak self] error in
+            var text = ChitgramStrings.get(268)
+            if case let .floodWait(seconds) = error, let seconds {
+                text += "\n\nFLOOD_WAIT: \(seconds)s"
+            }
+            self?.chitgramShowBotLoginError(text, token: token)
+        }))
+    }
+
+    private func chitgramShowBotLoginError(_ text: String, token: String) {
+        let alert = UIAlertController(title: ChitgramStrings.get(266), message: text, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: ChitgramStrings.get(4), style: .default, handler: { [weak self] _ in
+            self?.chitgramAskBotToken(text: token)
+        }))
+        self.sharedContext.applicationBindings.presentNativeController(alert)
     }
 
     @objc private func debugQrTap(_ recognizer: UITapGestureRecognizer) {
