@@ -7,7 +7,10 @@ import TelegramUIPreferences
 import ItemListUI
 import PresentationDataUtils
 import AccountContext
+import TelegramCore
+import UndoUI
 import ChitgramCore
+import ChitgramEngine
 
 /// The sections of Chitgram ▸ Sozlamalar, in Android's order (`FenixSettings.fillItems`). A section is added here
 /// when its first feature is ported.
@@ -77,9 +80,12 @@ private enum ChitgramSettingsRow: Int32 {
     case confirmGif
     case roundCameraFront
     case hideTabs
+    case adminFolders
+    case adminFoldersRefresh
     case autoAcceptJoin
     case reminderEnabled
     case reminderDelay
+    case reminderSound
     case apkShield
 
     var section: ChitgramSettingsSection {
@@ -98,11 +104,11 @@ private enum ChitgramSettingsRow: Int32 {
             return .confirmations
         case .roundCameraFront:
             return .roundVideo
-        case .hideTabs:
+        case .hideTabs, .adminFolders, .adminFoldersRefresh:
             return .folders
         case .autoAcceptJoin:
             return .channels
-        case .reminderEnabled, .reminderDelay:
+        case .reminderEnabled, .reminderDelay, .reminderSound:
             return .reminder
         case .apkShield:
             return .security
@@ -153,12 +159,18 @@ private enum ChitgramSettingsRow: Int32 {
             return 27
         case .hideTabs:
             return 12
+        case .adminFolders:
+            return 30
+        case .adminFoldersRefresh:
+            return 31
         case .autoAcceptJoin:
             return 13
         case .reminderEnabled:
             return 14
         case .reminderDelay:
             return 15
+        case .reminderSound:
+            return 16
         case .apkShield:
             return 28
         }
@@ -211,6 +223,10 @@ private enum ChitgramSettingsRow: Int32 {
             return (113, 354)
         case .hideTabs:
             return (260, 261)
+        case .adminFolders:
+            return (391, 392)
+        case .adminFoldersRefresh:
+            return (398, -1)
         case .autoAcceptJoin:
             return (263, 264)
         case .reminderEnabled:
@@ -218,6 +234,8 @@ private enum ChitgramSettingsRow: Int32 {
         case .reminderDelay:
             // A button; its title carries the value (see the entries).
             return (272, -1)
+        case .reminderSound:
+            return (274, -1)
         case .apkShield:
             return (378, 379)
         }
@@ -264,7 +282,7 @@ private enum ChitgramSettingsRow: Int32 {
             return .autoAcceptJoin
         case .reminderEnabled:
             return .reminderEnabled
-        case .reminderDelay:
+        case .reminderDelay, .reminderSound, .adminFolders, .adminFoldersRefresh:
             return nil
         case .apkShield:
             return .apkShield
@@ -277,6 +295,7 @@ private enum ChitgramSettingsRow: Int32 {
 /// What the switches show: Chitgram's own preferences, plus the Telegram settings some rows drive.
 private struct ChitgramSettingsState {
     var autoDownload: MediaAutoDownloadSettings
+    var accountPeerId: EnginePeer.Id
 
     func isOn(_ row: ChitgramSettingsRow) -> Bool {
         let preferences = ChitgramPreferences.shared
@@ -290,6 +309,8 @@ private struct ChitgramSettingsState {
         case .downloadStop:
             // Android: stopped when every network preset is off (`FenixSettings.isAutoDownloadStopped`).
             return !self.autoDownload.cellular.enabled && !self.autoDownload.wifi.enabled
+        case .adminFolders:
+            return ChitgramAdminFolders.isEnabled(accountPeerId: self.accountPeerId)
         default:
             return false
         }
@@ -339,7 +360,9 @@ private enum ChitgramSettingsEntry: ItemListNodeEntry {
         case let .header(_, text):
             return ItemListSectionHeaderItem(presentationData: presentationData, text: text, sectionId: self.section)
         case let .toggle(row, title, text, value):
-            return ItemListSwitchItem(presentationData: presentationData, systemStyle: .glass, title: title, text: text, value: value, maximumNumberOfLines: 2, sectionId: self.section, style: .blocks, updated: { value in
+            // Admin folders change only after a confirmation and a server write, so its switch follows the stored
+            // state instead of flipping on the tap.
+            return ItemListSwitchItem(presentationData: presentationData, systemStyle: .glass, title: title, text: text, value: value, enableInteractiveChanges: row != .adminFolders, maximumNumberOfLines: 2, sectionId: self.section, style: .blocks, updated: { value in
                 arguments.toggle(row, value)
             })
         case let .button(row, title):
@@ -404,6 +427,12 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
 
     header(.folders)
     toggle(.hideTabs)
+    toggle(.adminFolders)
+    // Refresh exists once the folders do: the sync keeps them current but keeps the user's own edits, so this is
+    // the one way to say "rebuild from my rights".
+    if state.isOn(.adminFolders) {
+        button(.adminFoldersRefresh)
+    }
 
     header(.channels)
     toggle(.autoAcceptJoin)
@@ -412,6 +441,8 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
     toggle(.reminderEnabled)
     // Android: "Eslatma vaqti: 5 daq".
     entries.append(.button(.reminderDelay, title: "\(ChitgramStrings.get(272)): \(ChitgramPreferences.shared.int(.reminderDelayMin)) \(ChitgramStrings.get(273))"))
+    // Android: "Ovoz: Oddiy ohang".
+    entries.append(.button(.reminderSound, title: "\(ChitgramStrings.get(274)): \(ChitgramStrings.get(ChitgramPreferences.shared.int(.reminderSound) == 1 ? 276 : 275))"))
 
     header(.security)
     toggle(.apkShield)
@@ -423,6 +454,8 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
 public func chitgramSettingsController(context: AccountContext) -> ViewController {
     let preferences = ChitgramPreferences.shared
     var pushControllerImpl: ((ViewController) -> Void)?
+    var presentControllerImpl: ((ViewController) -> Void)?
+    var reportAdminFolders: ((ChitgramAdminFolders.Result) -> Void)?
     let arguments = ChitgramSettingsArguments(toggle: { row, value in
         if let key = row.preferenceKey {
             preferences.set(value, for: key)
@@ -431,6 +464,33 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
         switch row {
         case .deleteSave:
             preferences.set(value ? ChitgramPreferences.DeletedCheckType.keep.rawValue : ChitgramPreferences.DeletedCheckType.off.rawValue, for: .deletedCheckType)
+        case .adminFolders:
+            // The folders are written to the Telegram account and show up on every device: say so first.
+            let presentationData = context.sharedContext.currentPresentationData.with { $0 }
+            if !ChitgramAdminFolders.isEnabled(accountPeerId: context.account.peerId) {
+                presentControllerImpl?(textAlertController(context: context, title: ChitgramStrings.get(391), text: ChitgramStrings.get(397), actions: [
+                    TextAlertAction(type: .genericAction, title: ChitgramStrings.get(80), action: {
+                        preferences.notifyChanged()
+                    }),
+                    TextAlertAction(type: .defaultAction, title: ChitgramStrings.get(323), action: {
+                        let _ = (ChitgramAdminFolders.rebuild(context: context)
+                        |> deliverOnMainQueue).startStandalone(next: { result in
+                            reportAdminFolders?(result)
+                        })
+                    })
+                ]))
+            } else {
+                presentControllerImpl?(textAlertController(context: context, title: ChitgramStrings.get(391), text: ChitgramStrings.get(402), actions: [
+                    TextAlertAction(type: .genericAction, title: ChitgramStrings.get(80), action: {
+                        preferences.notifyChanged()
+                    }),
+                    TextAlertAction(type: .destructiveAction, title: presentationData.strings.Common_Delete, action: {
+                        let _ = ChitgramAdminFolders.remove(context: context).startStandalone()
+                    })
+                ]))
+            }
+            // The switch shows the stored state until the folders actually change.
+            preferences.notifyChanged()
         case .downloadStop:
             // Telegram's own automatic download, off (or back on) for mobile data and Wi-Fi at once.
             let _ = updateMediaDownloadSettingsInteractively(accountManager: context.sharedContext.accountManager, { settings in
@@ -450,6 +510,31 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
             pushControllerImpl?(chitgramReminderDelayController(context: context))
         case .keywordWatch:
             pushControllerImpl?(chitgramKeywordWatchController(context: context))
+        case .adminFoldersRefresh:
+            let _ = (ChitgramAdminFolders.rebuild(context: context)
+            |> deliverOnMainQueue).startStandalone(next: { result in
+                reportAdminFolders?(result)
+            })
+        case .reminderSound:
+            // Two tones, as on Android: the soft notification sound or the louder ringtone.
+            let presentationData = context.sharedContext.currentPresentationData.with { $0 }
+            let actionSheet = ActionSheetController(presentationData: presentationData)
+            var items: [ActionSheetItem] = [ActionSheetTextItem(title: ChitgramStrings.get(274), parseMarkdown: false)]
+            for (value, titleId) in [(0, 275), (1, 276)] {
+                items.append(ActionSheetButtonItem(title: ChitgramStrings.get(titleId), color: .accent, action: { [weak actionSheet] in
+                    actionSheet?.dismissAnimated()
+                    preferences.set(value, for: .reminderSound)
+                }))
+            }
+            actionSheet.setItemGroups([
+                ActionSheetItemGroup(items: items),
+                ActionSheetItemGroup(items: [
+                    ActionSheetButtonItem(title: presentationData.strings.Common_Cancel, color: .accent, font: .bold, action: { [weak actionSheet] in
+                        actionSheet?.dismissAnimated()
+                    })
+                ])
+            ])
+            presentControllerImpl?(actionSheet)
         default:
             break
         }
@@ -472,7 +557,7 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
         )
         let listState = ItemListNodeState(
             presentationData: ItemListPresentationData(presentationData),
-            entries: chitgramSettingsEntries(state: ChitgramSettingsState(autoDownload: autoDownload)),
+            entries: chitgramSettingsEntries(state: ChitgramSettingsState(autoDownload: autoDownload, accountPeerId: context.account.peerId)),
             style: .blocks,
             animateChanges: true
         )
@@ -481,6 +566,26 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
     let controller = ItemListController(context: context, state: signal)
     pushControllerImpl = { [weak controller] c in
         controller?.push(c)
+    }
+    presentControllerImpl = { [weak controller] c in
+        controller?.present(c, in: .window(.root))
+    }
+    // What a create or refresh did, in words (Android `reportAdminFolders`).
+    reportAdminFolders = { result in
+        let presentationData = context.sharedContext.currentPresentationData.with { $0 }
+        preferences.notifyChanged()
+        if let reason = result.blockedReason {
+            presentControllerImpl?(textAlertController(context: context, title: ChitgramStrings.get(391), text: reason, actions: [
+                TextAlertAction(type: .defaultAction, title: presentationData.strings.Common_OK, action: {})
+            ]))
+        } else if result.truncated.isEmpty {
+            presentControllerImpl?(UndoOverlayController(presentationData: presentationData, content: .info(title: nil, text: ChitgramStrings.get(403), timeout: nil, customUndoText: nil), elevatedLayout: false, action: { _ in return false }))
+        } else {
+            let text = result.truncated.map { ChitgramStrings.format(401, $0.0, $0.1) }.joined(separator: "\n")
+            presentControllerImpl?(textAlertController(context: context, title: ChitgramStrings.get(391), text: text, actions: [
+                TextAlertAction(type: .defaultAction, title: presentationData.strings.Common_OK, action: {})
+            ]))
+        }
     }
     return controller
 }

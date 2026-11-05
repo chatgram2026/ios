@@ -29,6 +29,8 @@ public final class ChitgramAccountServices {
             ChitgramKeywords.shared.isPremium = ChitgramPremium.isActive(accountPeerId: accountPeerId)
             // Auto messenger: tops the server queue up; the limits it applies depend on Premium.
             ChitgramAutoPost.refill(context: context)
+            // Admin folders follow rights that changed while the app was closed.
+            ChitgramAdminFolders.sync(context: context)
         })
         // Android refills on every resume (throttled to once in 10 minutes).
         self.foregroundObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main, using: { [weak context] _ in
@@ -36,6 +38,7 @@ public final class ChitgramAccountServices {
                 return
             }
             ChitgramAutoPost.refill(context: context)
+            ChitgramAdminFolders.sync(context: context)
         })
     }
 

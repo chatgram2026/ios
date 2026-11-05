@@ -164,6 +164,19 @@ public final class ChitgramPreferences {
         }
     }
 
+    /// Makes open screens redraw without a value changing, e.g. to put a switch back after a refused or cancelled
+    /// action.
+    public func notifyChanged() {
+        let notify = {
+            NotificationCenter.default.post(name: ChitgramPreferences.didChangeNotification, object: self, userInfo: ["key": ""])
+        }
+        if Thread.isMainThread {
+            notify()
+        } else {
+            DispatchQueue.main.async(execute: notify)
+        }
+    }
+
     /// When each key was last changed on this device, in milliseconds (Android's `System.currentTimeMillis`).
     public func changeTime(_ key: Key) -> Int64? {
         self.lock.lock()

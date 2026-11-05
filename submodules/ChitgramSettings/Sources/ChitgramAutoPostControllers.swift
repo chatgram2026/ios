@@ -515,7 +515,8 @@ private enum ChitgramAutoPostEditEntry: ItemListNodeEntry {
                 arguments.chooseHours()
             })
         case let .enabled(title, value):
-            return ItemListSwitchItem(presentationData: presentationData, systemStyle: .glass, title: title, value: value, sectionId: self.section, style: .blocks, updated: { _ in
+            // The switch can be refused (no message or chat yet), so it follows the stored state, not the tap.
+            return ItemListSwitchItem(presentationData: presentationData, systemStyle: .glass, title: title, value: value, enableInteractiveChanges: false, sectionId: self.section, style: .blocks, updated: { _ in
                 arguments.toggleEnabled()
             })
         case let .delete(text):

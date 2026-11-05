@@ -71,7 +71,12 @@ final class ChitgramMessageReminder {
             let content = UNMutableNotificationContent()
             content.title = ChitgramStrings.get(277)
             content.body = ChitgramStrings.get(278)
-            content.sound = .default
+            // Android: sound 0 is the soft notification tone, 1 the louder alarm tone (harder to miss).
+            if ChitgramPreferences.shared.int(.reminderSound) == 1, #available(iOS 15.2, *) {
+                content.sound = .defaultRingtone
+            } else {
+                content.sound = .default
+            }
             content.interruptionLevel = .timeSensitive
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: TimeInterval(minutes * 60), repeats: false)
             center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: trigger), withCompletionHandler: nil)
