@@ -123,6 +123,7 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
     TGPhotoCaptionInputMixin *_captionMixin;
     
     TGModernButton *_muteButton;
+    TGModernButton *_chitgramRoundButton;
     TGCheckButtonView *_checkButton;
     bool _ignoreSetSelected;
     TGMediaPickerPhotoCounterButton *_photoCounterButton;
@@ -257,6 +258,20 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
         [_muteButton setImage:[TGPhotoEditorInterfaceAssets muteActiveIcon]  forState:UIControlStateSelected | UIControlStateHighlighted];
         [_muteButton addTarget:self action:@selector(toggleSendAsGif) forControlEvents:UIControlEventTouchUpInside];
         [_wrapperView addSubview:_muteButton];
+
+        // Chitgram: "send as round video note", beside the GIF switch, for a video (Android PhotoViewer).
+        [TGChitgramRoundVideo setRequested:false];
+        _chitgramRoundButton = [[TGModernButton alloc] initWithFrame:CGRectMake(0, 0, 40.0f, 40.0f)];
+        _chitgramRoundButton.hidden = true;
+        [_chitgramRoundButton setBackgroundImage:[TGPhotoEditorInterfaceAssets gifBackgroundImage] forState:UIControlStateNormal];
+        UIImage *chitgramRoundIcon = [[UIImage systemImageNamed:@"video.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        UIImage *chitgramRoundActiveIcon = [[UIImage systemImageNamed:@"video.circle.fill"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+        [_chitgramRoundButton setImage:chitgramRoundIcon forState:UIControlStateNormal];
+        [_chitgramRoundButton setImage:chitgramRoundActiveIcon forState:UIControlStateSelected];
+        [_chitgramRoundButton setImage:chitgramRoundActiveIcon forState:UIControlStateSelected | UIControlStateHighlighted];
+        _chitgramRoundButton.tintColor = [UIColor whiteColor];
+        [_chitgramRoundButton addTarget:self action:@selector(chitgramToggleRoundVideo) forControlEvents:UIControlEventTouchUpInside];
+        [_wrapperView addSubview:_chitgramRoundButton];
         
         if (recipientName.length > 0)
         {
@@ -772,6 +787,8 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
                 }
             }
             strongSelf->_muteButton.hidden = !sendableAsGif;
+            strongSelf->_chitgramRoundButton.hidden = !sendableAsGif;
+            strongSelf->_chitgramRoundButton.selected = [TGChitgramRoundVideo requested];
             
             bool canHaveCover = false;
             if ([strongItemView isKindOfClass:[TGMediaPickerGalleryVideoItemView class]]) {
@@ -1423,6 +1440,7 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
         {
             _checkButton.alpha = alpha;
             _muteButton.alpha = alpha;
+            _chitgramRoundButton.alpha = alpha;
             _coverButton.alpha = alpha;
             _arrowView.alpha = alpha * 0.6f;
             _recipientLabel.alpha = alpha * 0.6;
@@ -1433,6 +1451,7 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
             {
                 _checkButton.userInteractionEnabled = !hidden;
                 _muteButton.userInteractionEnabled = !hidden;
+                _chitgramRoundButton.userInteractionEnabled = !hidden;
                 _coverButton.userInteractionEnabled = !hidden;
                 _captionMixin.livePhotoButtonView.userInteractionEnabled = !hidden;
             }
@@ -1456,7 +1475,9 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
         _checkButton.userInteractionEnabled = !hidden;
         
         _muteButton.alpha = alpha;
+            _chitgramRoundButton.alpha = alpha;
         _muteButton.userInteractionEnabled = !hidden;
+                _chitgramRoundButton.userInteractionEnabled = !hidden;
         
         _coverButton.alpha = alpha;
         _coverButton.userInteractionEnabled = !hidden;
@@ -1493,6 +1514,7 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
         {
             _checkButton.alpha = alpha;
             _muteButton.alpha = alpha;
+            _chitgramRoundButton.alpha = alpha;
             _coverButton.alpha = alpha;
             _arrowView.alpha = alpha * 0.6;
             _recipientLabel.alpha = alpha * 0.6;
@@ -1506,6 +1528,7 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
             {
                 _checkButton.userInteractionEnabled = !hidden;
                 _muteButton.userInteractionEnabled = !hidden;
+                _chitgramRoundButton.userInteractionEnabled = !hidden;
                 _coverButton.userInteractionEnabled = !hidden;
                 _portraitToolbarView.userInteractionEnabled = !hidden;
                 _landscapeToolbarView.userInteractionEnabled = !hidden;
@@ -1532,7 +1555,9 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
         _checkButton.userInteractionEnabled = !hidden;
         
         _muteButton.alpha = alpha;
+            _chitgramRoundButton.alpha = alpha;
         _muteButton.userInteractionEnabled = !hidden;
+                _chitgramRoundButton.userInteractionEnabled = !hidden;
         
         _coverButton.alpha = alpha;
         _coverButton.userInteractionEnabled = !hidden;
@@ -1614,6 +1639,14 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
         [(TGMediaPickerGalleryVideoItemView *)currentItemView toggleSendAsGif:false];
     
     [_muteButton removeFromSuperview];
+    [_chitgramRoundButton removeFromSuperview];
+}
+
+- (void)chitgramToggleRoundVideo
+{
+    bool requested = ![TGChitgramRoundVideo requested];
+    [TGChitgramRoundVideo setRequested:requested];
+    _chitgramRoundButton.selected = requested;
 }
 
 - (void)toggleSendAsGif
@@ -1805,6 +1838,7 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
         if (view == _photoCounterButton
             || view == _checkButton
             || view == _muteButton
+            || view == _chitgramRoundButton
             || view == _groupButton
             || view == _cameraButton
             || view == _coverButton
@@ -2202,6 +2236,7 @@ static TGMediaLivePhotoMode TGMediaPickerGalleryResolvedLivePhotoMode(NSNumber *
     }
     
     _muteButton.frame = [self _muteButtonFrameForOrientation:orientation screenEdges:screenEdges hasHeaderView:true];
+    _chitgramRoundButton.frame = CGRectOffset(_muteButton.frame, (_muteButton.frame.origin.x > self.frame.size.width / 2.0f) ? -46.0f : 46.0f, 0.0f);
     _checkButton.frame = [self _checkButtonFrameForOrientation:orientation screenEdges:screenEdges hasHeaderView:hasHeaderView];
     _groupButton.frame = [self _groupButtonFrameForOrientation:orientation screenEdges:screenEdges hasHeaderView:hasHeaderView];
     _coverButton.frame = [self _coverButtonFrameForOrientation:orientation screenEdges:screenEdges hasHeaderView:hasHeaderView];

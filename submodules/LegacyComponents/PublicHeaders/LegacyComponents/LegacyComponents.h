@@ -278,6 +278,7 @@
 #import <LegacyComponents/TGVideoCameraGLView.h>
 #import <LegacyComponents/TGVideoCameraMovieRecorder.h>
 #import <LegacyComponents/TGVideoEditAdjustments.h>
+#import <LegacyComponents/TGChitgramRoundVideo.h>
 #import <LegacyComponents/TGVideoInfo.h>
 #import <LegacyComponents/TGVideoMediaAttachment.h>
 #import <LegacyComponents/TGVideoMessageCaptureController.h>

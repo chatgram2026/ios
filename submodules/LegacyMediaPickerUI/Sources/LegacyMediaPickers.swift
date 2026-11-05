@@ -130,6 +130,34 @@ private enum LegacyAssetVideoData {
     case tempFile(path: String, dimensions: CGSize, duration: Double)
 }
 
+/// Chitgram: a gallery video sent as a round video note (Android PhotoViewer's round-video switch): the largest centred
+/// square, at most 60 seconds from where the trim starts, at the video-message size and bitrate.
+private func chitgramRoundVideoAdjustments(data: LegacyAssetVideoData, adjustments: TGVideoEditAdjustments?) -> TGVideoEditAdjustments? {
+    let size: CGSize
+    let duration: Double
+    switch data {
+    case let .asset(asset):
+        size = asset.dimensions
+        duration = asset.videoDuration
+    case let .tempFile(_, dimensions, tempDuration):
+        size = dimensions
+        duration = tempDuration
+    }
+    if size.width <= 0.0 || size.height <= 0.0 {
+        return adjustments
+    }
+    let side = min(size.width, size.height)
+    let cropRect = CGRect(x: floor((size.width - side) / 2.0), y: floor((size.height - side) / 2.0), width: side, height: side)
+    var start = 0.0
+    var end = duration
+    if let adjustments, adjustments.trimApplied() {
+        start = adjustments.trimStartValue
+        end = adjustments.trimEndValue
+    }
+    end = min(end, start + 60.0)
+    return TGVideoEditAdjustments(originalSize: size, cropRect: cropRect, cropOrientation: .up, cropRotation: 0.0, cropLockedAspectRatio: 1.0, cropMirrored: false, trimStartValue: start, trimEndValue: end, toolValues: nil, paintingData: nil, sendAsGif: false, preset: TGMediaVideoConversionPresetVideoMessage)
+}
+
 private enum LegacyAssetItem {
     case image(data: LegacyAssetImageData, thumbnail: UIImage?, caption: NSAttributedString?, stickers: [FileMediaReference], video: LegacyAssetVideoData?, adjustments: TGVideoEditAdjustments?)
     case file(data: LegacyAssetImageData, thumbnail: UIImage?, mimeType: String, name: String, caption: NSAttributedString?)
@@ -806,7 +834,16 @@ public func legacyAssetPickerEnqueueMessages(
                                 default:
                                     break
                             }
-                        case let .video(data, thumbnail, cover, adjustments, caption, asFile, asAnimation, stickers):
+                        case let .video(data, thumbnail, cover, originalAdjustments, originalCaption, asFile, asAnimation, stickers):
+                            // Chitgram: the gallery's round-video switch makes this video a round video note.
+                            let chitgramRound = !asFile && !asAnimation && TGChitgramRoundVideo.requested()
+                            if chitgramRound {
+                                // One video per switch, as on Android: the next send is an ordinary video again.
+                                TGChitgramRoundVideo.setRequested(false)
+                            }
+                            let adjustments = chitgramRound ? chitgramRoundVideoAdjustments(data: data, adjustments: originalAdjustments) : originalAdjustments
+                            // A round video note carries no caption.
+                            let caption = chitgramRound ? nil : originalCaption
                             var finalDimensions: CGSize
                             var finalDuration: Double
                             switch data {
@@ -883,6 +920,10 @@ public func legacyAssetPickerEnqueueMessages(
                             if !asAnimation {
                                 finalDimensions = TGMediaVideoConverter.dimensions(for: finalDimensions, adjustments: adjustments, preset: TGMediaVideoConversionPresetCompressedMedium)
                             }
+                            if chitgramRound {
+                                preset = TGMediaVideoConversionPresetVideoMessage
+                                finalDimensions = CGSize(width: 384.0, height: 384.0)
+                            }
                             
                             var resourceAdjustments: VideoMediaResourceAdjustments?
                             if let adjustments = adjustments {
@@ -926,7 +967,7 @@ public func legacyAssetPickerEnqueueMessages(
                                 fileAttributes.append(.Animated)
                             }
                             if !asFile {
-                                let flags: TelegramMediaVideoFlags = [.supportsStreaming]
+                                let flags: TelegramMediaVideoFlags = chitgramRound ? [.instantRoundVideo] : [.supportsStreaming]
                                 fileAttributes.append(.Video(duration: finalDuration, size: PixelDimensions(finalDimensions), flags: flags, preloadSize: nil, coverTime: nil, videoCodec: nil))
                                 if let adjustments = adjustments {
                                     if adjustments.sendAsGif {
