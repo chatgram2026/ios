@@ -14,6 +14,7 @@ swift_library(
         "//submodules/LottieSettings:LottieSettings",
         "//submodules/Display",
         "//submodules/TelegramCore",
+        "//submodules/ChitgramCore",
         "//submodules/TextFormat",
         "//submodules/UrlEscaping",
         "//submodules/TelegramUniversalVideoContent",

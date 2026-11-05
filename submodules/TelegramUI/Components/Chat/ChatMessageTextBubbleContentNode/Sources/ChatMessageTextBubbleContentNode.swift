@@ -511,6 +511,12 @@ public class ChatMessageTextBubbleContentNode: ChatMessageBubbleContentNode {
                     updatedCachedChatMessageText = CachedChatMessageText(text: rawText, inputEntities: messageEntities, entities: entities)
                 }
                 
+                // Chitgram: an edited message shows its earlier versions above its text (Android EditPreview).
+                if let decorated = chitgramDecorateEdited(text: rawText, entities: entities ?? [], accountPeerId: item.context.account.peerId, messageId: message.id) {
+                    rawText = decorated.text
+                    entities = decorated.entities
+                }
+                
                 
                 let messageTheme = incoming ? item.presentationData.theme.theme.chat.message.incoming : item.presentationData.theme.theme.chat.message.outgoing
                 
