@@ -59,6 +59,23 @@ extension ChatControllerImpl {
         self.chitgramLockOverlay = overlay
     }
 
+    /// Lets the chat's profile menu put text into this chat's input box ("Voice to text").
+    func chitgramRegisterInputBridge() {
+        guard let peerId = self.chatLocation.peerId else {
+            return
+        }
+        ChitgramChatBridge.register(chat: peerId.toInt64(), insert: { [weak self] text in
+            guard let self else {
+                return false
+            }
+            let state = self.presentationInterfaceState.interfaceState.composeInputState
+            let length = state.inputText.length
+            let separator = length > 0 ? " " : ""
+            self.updateTextInputState(state.replacingFlatRange(NSRange(location: length, length: 0), with: separator + text))
+            return true
+        })
+    }
+
     /// Face ID / Touch ID right away, once; the passcode and the Unlock button stay for later tries.
     func chitgramPromptUnlockIfNeeded() {
         // Previews never get viewDidAppear, so this only runs for an opened chat.

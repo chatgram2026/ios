@@ -10,6 +10,7 @@ import UndoUI
 import PresentationDataUtils
 import ChitgramCore
 import ChitgramChat
+import ChitgramSettings
 
 extension PeerInfoScreenNode {
     /// Chitgram: the chat's ⋮ menu items from Android (`ChatActivity` header menu), placed after Telegram's own in the
@@ -24,6 +25,16 @@ extension PeerInfoScreenNode {
             f(.dismissWithoutContent)
             self?.chitgramOpenTextStyle()
         })))
+
+        // Voice to text (Android `VoiceTranslateSheet`): dictate into the chat's input box.
+        if self.peerId.namespace != Namespaces.Peer.SecretChat {
+            items.append(.action(ContextMenuActionItem(text: ChitgramStrings.get(308), icon: { theme in
+                return generateTintedImage(image: UIImage(systemName: "mic"), color: theme.contextMenu.primaryColor)
+            }, action: { [weak self] _, f in
+                f(.dismissWithoutContent)
+                self?.chitgramOpenVoiceToText(peerId: peer.id)
+            })))
+        }
 
         // Auto-translate of outgoing messages (Android `AutoTranslatePicker`), where the account can write.
         if self.peerId.namespace != Namespaces.Peer.SecretChat {
@@ -84,6 +95,24 @@ extension PeerInfoScreenNode {
             }
         }
         return items
+    }
+
+    private func chitgramOpenVoiceToText(peerId: EnginePeer.Id) {
+        let chat = peerId.toInt64()
+        chitgramPresentVoiceToText(context: self.context, chat: chat, present: { [weak self] c in
+            self?.controller?.present(c, in: .window(.root))
+        }, completion: { [weak self] text in
+            guard let self else {
+                return
+            }
+            if ChitgramChatBridge.insert(chat: chat, text: text) {
+                // Back to the chat, where the text now waits in the input box.
+                let _ = (self.controller?.navigationController as? NavigationController)?.popViewController(animated: true)
+            } else {
+                UIPasteboard.general.string = text
+                self.controller?.present(UndoOverlayController(presentationData: self.presentationData, content: .copy(text: text), elevatedLayout: false, action: { _ in return false }), in: .current)
+            }
+        })
     }
 
     private func chitgramOpenAutoTranslate(peerId: EnginePeer.Id) {

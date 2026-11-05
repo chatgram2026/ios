@@ -7914,6 +7914,8 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
         }
         // Chitgram: ask to unlock once, as soon as a locked chat is on screen.
         self.chitgramPromptUnlockIfNeeded()
+        // Chitgram: the profile menu's "Voice to text" writes into this chat's input box.
+        self.chitgramRegisterInputBridge()
 
         self.chatDisplayNode.historyNode.experimentalSnapScrollToItem = false
         self.chatDisplayNode.historyNode.canReadHistory.set(self.computedCanReadHistoryPromise.get())
