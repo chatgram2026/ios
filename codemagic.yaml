@@ -173,39 +173,57 @@ workflows:
                   json.dump(configuration, file, indent=2)
           PYEOF
 
-          # Make.py needs the app's own App Store profile with Push Notifications: say which profile is what, and stop
-          # here with the reason when that one is missing, instead of Make.py's bare "no aps-environment".
+          # Make.py needs the app's own App Store profile with Push Notifications and the app group: keep only the newest
+          # profile of each app (Apple still lists the ones a capability change made invalid, and Make.py takes the
+          # first it meets), say which profile is what, and stop here with what to fix instead of Make.py's bare error.
           python3 - <<'PYEOF'
           import glob, json, os, plistlib, subprocess, sys
           configuration = json.load(open(os.path.expanduser("~/chitgram-config/configuration.json")))
           team = configuration["team_id"]
           bundle = configuration["bundle_id"]
-          main = None
-          prefixes = set()
-          for path in sorted(glob.glob(os.path.expanduser("~/chitgram-signing/profiles/*.mobileprovision"))):
+          group = "group." + bundle
+          newest = {}
+          for path in glob.glob(os.path.expanduser("~/chitgram-signing/profiles/*.mobileprovision")):
               data = subprocess.run(["openssl", "smime", "-inform", "der", "-verify", "-noverify", "-in", path],
                                     stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).stdout
               profile = plistlib.loads(data)
+              identifier = profile.get("Entitlements", {}).get("application-identifier", "")
+              key = (identifier, bool(profile.get("ProvisionedDevices")))
+              if key in newest and newest[key][0] >= profile["CreationDate"]:
+                  os.remove(path)
+                  continue
+              if key in newest:
+                  os.remove(newest[key][1])
+              newest[key] = (profile["CreationDate"], path, profile)
+          main = None
+          problems = []
+          for (identifier, devices), (created, path, profile) in sorted(newest.items()):
               entitlements = profile.get("Entitlements", {})
-              identifier = entitlements.get("application-identifier", "")
               prefix, _, app = identifier.partition(".")
-              prefixes.add(prefix)
-              groups = ",".join(entitlements.get("com.apple.security.application-groups", [])) or "none"
-              kind = "development or ad hoc" if profile.get("ProvisionedDevices") else "App Store"
-              print("Profile %s: %s (%s), prefix is the team: %s, push: %s, app groups: %s" % (
-                  os.path.basename(path)[:8], app, kind, "yes" if prefix == team else "NO",
-                  entitlements.get("aps-environment", "NONE"), groups))
+              groups = entitlements.get("com.apple.security.application-groups", [])
+              print("Profile %s: %s (%s, made %s), prefix is the team: %s, push: %s, app groups: %s" % (
+                  os.path.basename(path)[:8], app, "devices" if devices else "App Store", created.strftime("%Y-%m-%d %H:%M"),
+                  "yes" if prefix == team else "NO", entitlements.get("aps-environment", "NONE"), ",".join(groups) or "none"))
+              if devices:
+                  continue
+              if group not in groups:
+                  if any(g.lower() == group.lower() for g in groups):
+                      problems.append("%s: its app group has other letter case than %s" % (app, group))
+                  else:
+                      problems.append("%s: App Groups with %s is not on" % (app, group))
               if identifier == team + "." + bundle:
                   main = entitlements
           if main is None:
-              if any(prefix != team for prefix in prefixes):
-                  print("The App ID prefix of some profiles is not the team: the app's App ID was made with another prefix.")
               sys.exit("No App Store profile for %s itself. Check that the App ID %s exists in the Apple Developer portal "
-                       "(Certificates, Identifiers & Profiles > Identifiers) in the same team as the App Store Connect key." % (bundle, bundle))
+                       "in the same team as the App Store Connect key." % (bundle, bundle))
           if "aps-environment" not in main:
-              sys.exit("The profile of %s has no Push Notifications. In the Apple Developer portal open the App ID %s, turn "
-                       "on Push Notifications and App Groups (group.%s), save, and build again: a new profile is made then." % (bundle, bundle, bundle))
-          print("Profile check: %s has an App Store profile with Push Notifications (%s)" % (bundle, main["aps-environment"]))
+              problems.append("%s: Push Notifications is not on" % bundle)
+          if problems:
+              for problem in problems:
+                  print("Profile check: " + problem)
+              sys.exit("Fix these in the Apple Developer portal (Identifiers): the app group must be exactly %s, chosen in "
+                       "App Groups of every App ID, and %s needs Push Notifications. Then build again." % (group, bundle))
+          print("Profile check: every App Store profile has %s, and %s has Push Notifications (%s)" % (group, bundle, main["aps-environment"]))
           PYEOF
 
       - name: Build
