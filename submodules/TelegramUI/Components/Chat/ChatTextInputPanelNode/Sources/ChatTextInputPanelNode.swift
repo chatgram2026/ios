@@ -60,6 +60,7 @@ import ChatInputContextPanelNode
 import RasterizedCompositionComponent
 import RichTextEditorUIKit
 import RichTextEditorCore
+import ChitgramCore
 
 /// The chat composer's inline custom-emoji view already exposes `dynamicColor` (forwarding to its backing
 /// `InlineStickerItemLayer`), so it satisfies the editor's emoji-view contract as-is. Declared here (the one
@@ -6023,6 +6024,11 @@ public class ChatTextInputPanelNode: ChatInputPanelNode, ASEditableTextNodeDeleg
                     self.interfaceInteraction?.openPremiumGift()
                 case .suggestPost:
                     self.interfaceInteraction?.openSuggestPost(nil, .default)
+                case .chitgramDictation:
+                    // Chitgram: dictation into this chat's input box, with the saved languages.
+                    if let peerId = self.presentationInterfaceState?.chatLocation.peerId {
+                        ChitgramChatBridge.dictate(chat: peerId.toInt64())
+                    }
                 }
                 break
             }

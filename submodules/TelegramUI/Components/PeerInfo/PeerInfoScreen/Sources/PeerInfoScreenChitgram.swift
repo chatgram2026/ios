@@ -27,7 +27,7 @@ extension PeerInfoScreenNode {
         })))
 
         // Voice to text (Android `VoiceTranslateSheet`): dictate into the chat's input box.
-        if self.peerId.namespace != Namespaces.Peer.SecretChat {
+        if self.peerId.namespace != Namespaces.Peer.SecretChat && chitgramVoiceInputIsAvailable() {
             items.append(.action(ContextMenuActionItem(text: ChitgramStrings.get(308), icon: { theme in
                 return generateTintedImage(image: UIImage(systemName: "mic"), color: theme.contextMenu.primaryColor)
             }, action: { [weak self] _, f in
@@ -99,7 +99,7 @@ extension PeerInfoScreenNode {
 
     private func chitgramOpenVoiceToText(peerId: EnginePeer.Id) {
         let chat = peerId.toInt64()
-        chitgramPresentVoiceToText(context: self.context, chat: chat, present: { [weak self] c in
+        chitgramPresentVoiceToText(context: self.context, present: { [weak self] c in
             self?.controller?.present(c, in: .window(.root))
         }, completion: { [weak self] text in
             guard let self else {

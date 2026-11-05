@@ -23,6 +23,7 @@ private enum ChitgramSettingsSection: Int32 {
     case chatLock
     case confirmations
     case roundVideo
+    case messageField
     case folders
     case channels
     case reminder
@@ -47,6 +48,8 @@ private enum ChitgramSettingsSection: Int32 {
             return 190
         case .roundVideo:
             return 353
+        case .messageField:
+            return 380
         case .folders:
             return 240
         case .channels:
@@ -85,6 +88,7 @@ private enum ChitgramSettingsRow: Int32 {
     case confirmVoice
     case confirmGif
     case roundCameraFront
+    case voiceMic
     case folderIcons
     case hideTabs
     case tabBar
@@ -114,6 +118,8 @@ private enum ChitgramSettingsRow: Int32 {
             return .confirmations
         case .roundCameraFront:
             return .roundVideo
+        case .voiceMic:
+            return .messageField
         case .folderIcons, .hideTabs, .tabBar, .adminFolders, .adminFoldersRefresh:
             return .folders
         case .autoAcceptJoin:
@@ -173,6 +179,8 @@ private enum ChitgramSettingsRow: Int32 {
             return 10
         case .roundCameraFront:
             return 27
+        case .voiceMic:
+            return 29
         case .hideTabs:
             return 12
         case .tabBar:
@@ -247,6 +255,8 @@ private enum ChitgramSettingsRow: Int32 {
         case .roundCameraFront:
             // Titled "Front camera"; off means the rear one.
             return (113, 354)
+        case .voiceMic:
+            return (381, 382)
         case .hideTabs:
             return (260, 261)
         case .tabBar:
@@ -308,6 +318,8 @@ private enum ChitgramSettingsRow: Int32 {
             return .confirmGif
         case .roundCameraFront:
             return .roundCameraFront
+        case .voiceMic:
+            return .dictationMicEnabled
         case .hideTabs:
             return .hideTabs
         case .folderIcons:
@@ -482,6 +494,12 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
 
     header(.roundVideo)
     toggle(.roundCameraFront)
+
+    // Only where speech can be recognised: elsewhere the mic is hidden anyway (Android: the same).
+    if chitgramHasSpeechRecognizer() {
+        header(.messageField)
+        toggle(.voiceMic)
+    }
 
     header(.folders)
     toggle(.folderIcons)

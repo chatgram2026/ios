@@ -12,6 +12,8 @@ public enum ChatTextInputAccessoryItem: Equatable {
         case scheduledMessages
         case gift
         case suggestPost
+        // Chitgram: the dictation mic.
+        case chitgramDictation
     }
     
     public enum InputMode: Hashable {
@@ -29,6 +31,8 @@ public enum ChatTextInputAccessoryItem: Equatable {
     case scheduledMessages
     case gift
     case suggestPost
+    /// Chitgram: the dictation mic (Android `VoiceDictation`, Settings: Message field, Voice input button).
+    case chitgramDictation
     
     public var key: Key {
         switch self {
@@ -48,6 +52,8 @@ public enum ChatTextInputAccessoryItem: Equatable {
             return .gift
         case .suggestPost:
             return .suggestPost
+        case .chitgramDictation:
+            return .chitgramDictation
         }
     }
 }

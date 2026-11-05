@@ -10,6 +10,7 @@ import SwiftSignalKit
 import TextFormat
 import ChatContextQuery
 import ChatTextInputPanelNode
+import ChitgramSettings
 
 func serviceTasksForChatPresentationIntefaceState(context: AccountContext, chatPresentationInterfaceState: ChatPresentationInterfaceState, updateState: @escaping ((ChatPresentationInterfaceState) -> ChatPresentationInterfaceState) -> Void) -> [AnyHashable: () -> Disposable] {
     // Read the STRUCTURAL model, not the derived `inputText`: the flat projection drops whole blocks
@@ -258,6 +259,10 @@ func inputTextPanelStateForChatPresentationInterfaceState(_ chatPresentationInte
                         accessoryItems.append(.input(isEnabled: true, inputMode: .stickers))
                     }
                 } else {
+                    // Chitgram: the dictation mic (Android shows it beside the field while it is switched on).
+                    if chitgramVoiceInputIsAvailable() {
+                        accessoryItems.append(.chitgramDictation)
+                    }
                     stickersAreEmoji = stickersAreEmoji || hasForward
                     if stickersEnabled {
                         accessoryItems.append(.input(isEnabled: true, inputMode: stickersAreEmoji ? .emoji : .stickers))

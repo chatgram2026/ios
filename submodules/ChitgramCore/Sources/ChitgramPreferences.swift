@@ -37,6 +37,8 @@ public final class ChitgramPreferences {
         // Round video, composer
         case roundCameraFront = "round_camera_front"
         case dictationMicEnabled = "dictation_mic_enabled"
+        case dictationFrom = "dictation_from"
+        case dictationTo = "dictation_to"
         // Folders and tabs
         case folderIconMode = "folder_icon_mode"
         case folderIcons = "folder_icons"
@@ -59,7 +61,7 @@ public final class ChitgramPreferences {
                 return 0
             case .reminderDelayMin:
                 return 5
-            case .autoAnswerText, .folderIcons:
+            case .autoAnswerText, .folderIcons, .dictationFrom, .dictationTo:
                 return ""
             default:
                 return false

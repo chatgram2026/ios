@@ -1,4 +1,5 @@
 import Foundation
+import ChitgramCore
 import LottieSettings
 import UIKit
 import Display
@@ -172,12 +173,15 @@ final class AccessoryItemIconButton: HighlightTrackingButton, GlassBackgroundVie
                 return (PresentationResourcesChat.chatInputTextFieldScheduleImage(theme), nil, strings.VoiceOver_ScheduledMessages, 1.0, UIEdgeInsets())
             case .gift:
                 return (PresentationResourcesChat.chatInputTextFieldGiftImage(theme), nil, strings.VoiceOver_GiftPremium, 1.0, UIEdgeInsets())
+            case .chitgramDictation:
+                let image = UIImage(systemName: "mic", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18.0, weight: .regular))?.withRenderingMode(.alwaysTemplate)
+                return (image, nil, ChitgramStrings.get(381), 1.0, UIEdgeInsets())
         }
     }
     
     private static func calculateWidth(item: ChatTextInputAccessoryItem, image: UIImage?, text: String?, strings: PresentationStrings) -> CGFloat {
         switch item {
-        case .input, .botInput, .silentPost, .commands, .scheduledMessages, .gift, .suggestPost:
+        case .input, .botInput, .silentPost, .commands, .scheduledMessages, .gift, .suggestPost, .chitgramDictation:
             return 32.0
         case let .messageAutoremoveTimeout(timeout):
             var imageWidth = (image?.size.width ?? 0.0) + CGFloat(8.0)

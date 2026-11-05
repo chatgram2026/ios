@@ -74,6 +74,19 @@ extension ChatControllerImpl {
             self.updateTextInputState(state.replacingFlatRange(NSRange(location: length, length: 0), with: separator + text))
             return true
         })
+        let chat = peerId.toInt64()
+        ChitgramChatBridge.registerDictation(chat: chat, start: { [weak self] in
+            self?.chitgramDictateIntoInput(chat: chat)
+        })
+    }
+
+    /// The composer mic: dictation with the saved languages, the text then added to the input box.
+    private func chitgramDictateIntoInput(chat: Int64) {
+        chitgramStartDictation(context: self.context, present: { [weak self] c in
+            self?.present(c, in: .window(.root))
+        }, completion: { text in
+            let _ = ChitgramChatBridge.insert(chat: chat, text: text)
+        })
     }
 
     /// Face ID / Touch ID right away, once; the passcode and the Unlock button stay for later tries.
