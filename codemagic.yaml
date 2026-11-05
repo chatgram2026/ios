@@ -75,6 +75,9 @@ workflows:
               "chitgram_firebase_project_id": os.environ.get("CHITGRAM_FIREBASE_PROJECT_ID", "").strip(),
               "chitgram_firebase_api_key": os.environ.get("CHITGRAM_FIREBASE_API_KEY", "").strip(),
               "chitgram_firebase_app_id": os.environ.get("CHITGRAM_FIREBASE_APP_ID", "").strip(),
+              # The sponsored-channel search ads backend (Android ADS_BASE_URL / ADS_API_KEY).
+              "chitgram_ads_base_url": os.environ.get("CHITGRAM_ADS_BASE_URL", "").strip(),
+              "chitgram_ads_api_key": os.environ.get("CHITGRAM_ADS_API_KEY", "").strip(),
           }
           with open(os.path.expanduser("~/chitgram-config/configuration.json"), "w") as file:
               json.dump(configuration, file, indent=2)

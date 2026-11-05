@@ -1,4 +1,5 @@
 import Foundation
+import ChitgramEngine
 import LottieSettings
 import UIKit
 import AsyncDisplayKit
@@ -880,13 +881,21 @@ public enum ChatListSearchEntry: Comparable, Identifiable {
 
                 return ContactsPeerItem(presentationData: ItemListPresentationData(presentationData), sortOrder: nameSortOrder, displayOrder: nameDisplayOrder, context: context, peerMode: .generalSearch(isSavedMessages: false), peer: .peer(peer: peer.peer, chatPeer: peer.peer), status: .addressName(suffixString), badge: nil, requiresPremiumForMessaging: false, enabled: enabled, selection: .none, editing: ContactsPeerItemEditing(editable: false, editing: false, revealed: false), index: nil, header: header, searchQuery: nil, isAd: true, action: { _ in
                     interaction.peerSelected(peer.peer, nil, nil, nil, false)
+                    // Chitgram: a tap on our ad is counted by our backend, never reported to Telegram.
+                    if let orderId = ChitgramSearchAds.orderId(opaqueId: peer.opaqueId) {
+                        ChitgramSearchAds.click(context: context, orderId: orderId)
+                        return
+                    }
                     context.engine.messages.markAdAction(opaqueId: peer.opaqueId, media: false, fullscreen: false)
                 }, disabledAction: { _ in
                     interaction.disabledPeerSelected(peer.peer, nil, .generic)
                 }, animationCache: interaction.animationCache, animationRenderer: interaction.animationRenderer, storyStats: nil, adButtonAction: { node in
+                    if ChitgramSearchAds.orderId(opaqueId: peer.opaqueId) != nil {
+                        return
+                    }
                     interaction.openAdInfo(node, peer)
                 }, visibilityUpdated: { isVisible in
-                    if isVisible {
+                    if isVisible && ChitgramSearchAds.orderId(opaqueId: peer.opaqueId) == nil {
                         context.engine.messages.markAdAsSeen(opaqueId: peer.opaqueId)
                     }
                 })
@@ -2707,9 +2716,11 @@ final class ChatListSearchListPaneNode: ASDisplayNode, ChatListSearchPaneNode {
                         |> then(
                             globalPeerSearchContext.searchRemotePeers(engine: context.engine, query: query)
                             |> mapToSignal { result in
-                                return context.engine.peers.searchAdPeers(query: query)
-                                |> map { adPeers in
-                                    return (result.0, result.1, adPeers, false)
+                                // Chitgram: the sponsored channel of our ads backend first, Telegram's own after it
+                                // (Android AdsManager).
+                                return combineLatest(context.engine.peers.searchAdPeers(query: query), ChitgramSearchAds.ad(context: context, query: query))
+                                |> map { adPeers, chitgramAd in
+                                    return (result.0, result.1, (chitgramAd.map { [$0] } ?? []) + adPeers.filter { $0.peer.id != chitgramAd?.peer.id }, false)
                                 }
                             }
                         )

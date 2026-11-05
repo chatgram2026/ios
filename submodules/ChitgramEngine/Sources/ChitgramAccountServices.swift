@@ -19,6 +19,8 @@ public final class ChitgramAccountServices {
         self.autoAcceptJoin = ChitgramAutoAcceptJoin(context: context)
         self.messageReminder = ChitgramMessageReminder(context: context)
         self.keywordWatch = ChitgramKeywordWatch(context: context)
+        // An account signed in here for the first time counts among the logins (Android AnalyticsRemote.addAccount).
+        ChitgramAnalytics.addAccountIfNew(accountPeerId: context.account.peerId)
         // Chitgram badges: lookups through Firestore, and this account's own badge.
         ChitgramBadgeService.start(context: context)
         // Saved media of kept deleted messages goes back into a cache that was cleared (Android ChitgramArchive).

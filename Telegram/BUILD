@@ -66,6 +66,8 @@ load(
     "telegram_chitgram_firebase_project_id",
     "telegram_chitgram_firebase_api_key",
     "telegram_chitgram_firebase_app_id",
+    "telegram_chitgram_ads_base_url",
+    "telegram_chitgram_ads_api_key",
 )
 
 load("@build_bazel_rules_apple//apple:resources.bzl",
@@ -663,6 +665,10 @@ plist_fragment(
     <string>{firebaseKey}</string>
     <key>ChitgramFirebaseAppId</key>
     <string>{firebaseApp}</string>
+    <key>ChitgramAdsBaseUrl</key>
+    <string>{adsUrl}</string>
+    <key>ChitgramAdsApiKey</key>
+    <string>{adsKey}</string>
     """.format(
         phone = telegram_chitgram_demo_phone.replace("&", "&amp;"),
         phone2 = telegram_chitgram_demo_phone_2.replace("&", "&amp;"),
@@ -671,6 +677,8 @@ plist_fragment(
         firebaseProject = telegram_chitgram_firebase_project_id.replace("&", "&amp;"),
         firebaseKey = telegram_chitgram_firebase_api_key.replace("&", "&amp;"),
         firebaseApp = telegram_chitgram_firebase_app_id.replace("&", "&amp;"),
+        adsUrl = telegram_chitgram_ads_base_url.replace("&", "&amp;"),
+        adsKey = telegram_chitgram_ads_api_key.replace("&", "&amp;"),
     ),
 )
 

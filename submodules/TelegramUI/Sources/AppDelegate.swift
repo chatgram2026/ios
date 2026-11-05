@@ -1278,6 +1278,8 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             // Chitgram: where Telegram is blocked, a proxy from the owner's list before login (Android RegionProxyManager).
             Queue.mainQueue().async {
                 ChitgramRegionProxy.maybeAutoConnect(sharedContext: sharedContext)
+                // Chitgram: this device counted once among the installs (Android AnalyticsRemote).
+                ChitgramAnalytics.addInstallIfFirstTime()
             }
             sharedApplicationContext.sharedContext.mediaManager.overlayMediaManager.attachOverlayMediaController(sharedApplicationContext.overlayMediaController)
             
