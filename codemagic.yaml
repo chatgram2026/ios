@@ -83,13 +83,47 @@ workflows:
       - name: Signing files
         script: |
           set -euo pipefail
+          # The key is pasted into Codemagic by hand, which can turn its line breaks into spaces or "\n", or it may
+          # come as base64: rebuild a proper PEM file from whatever form it has, and check it before using it.
+          mkdir -p "$HOME/chitgram-config"
+          python3 - <<'PYEOF'
+          import base64, os, re, sys
+          value = os.environ.get("CERTIFICATE_PRIVATE_KEY", "").strip().strip('"').strip("'")
+          value = value.replace("\\n", "\n").replace("\r", "")
+          if "-----BEGIN" not in value:
+              compact = re.sub(r"\s+", "", value)
+              try:
+                  decoded = base64.b64decode(compact + "=" * (-len(compact) % 4))
+              except Exception:
+                  decoded = b""
+              if b"-----BEGIN" in decoded:
+                  value = decoded.decode("utf-8", "replace")
+              elif decoded[:1] == b"\x30":
+                  value = "-----BEGIN RSA PRIVATE KEY-----\n" + compact + "\n-----END RSA PRIVATE KEY-----"
+          match = re.search(r"-----BEGIN ([A-Z ]+)-----(.*?)-----END \1-----", value, re.S)
+          if not match:
+              sys.exit("CERTIFICATE_PRIVATE_KEY does not hold a private key: paste the whole ios_distribution_private_key file")
+          kind = match.group(1)
+          body = re.sub(r"\s+", "", match.group(2))
+          lines = [body[i:i + 64] for i in range(0, len(body), 64)]
+          path = os.path.expanduser("~/chitgram-config/certificate_private_key.pem")
+          with open(path, "w") as output:
+              output.write("-----BEGIN %s-----\n%s\n-----END %s-----\n" % (kind, "\n".join(lines), kind))
+          os.chmod(path, 0o600)
+          print("Certificate key: %s, %d characters" % (kind, len(body)))
+          PYEOF
+          CERTIFICATE_KEY_FILE="$HOME/chitgram-config/certificate_private_key.pem"
+          if ! openssl rsa -in "$CERTIFICATE_KEY_FILE" -check -noout > /dev/null; then
+            echo "CERTIFICATE_PRIVATE_KEY is not a valid RSA private key: paste the whole ios_distribution_private_key file"
+            exit 1
+          fi
           keychain initialize
           # Creates the distribution certificate on the first build and an App Store profile for every App ID
           # that has none yet; later builds download them.
           for suffix in "" .Share .NotificationContent .NotificationService .SiriIntents .Widget .BroadcastUpload; do
             app-store-connect fetch-signing-files "$BUNDLE_ID$suffix" \
               --type IOS_APP_STORE \
-              --certificate-key=@env:CERTIFICATE_PRIVATE_KEY \
+              --certificate-key="@file:$CERTIFICATE_KEY_FILE" \
               --create
           done
           keychain add-certificates
