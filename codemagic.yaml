@@ -165,6 +165,41 @@ workflows:
                   json.dump(configuration, file, indent=2)
           PYEOF
 
+          # Make.py needs the app's own App Store profile with Push Notifications: say which profile is what, and stop
+          # here with the reason when that one is missing, instead of Make.py's bare "no aps-environment".
+          python3 - <<'PYEOF'
+          import glob, json, os, plistlib, subprocess, sys
+          configuration = json.load(open(os.path.expanduser("~/chitgram-config/configuration.json")))
+          team = configuration["team_id"]
+          bundle = configuration["bundle_id"]
+          main = None
+          prefixes = set()
+          for path in sorted(glob.glob(os.path.expanduser("~/chitgram-signing/profiles/*.mobileprovision"))):
+              data = subprocess.run(["openssl", "smime", "-inform", "der", "-verify", "-noverify", "-in", path],
+                                    stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).stdout
+              profile = plistlib.loads(data)
+              entitlements = profile.get("Entitlements", {})
+              identifier = entitlements.get("application-identifier", "")
+              prefix, _, app = identifier.partition(".")
+              prefixes.add(prefix)
+              groups = ",".join(entitlements.get("com.apple.security.application-groups", [])) or "none"
+              kind = "development or ad hoc" if profile.get("ProvisionedDevices") else "App Store"
+              print("Profile %s: %s (%s), prefix is the team: %s, push: %s, app groups: %s" % (
+                  os.path.basename(path)[:8], app, kind, "yes" if prefix == team else "NO",
+                  entitlements.get("aps-environment", "NONE"), groups))
+              if identifier == team + "." + bundle:
+                  main = entitlements
+          if main is None:
+              if any(prefix != team for prefix in prefixes):
+                  print("The App ID prefix of some profiles is not the team: the app's App ID was made with another prefix.")
+              sys.exit("No App Store profile for %s itself. Check that the App ID %s exists in the Apple Developer portal "
+                       "(Certificates, Identifiers & Profiles > Identifiers) in the same team as the App Store Connect key." % (bundle, bundle))
+          if "aps-environment" not in main:
+              sys.exit("The profile of %s has no Push Notifications. In the Apple Developer portal open the App ID %s, turn "
+                       "on Push Notifications and App Groups (group.%s), save, and build again: a new profile is made then." % (bundle, bundle, bundle))
+          print("Profile check: %s has an App Store profile with Push Notifications (%s)" % (bundle, main["aps-environment"]))
+          PYEOF
+
       - name: Build
         script: |
           set -uo pipefail
