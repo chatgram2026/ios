@@ -256,6 +256,10 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
     var didSetupDropToPaste: Bool = false
     // Chitgram: set while a send the user just confirmed re-enters its own path (see chitgramConfirmSend).
     var chitgramSendConfirmed: Bool = false
+    // Chitgram: the cover over a locked chat (see chitgramApplyChatLock), and whether it was opened.
+    var chitgramLockOverlay: UIView?
+    var chitgramUnlocked: Bool = false
+    var chitgramUnlockPrompted: Bool = false
     
     let context: AccountContext
     public internal(set) var chatLocation: ChatLocation
@@ -7727,6 +7731,8 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
     
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        // Chitgram: a locked chat stays covered until Face ID / Touch ID or its passcode opens it.
+        self.chitgramApplyChatLock()
 
         self.walletTransferAnimationsVisible = true
         self.chatDisplayNode.historyNode.forEachVisibleMessageItemNode { itemNode in
@@ -7906,6 +7912,8 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
         if let peerId = self.chatLocation.peerId {
             ChitgramAnsweredChats.shared.forget(peerId.toInt64())
         }
+        // Chitgram: ask to unlock once, as soon as a locked chat is on screen.
+        self.chitgramPromptUnlockIfNeeded()
 
         self.chatDisplayNode.historyNode.experimentalSnapScrollToItem = false
         self.chatDisplayNode.historyNode.canReadHistory.set(self.computedCanReadHistoryPromise.get())
@@ -8491,6 +8499,11 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
     override public func containerLayoutUpdated(_ layout: ContainerViewLayout, transition: ContainedViewLayoutTransition) {
         self.suspendNavigationBarLayout = true
         super.containerLayoutUpdated(layout, transition: transition)
+        // Chitgram: a preview never gets viewWillAppear, so a locked chat is covered here too.
+        if self.isPreviewingMode {
+            self.chitgramApplyChatLock()
+        }
+        self.chitgramLockOverlay?.frame = CGRect(origin: CGPoint(), size: layout.size)
         
         if self.isPreviewingMode, case let .peer(peerId) = self.chatLocation, peerId.namespace == Namespaces.Peer.SecretChat {
             // A previewing controller is hosted by a ContextController, which never calls

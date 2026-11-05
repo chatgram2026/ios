@@ -5,6 +5,7 @@ import AccountContext
 import AlertUI
 import PresentationDataUtils
 import ChitgramCore
+import ChitgramSettings
 
 // Chitgram: set by "Special forward" in the message menu for the forward it starts (main thread only).
 var chitgramForwardHidingSender = false
@@ -28,5 +29,58 @@ extension ChatControllerImpl {
             TextAlertAction(type: .genericAction, title: strings.Common_Cancel, action: {}),
             TextAlertAction(type: .defaultAction, title: strings.Common_OK, action: completion)
         ]), in: .window(.root))
+    }
+}
+
+// Chitgram: the chat lock (Android `SecretLockScreenDialog` on opening a locked chat).
+extension ChatControllerImpl {
+    /// Covers the chat when it is locked and not opened yet.
+    func chitgramApplyChatLock() {
+        guard !self.chitgramUnlocked, self.chitgramLockOverlay == nil, let peerId = self.chatLocation.peerId, ChitgramLock.isLocked(peerId.toInt64()) else {
+            return
+        }
+        let overlay = ChitgramChatLockOverlayView(theme: self.presentationData.theme, unlock: { [weak self] in
+            self?.chitgramRequestUnlock()
+        }, back: { [weak self] in
+            guard let self else {
+                return
+            }
+            if let navigationController = self.navigationController as? NavigationController {
+                let _ = navigationController.popViewController(animated: true)
+            } else {
+                self.dismiss()
+            }
+        })
+        overlay.frame = self.view.bounds
+        self.view.addSubview(overlay)
+        self.chitgramLockOverlay = overlay
+    }
+
+    /// Face ID / Touch ID right away, once; the passcode and the Unlock button stay for later tries.
+    func chitgramPromptUnlockIfNeeded() {
+        // Previews never get viewDidAppear, so this only runs for an opened chat.
+        if self.chitgramLockOverlay != nil && !self.chitgramUnlockPrompted {
+            self.chitgramUnlockPrompted = true
+            self.chitgramRequestUnlock()
+        }
+    }
+
+    func chitgramRequestUnlock() {
+        guard let peerId = self.chatLocation.peerId else {
+            return
+        }
+        let chatId = peerId.toInt64()
+        chitgramUnlock(context: self.context, title: ChitgramStrings.get(252), push: { [weak self] c in
+            (self?.navigationController as? NavigationController)?.pushViewController(c)
+        }, check: { passcode in
+            return ChitgramLock.check(chatId, passcode: passcode)
+        }, completion: { [weak self] in
+            guard let self else {
+                return
+            }
+            self.chitgramUnlocked = true
+            self.chitgramLockOverlay?.removeFromSuperview()
+            self.chitgramLockOverlay = nil
+        })
     }
 }

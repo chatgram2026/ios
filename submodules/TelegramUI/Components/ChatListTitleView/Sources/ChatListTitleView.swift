@@ -204,6 +204,8 @@ public final class ChatListTitleView: UIView, NavigationBarTitleView, Navigation
     
     public var toggleIsLocked: (() -> Void)?
     public var openProxySettings: (() -> Void)?
+    // Chitgram: the long press on the title (the secret folder), set by the main chat list while it is on screen.
+    public static var chitgramTitleLongPressed: (() -> Void)?
     
     private var isPasscodeSet = false
     private var isManuallyLocked = false
@@ -297,6 +299,7 @@ public final class ChatListTitleView: UIView, NavigationBarTitleView, Navigation
         }
         
         self.buttonView.addTarget(self, action: #selector(self.buttonPressed), for: .touchUpInside)
+        self.buttonView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(self.chitgramLongPressed(_:))))
         
         self.proxyButton.highligthedChanged = { [weak self] highlighted in
             if let strongSelf = self {
@@ -458,6 +461,12 @@ public final class ChatListTitleView: UIView, NavigationBarTitleView, Navigation
         return resultFrame
     }
     
+    @objc private func chitgramLongPressed(_ recognizer: UILongPressGestureRecognizer) {
+        if recognizer.state == .began {
+            ChatListTitleView.chitgramTitleLongPressed?()
+        }
+    }
+
     @objc private func buttonPressed() {
         self.toggleIsLocked?()
     }

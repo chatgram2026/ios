@@ -14,6 +14,8 @@ swift_library(
         "//submodules/ChitgramCore",
         "//submodules/ChitgramEngine",
         "//submodules/UndoUI:UndoUI",
+        "//submodules/LocalAuth:LocalAuth",
+        "//submodules/PasscodeUI:PasscodeUI",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",
         "//submodules/AsyncDisplayKit:AsyncDisplayKit",
         "//submodules/Display:Display",

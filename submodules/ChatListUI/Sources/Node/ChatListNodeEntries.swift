@@ -4,6 +4,7 @@ import TelegramCore
 import TelegramPresentationData
 import MergeLists
 import AccountContext
+import ChitgramCore
 
 enum ChatListNodeEntryId: Hashable {
     case Header
@@ -667,6 +668,11 @@ func chatListNodeEntriesForView(view: EngineChatList, state: ChatListNodeState, 
     
     var hasPinned = false
     
+    // Chitgram: chats in the secret folder are not in the chat list (Android: folder 100).
+    var chitgramSecretChats = Set<Int64>()
+    if case .chatList = mode, case .chatList = chatListLocation {
+        chitgramSecretChats = ChitgramLock.secretChats()
+    }
     loop: for entry in view.items {
         var peerId: EnginePeer.Id?
         var threadId: Int64?
@@ -684,6 +690,9 @@ func chatListNodeEntriesForView(view: EngineChatList, state: ChatListNodeState, 
             continue loop
         }
         if let peerId = peerId, state.pendingRemovalItemIds.contains(ChatListNodeState.ItemId(peerId: peerId, threadId: threadId)) {
+            continue loop
+        }
+        if threadId == nil, let peerId = peerId, chitgramSecretChats.contains(peerId.toInt64()) {
             continue loop
         }
         var updatedMessages = entry.messages

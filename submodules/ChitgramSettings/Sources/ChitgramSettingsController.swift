@@ -20,6 +20,7 @@ private enum ChitgramSettingsSection: Int32 {
     case download
     case autoAnswer
     case privacy
+    case chatLock
     case confirmations
     case roundVideo
     case folders
@@ -40,6 +41,8 @@ private enum ChitgramSettingsSection: Int32 {
             return 228
         case .privacy:
             return 244
+        case .chatLock:
+            return 252
         case .confirmations:
             return 190
         case .roundVideo:
@@ -75,6 +78,8 @@ private enum ChitgramSettingsRow: Int32 {
     case ghostUpload
     case ghostButton
     case hideSponsored
+    case secretChat
+    case changeCommonPassword
     case confirmSticker
     case confirmVoice
     case confirmGif
@@ -98,8 +103,10 @@ private enum ChitgramSettingsRow: Int32 {
             return .download
         case .autoAnswerActive, .autoAnswerText, .keywordWatch:
             return .autoAnswer
-        case .ghostMode, .ghostRead, .ghostOnline, .ghostTyping, .ghostUpload, .ghostButton, .hideSponsored:
+        case .ghostMode, .ghostRead, .ghostOnline, .ghostTyping, .ghostUpload, .ghostButton, .hideSponsored, .secretChat:
             return .privacy
+        case .changeCommonPassword:
+            return .chatLock
         case .confirmSticker, .confirmVoice, .confirmGif:
             return .confirmations
         case .roundCameraFront:
@@ -149,6 +156,10 @@ private enum ChitgramSettingsRow: Int32 {
             return 26
         case .hideSponsored:
             return 38
+        case .secretChat:
+            return 23
+        case .changeCommonPassword:
+            return 24
         case .confirmSticker:
             return 8
         case .confirmVoice:
@@ -212,6 +223,10 @@ private enum ChitgramSettingsRow: Int32 {
             return (342, 343)
         case .hideSponsored:
             return (566, 567)
+        case .secretChat:
+            return (213, 217)
+        case .changeCommonPassword:
+            return (251, -1)
         case .confirmSticker:
             return (210, 191)
         case .confirmVoice:
@@ -282,7 +297,7 @@ private enum ChitgramSettingsRow: Int32 {
             return .autoAcceptJoin
         case .reminderEnabled:
             return .reminderEnabled
-        case .reminderDelay, .reminderSound, .adminFolders, .adminFoldersRefresh:
+        case .reminderDelay, .reminderSound, .adminFolders, .adminFoldersRefresh, .secretChat, .changeCommonPassword:
             return nil
         case .apkShield:
             return .apkShield
@@ -311,6 +326,8 @@ private struct ChitgramSettingsState {
             return !self.autoDownload.cellular.enabled && !self.autoDownload.wifi.enabled
         case .adminFolders:
             return ChitgramAdminFolders.isEnabled(accountPeerId: self.accountPeerId)
+        case .secretChat:
+            return ChitgramLock.hasSecretPassword()
         default:
             return false
         }
@@ -363,7 +380,7 @@ private enum ChitgramSettingsEntry: ItemListNodeEntry {
         case let .toggle(row, title, text, value):
             // Admin folders change only after a confirmation and a server write, so its switch follows the stored
             // state instead of flipping on the tap.
-            return ItemListSwitchItem(presentationData: presentationData, systemStyle: .glass, title: title, text: text, value: value, enableInteractiveChanges: row != .adminFolders, maximumNumberOfLines: 2, sectionId: self.section, style: .blocks, updated: { value in
+            return ItemListSwitchItem(presentationData: presentationData, systemStyle: .glass, title: title, text: text, value: value, enableInteractiveChanges: row != .adminFolders && row != .secretChat, maximumNumberOfLines: 2, sectionId: self.section, style: .blocks, updated: { value in
                 arguments.toggle(row, value)
             })
         case let .button(row, title):
@@ -421,6 +438,13 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
     }
     toggle(.ghostButton)
     toggle(.hideSponsored)
+    toggle(.secretChat)
+
+    // Chat-lock management: only the common passcode's change, and only once there is one (Android: the same).
+    if ChitgramLock.hasCommonPassword() {
+        header(.chatLock)
+        button(.changeCommonPassword)
+    }
 
     header(.confirmations)
     toggle(.confirmSticker)
@@ -462,6 +486,7 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
     var pushControllerImpl: ((ViewController) -> Void)?
     var presentControllerImpl: ((ViewController) -> Void)?
     var reportAdminFolders: ((ChitgramAdminFolders.Result) -> Void)?
+    var showToast: ((String) -> Void)?
     let arguments = ChitgramSettingsArguments(toggle: { row, value in
         if let key = row.preferenceKey {
             preferences.set(value, for: key)
@@ -470,6 +495,56 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
         switch row {
         case .deleteSave:
             preferences.set(value ? ChitgramPreferences.DeletedCheckType.keep.rawValue : ChitgramPreferences.DeletedCheckType.off.rawValue, for: .deletedCheckType)
+        case .secretChat:
+            if !ChitgramLock.hasSecretPassword() {
+                // On: a passcode for the folder first.
+                chitgramSetupPasscode(context: context, push: { c in
+                    pushControllerImpl?(c)
+                }, completion: { passcode, numeric in
+                    ChitgramLock.setSecretPassword(passcode, numeric: numeric)
+                    showToast?(ChitgramStrings.get(38))
+                })
+            } else {
+                // Already on: change its passcode, or turn it off (the chats come back to the list).
+                let presentationData = context.sharedContext.currentPresentationData.with { $0 }
+                let actionSheet = ActionSheetController(presentationData: presentationData)
+                let unlockThen: (@escaping () -> Void) -> Void = { action in
+                    chitgramUnlock(context: context, title: ChitgramStrings.get(213), push: { c in
+                        pushControllerImpl?(c)
+                    }, check: { passcode in
+                        return ChitgramLock.checkSecretPassword(passcode)
+                    }, completion: action)
+                }
+                actionSheet.setItemGroups([
+                    ActionSheetItemGroup(items: [
+                        ActionSheetTextItem(title: ChitgramStrings.get(213), parseMarkdown: false),
+                        ActionSheetButtonItem(title: ChitgramStrings.get(9), color: .accent, action: { [weak actionSheet] in
+                            actionSheet?.dismissAnimated()
+                            unlockThen({
+                                chitgramSetupPasscode(context: context, push: { c in
+                                    pushControllerImpl?(c)
+                                }, completion: { passcode, numeric in
+                                    ChitgramLock.setSecretPassword(passcode, numeric: numeric)
+                                    showToast?(ChitgramStrings.get(37))
+                                })
+                            })
+                        }),
+                        ActionSheetButtonItem(title: ChitgramStrings.get(10), color: .destructive, action: { [weak actionSheet] in
+                            actionSheet?.dismissAnimated()
+                            unlockThen({
+                                ChitgramLock.removeSecretPassword()
+                                showToast?(ChitgramStrings.get(35))
+                            })
+                        })
+                    ]),
+                    ActionSheetItemGroup(items: [
+                        ActionSheetButtonItem(title: presentationData.strings.Common_Cancel, color: .accent, font: .bold, action: { [weak actionSheet] in
+                            actionSheet?.dismissAnimated()
+                        })
+                    ])
+                ])
+                presentControllerImpl?(actionSheet)
+            }
         case .adminFolders:
             // The folders are written to the Telegram account and show up on every device: say so first.
             let presentationData = context.sharedContext.currentPresentationData.with { $0 }
@@ -518,6 +593,20 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
             pushControllerImpl?(chitgramKeywordWatchController(context: context))
         case .autoAcceptJoin:
             pushControllerImpl?(chitgramAutoAcceptController(context: context))
+        case .changeCommonPassword:
+            // The current passcode first, then the new one.
+            chitgramUnlock(context: context, title: ChitgramStrings.get(252), push: { c in
+                pushControllerImpl?(c)
+            }, check: { passcode in
+                return ChitgramLock.checkCommonPassword(passcode)
+            }, completion: {
+                chitgramSetupPasscode(context: context, push: { c in
+                    pushControllerImpl?(c)
+                }, completion: { passcode, numeric in
+                    ChitgramLock.setCommonPassword(passcode, numeric: numeric)
+                    showToast?(ChitgramStrings.get(37))
+                })
+            })
         case .adminFoldersRefresh:
             let _ = (ChitgramAdminFolders.rebuild(context: context)
             |> deliverOnMainQueue).startStandalone(next: { result in
@@ -577,6 +666,10 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
     }
     presentControllerImpl = { [weak controller] c in
         controller?.present(c, in: .window(.root))
+    }
+    showToast = { text in
+        let presentationData = context.sharedContext.currentPresentationData.with { $0 }
+        presentControllerImpl?(UndoOverlayController(presentationData: presentationData, content: .info(title: nil, text: text, timeout: nil, customUndoText: nil), elevatedLayout: false, action: { _ in return false }))
     }
     // What a create or refresh did, in words (Android `reportAdminFolders`).
     reportAdminFolders = { result in

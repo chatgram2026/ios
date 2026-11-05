@@ -14,6 +14,7 @@ import PremiumUI
 import TelegramPresentationData
 import TelegramStringFormatting
 import ChatTimerScreen
+import ChitgramCore
 import NotificationPeerExceptionController
 
 func archiveContextMenuItems(context: AccountContext, group: EngineChatList.Group, chatListController: ChatListControllerImpl?) -> Signal<[ContextMenuItem], NoError> {
@@ -545,6 +546,14 @@ func chatContextMenuItems(context: AccountContext, peerId: EnginePeer.Id, promoI
                             }
                         }
                         
+                        // Chitgram: "Add to secret chat" once the secret folder has a passcode (Android: the chat's selection menu).
+                        if ChitgramLock.hasSecretPassword() && !isSavedMessages {
+                            items.append(.action(ContextMenuActionItem(text: ChitgramStrings.get(215), icon: { theme in generateTintedImage(image: UIImage(systemName: "lock"), color: theme.contextMenu.primaryColor) }, action: { _, f in
+                                f(.default)
+                                chatListController?.chitgramMoveToSecretFolder(peerId: peerId)
+                            })))
+                        }
+
                         let appendDeleteOrUngroupItem = {
                             if case .community = peer {
                                 items.append(.action(ContextMenuActionItem(text: strings.ChatList_Context_Ungroup, textColor: .destructive, icon: { theme in generateTintedImage(image: UIImage(bundleImageName: "Chat/Context Menu/Ungroup"), color: theme.contextMenu.destructiveColor) }, action: { _, f in

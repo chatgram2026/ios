@@ -2385,6 +2385,13 @@ public class ChatListControllerImpl: TelegramBaseController, ChatListController 
     
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        // Chitgram: a long press on the main chat list's title opens the secret folder.
+        if case .chatList(.root) = self.location {
+            ChatListTitleView.chitgramTitleLongPressed = { [weak self] in
+                self?.chitgramOpenSecretFolder()
+            }
+            self.chitgramRefreshSecretChats()
+        }
                 
         if self.powerSavingMonitoringDisposable == nil {
             self.powerSavingMonitoringDisposable = (self.context.sharedContext.automaticMediaDownloadSettings

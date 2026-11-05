@@ -7,17 +7,21 @@ import TelegramPresentationData
 import ItemListUI
 import PresentationDataUtils
 import AccountContext
+import UndoUI
 import ChitgramCore
+import ChitgramSettings
 
 private final class ChitgramChatToolsArguments {
     let toggleOneTime: (Bool) -> Void
     let toggleAutoText: (Bool) -> Void
     let editAutoText: () -> Void
+    let toggleLock: () -> Void
 
-    init(toggleOneTime: @escaping (Bool) -> Void, toggleAutoText: @escaping (Bool) -> Void, editAutoText: @escaping () -> Void) {
+    init(toggleOneTime: @escaping (Bool) -> Void, toggleAutoText: @escaping (Bool) -> Void, editAutoText: @escaping () -> Void, toggleLock: @escaping () -> Void) {
         self.toggleOneTime = toggleOneTime
         self.toggleAutoText = toggleAutoText
         self.editAutoText = editAutoText
+        self.toggleLock = toggleLock
     }
 }
 
@@ -26,9 +30,16 @@ private enum ChitgramChatToolsEntry: ItemListNodeEntry {
     case oneTime(Bool)
     case autoText(Bool)
     case autoTextEdit(String)
+    case lock(Bool)
+    case lockFooter(String)
 
     var section: ItemListSectionId {
-        return 0
+        switch self {
+        case .lock, .lockFooter:
+            return 1
+        default:
+            return 0
+        }
     }
 
     var stableId: Int32 {
@@ -41,6 +52,10 @@ private enum ChitgramChatToolsEntry: ItemListNodeEntry {
             return 2
         case .autoTextEdit:
             return 3
+        case .lock:
+            return 4
+        case .lockFooter:
+            return 5
         }
     }
 
@@ -65,6 +80,12 @@ private enum ChitgramChatToolsEntry: ItemListNodeEntry {
             return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, title: ChitgramStrings.get(302), label: current, sectionId: self.section, style: .blocks, action: {
                 arguments.editAutoText()
             })
+        case let .lock(isLocked):
+            return ItemListActionItem(presentationData: presentationData, systemStyle: .glass, title: ChitgramStrings.get(isLocked ? 247 : 246), kind: isLocked ? .destructive : .generic, alignment: .natural, sectionId: self.section, style: .blocks, action: {
+                arguments.toggleLock()
+            })
+        case let .lockFooter(text):
+            return ItemListTextItem(presentationData: presentationData, text: .plain(text), sectionId: self.section)
         }
     }
 }
@@ -74,6 +95,11 @@ private enum ChitgramChatToolsEntry: ItemListNodeEntry {
 public func chitgramChatToolsController(context: AccountContext, peerId: EnginePeer.Id) -> ViewController {
     let chatId = peerId.toInt64()
     var pushControllerImpl: ((ViewController) -> Void)?
+    var presentControllerImpl: ((ViewController) -> Void)?
+    let showToast: (String) -> Void = { text in
+        let presentationData = context.sharedContext.currentPresentationData.with { $0 }
+        presentControllerImpl?(UndoOverlayController(presentationData: presentationData, content: .info(title: nil, text: text, timeout: nil, customUndoText: nil), elevatedLayout: false, action: { _ in return false }))
+    }
     let arguments = ChitgramChatToolsArguments(toggleOneTime: { value in
         ChitgramPerChat.setOneTimeMedia(chatId, value)
     }, toggleAutoText: { value in
@@ -82,6 +108,52 @@ public func chitgramChatToolsController(context: AccountContext, peerId: EngineP
         ChitgramPerChat.setAutoText(chatId, autoText)
     }, editAutoText: {
         pushControllerImpl?(chitgramAutoTextEditorController(context: context, chatId: chatId))
+    }, toggleLock: {
+        let push: (ViewController) -> Void = { c in
+            pushControllerImpl?(c)
+        }
+        if ChitgramLock.isLocked(chatId) {
+            // Unlocking asks for the chat's passcode first.
+            chitgramUnlock(context: context, title: ChitgramStrings.get(252), push: push, check: { passcode in
+                return ChitgramLock.check(chatId, passcode: passcode)
+            }, completion: {
+                ChitgramLock.unlock(chatId)
+            })
+            return
+        }
+        // Android: "How to lock this chat?" — with the common passcode, or a passcode of its own.
+        let presentationData = context.sharedContext.currentPresentationData.with { $0 }
+        let actionSheet = ActionSheetController(presentationData: presentationData)
+        actionSheet.setItemGroups([
+            ActionSheetItemGroup(items: [
+                ActionSheetTextItem(title: ChitgramStrings.get(248), parseMarkdown: false),
+                ActionSheetButtonItem(title: ChitgramStrings.get(249), color: .accent, action: { [weak actionSheet] in
+                    actionSheet?.dismissAnimated()
+                    if ChitgramLock.hasCommonPassword() {
+                        ChitgramLock.addCommonLock(chatId)
+                    } else {
+                        chitgramSetupPasscode(context: context, push: push, completion: { passcode, numeric in
+                            ChitgramLock.setCommonPassword(passcode, numeric: numeric)
+                            ChitgramLock.addCommonLock(chatId)
+                            showToast(ChitgramStrings.get(38))
+                        })
+                    }
+                }),
+                ActionSheetButtonItem(title: ChitgramStrings.get(250), color: .accent, action: { [weak actionSheet] in
+                    actionSheet?.dismissAnimated()
+                    chitgramSetupPasscode(context: context, push: push, completion: { passcode, numeric in
+                        ChitgramLock.addIndividualLock(chatId, passcode: passcode, numeric: numeric)
+                        showToast(ChitgramStrings.get(38))
+                    })
+                })
+            ]),
+            ActionSheetItemGroup(items: [
+                ActionSheetButtonItem(title: presentationData.strings.Common_Cancel, color: .accent, font: .bold, action: { [weak actionSheet] in
+                    actionSheet?.dismissAnimated()
+                })
+            ])
+        ])
+        presentControllerImpl?(actionSheet)
     })
 
     let signal = combineLatest(queue: .mainQueue(), context.sharedContext.presentationData, ChitgramPreferences.shared.changes)
@@ -90,7 +162,9 @@ public func chitgramChatToolsController(context: AccountContext, peerId: EngineP
             .header(ChitgramStrings.get(305)),
             .oneTime(ChitgramPerChat.isOneTimeMedia(chatId)),
             .autoText(ChitgramPerChat.autoText(chatId).active),
-            .autoTextEdit(ChitgramPerChat.autoText(chatId).text)
+            .autoTextEdit(ChitgramPerChat.autoText(chatId).text),
+            .lock(ChitgramLock.isLocked(chatId)),
+            .lockFooter(ChitgramStrings.get(341))
         ]
         let controllerState = ItemListControllerState(
             presentationData: ItemListPresentationData(presentationData),
@@ -105,6 +179,9 @@ public func chitgramChatToolsController(context: AccountContext, peerId: EngineP
     let controller = ItemListController(context: context, state: signal)
     pushControllerImpl = { [weak controller] c in
         controller?.push(c)
+    }
+    presentControllerImpl = { [weak controller] c in
+        controller?.present(c, in: .window(.root))
     }
     return controller
 }
