@@ -5055,6 +5055,10 @@ class ChatControllerNode: ASDisplayNode, ASScrollViewDelegate {
         guard let textInputPanelNode = self.inputPanelNode as? ChatTextInputPanelNode else {
             return
         }
+        // Chitgram: auto-translate (Android AutoTranslate): the first Send translates the text in place.
+        if scheduleTime == nil, self.controller?.chitgramAutoTranslateBeforeSend(textInputPanelNode.inputTextState) == true {
+            return
+        }
         self.historyNode.justSentTextMessage = true
         
         if let richTextInputNode = textInputPanelNode.richTextInputNode, richTextInputNode.isInputFirstResponder {

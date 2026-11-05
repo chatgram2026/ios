@@ -2,6 +2,8 @@ import Foundation
 import UIKit
 import Display
 import AccountContext
+import SwiftSignalKit
+import UndoUI
 import TelegramCore
 import AlertUI
 import PresentationDataUtils
@@ -136,4 +138,54 @@ func chitgramApplyTextStyle(_ attributes: [EngineMessage.Attribute], text: Strin
         result.append(TextEntitiesMessageAttribute(entities: entities))
     }
     return result
+}
+
+// Chitgram: the text the last auto-translate put in the input box; sending that text sends it as it is.
+private var chitgramAutoTranslatedText: String?
+private var chitgramAutoTranslating = false
+
+extension ChatControllerImpl {
+    /// Auto-translate (Android `AutoTranslate`): with a language set for this chat, the first Send translates the
+    /// typed text and shows it in the input box; the second Send sends it. True when the send should wait.
+    func chitgramAutoTranslateBeforeSend(_ state: ChatTextInputState) -> Bool {
+        guard let peerId = self.chatLocation.peerId, let language = ChitgramAutoTranslate.language(peerId.toInt64()) else {
+            return false
+        }
+        let text = state.inputText.string
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return false
+        }
+        if text == chitgramAutoTranslatedText {
+            chitgramAutoTranslatedText = nil
+            return false
+        }
+        if chitgramAutoTranslating {
+            return true
+        }
+        chitgramAutoTranslating = true
+        self.present(UndoOverlayController(presentationData: self.presentationData, content: .info(title: nil, text: ChitgramStrings.get(327), timeout: 1.5, customUndoText: nil), elevatedLayout: false, action: { _ in return false }), in: .current)
+        let _ = (self.context.engine.messages.translate(text: text, toLang: language)
+        |> deliverOnMainQueue).startStandalone(next: { [weak self] result in
+            chitgramAutoTranslating = false
+            guard let self else {
+                return
+            }
+            if let (translated, _) = result, !translated.isEmpty {
+                chitgramAutoTranslatedText = translated
+                self.updateTextInputState(ChatTextInputState(inputText: NSAttributedString(string: translated)))
+            } else {
+                // Nothing to show: the next Send sends the text as it is.
+                chitgramAutoTranslatedText = text
+                self.present(UndoOverlayController(presentationData: self.presentationData, content: .info(title: nil, text: ChitgramStrings.get(328), timeout: nil, customUndoText: nil), elevatedLayout: false, action: { _ in return false }), in: .current)
+            }
+        }, error: { [weak self] _ in
+            chitgramAutoTranslating = false
+            chitgramAutoTranslatedText = text
+            guard let self else {
+                return
+            }
+            self.present(UndoOverlayController(presentationData: self.presentationData, content: .info(title: nil, text: ChitgramStrings.get(328), timeout: nil, customUndoText: nil), elevatedLayout: false, action: { _ in return false }), in: .current)
+        })
+        return true
+    }
 }

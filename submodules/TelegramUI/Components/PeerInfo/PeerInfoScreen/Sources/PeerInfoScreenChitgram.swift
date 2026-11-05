@@ -25,6 +25,18 @@ extension PeerInfoScreenNode {
             self?.chitgramOpenTextStyle()
         })))
 
+        // Auto-translate of outgoing messages (Android `AutoTranslatePicker`), where the account can write.
+        if self.peerId.namespace != Namespaces.Peer.SecretChat {
+            let current = ChitgramAutoTranslate.language(peer.id.toInt64())
+            let title = ChitgramStrings.get(324) + (current.map { " \u{00B7} " + ChitgramAutoTranslate.displayName($0) } ?? "")
+            items.append(.action(ContextMenuActionItem(text: title, icon: { theme in
+                return generateTintedImage(image: UIImage(systemName: "character.bubble"), color: theme.contextMenu.primaryColor)
+            }, action: { [weak self] _, f in
+                f(.dismissWithoutContent)
+                self?.chitgramOpenAutoTranslate(peerId: peer.id)
+            })))
+        }
+
         // Chat id as the row's label; tapping copies it (Android `show_chat_id`).
         let chatId = chitgramRecognizableId(peer.id)
         items.append(.action(ContextMenuActionItem(text: chatId, icon: { theme in
@@ -72,6 +84,33 @@ extension PeerInfoScreenNode {
             }
         }
         return items
+    }
+
+    private func chitgramOpenAutoTranslate(peerId: EnginePeer.Id) {
+        let chat = peerId.toInt64()
+        let current = ChitgramAutoTranslate.language(chat)
+        let actionSheet = ActionSheetController(presentationData: self.presentationData)
+        var items: [ActionSheetItem] = [ActionSheetTextItem(title: ChitgramStrings.get(325), parseMarkdown: false)]
+        items.append(ActionSheetButtonItem(title: (current == nil ? "\u{2713} " : "") + ChitgramStrings.get(326), color: .accent, action: { [weak actionSheet] in
+            actionSheet?.dismissAnimated()
+            ChitgramAutoTranslate.setLanguage(chat, nil)
+        }))
+        for language in ChitgramAutoTranslate.languages {
+            let title = (language == current ? "\u{2713} " : "") + ChitgramAutoTranslate.displayName(language)
+            items.append(ActionSheetButtonItem(title: title, color: .accent, action: { [weak actionSheet] in
+                actionSheet?.dismissAnimated()
+                ChitgramAutoTranslate.setLanguage(chat, language)
+            }))
+        }
+        actionSheet.setItemGroups([
+            ActionSheetItemGroup(items: items),
+            ActionSheetItemGroup(items: [
+                ActionSheetButtonItem(title: ChitgramStrings.get(177), color: .accent, font: .bold, action: { [weak actionSheet] in
+                    actionSheet?.dismissAnimated()
+                })
+            ])
+        ])
+        self.controller?.present(actionSheet, in: .window(.root))
     }
 
     private func chitgramOpenTextStyle() {
