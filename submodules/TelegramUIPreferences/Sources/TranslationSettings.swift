@@ -8,7 +8,8 @@ public struct TranslationSettings: Codable, Equatable {
     public var ignoredLanguages: [String]?
     
     public static var defaultSettings: TranslationSettings {
-        return TranslationSettings(showTranslate: false, translateChats: true, ignoredLanguages: nil)
+        // Chitgram: the Translate button is on from the start, as on Android.
+        return TranslationSettings(showTranslate: true, translateChats: true, ignoredLanguages: nil)
     }
     
     init(showTranslate: Bool, translateChats: Bool, ignoredLanguages: [String]?) {

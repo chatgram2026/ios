@@ -19,6 +19,7 @@ import WalletContext
 import UndoUI
 import StorageUsageScreen
 import ChitgramSettings
+import ChitgramEngine
 
 extension PeerInfoScreenNode {
     func openSettings(section: PeerInfoSettingsSection) {
@@ -226,21 +227,22 @@ extension PeerInfoScreenNode {
                 guard let strongSelf = self else {
                     return
                 }
-                var maximumAvailableAccounts: Int = 3
-                if accountAndPeer?.1.isPremium == true && !strongSelf.context.account.testingEnvironment {
-                    maximumAvailableAccounts = 4
-                }
+                // Chitgram: 10 accounts, 32 with Chitgram Premium on any of them (Android UserConfig
+                // MAX_ACCOUNT_DEFAULT_COUNT / MAX_ACCOUNT_COUNT); over the limit the Chitgram Premium page opens.
+                var maximumAvailableAccounts: Int = ChitgramPremium.isActive(accountPeerId: strongSelf.context.account.peerId) ? 32 : 10
                 var count: Int = 1
-                for (accountContext, peer, _) in accountsAndPeers {
+                for (accountContext, _, _) in accountsAndPeers {
                     if !accountContext.account.testingEnvironment {
-                        if peer.isPremium {
-                            maximumAvailableAccounts = 4
+                        if ChitgramPremium.isActive(accountPeerId: accountContext.account.peerId) {
+                            maximumAvailableAccounts = 32
                         }
                         count += 1
                     }
                 }
                 
                 if count >= maximumAvailableAccounts {
+                    strongSelf.controller?.push(chitgramSectionController(context: strongSelf.context, row: .premium))
+                } else if count >= Int.max {
                     var replaceImpl: ((ViewController) -> Void)?
                     let controller = PremiumLimitScreen(context: strongSelf.context, subject: .accounts, count: Int32(count), action: {
                         let controller = PremiumIntroScreen(context: strongSelf.context, source: .accounts)
