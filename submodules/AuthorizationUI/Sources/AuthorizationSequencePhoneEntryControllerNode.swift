@@ -16,6 +16,7 @@ import SolidRoundedButtonNode
 import AuthorizationUtils
 import ManagedAnimationNode
 import Markdown
+import ChitgramCore
 
 private final class PhoneAndCountryNode: ASDisplayNode {
     let strings: PresentationStrings
@@ -319,6 +320,10 @@ final class AuthorizationSequencePhoneEntryControllerNode: ASDisplayNode {
     private let proceedNode: SolidRoundedButtonNode
     
     private var qrNode: ASImageNode?
+    // Chitgram: the brand top-left and the QR login button top-right (Android `LoginActivity`), and the QR card.
+    private var chitgramBrandLabel: UILabel?
+    private var chitgramQrButton: UIButton?
+    private var chitgramQrCard: UIView?
     private let exportTokenDisposable = MetaDisposable()
     private let tokenEventsDisposable = MetaDisposable()
     var accountUpdated: ((UnauthorizedAccount) -> Void)?
@@ -504,6 +509,21 @@ final class AuthorizationSequencePhoneEntryControllerNode: ASDisplayNode {
         super.didLoad()
         
         self.titleNode.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.debugTap(_:))))
+
+        // Chitgram: "Chitgram" top-left and the QR login button top-right, as on Android.
+        let brandLabel = UILabel()
+        brandLabel.text = "Chitgram"
+        brandLabel.font = UIFont.systemFont(ofSize: 20.0, weight: .bold)
+        brandLabel.textColor = self.theme.list.itemAccentColor
+        self.view.addSubview(brandLabel)
+        self.chitgramBrandLabel = brandLabel
+        let qrButton = UIButton(type: .system)
+        qrButton.setImage(UIImage(systemName: "qrcode", withConfiguration: UIImage.SymbolConfiguration(pointSize: 22.0, weight: .regular)), for: .normal)
+        qrButton.tintColor = self.theme.list.itemAccentColor
+        qrButton.accessibilityLabel = ChitgramStrings.get(258)
+        qrButton.addTarget(self, action: #selector(self.chitgramQrPressed), for: .touchUpInside)
+        self.view.addSubview(qrButton)
+        self.chitgramQrButton = qrButton
         #if DEBUG && false
         self.noticeNode.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.debugQrTap(_:))))
         #endif
@@ -605,6 +625,11 @@ final class AuthorizationSequencePhoneEntryControllerNode: ASDisplayNode {
         
         let titleInset: CGFloat = layout.size.width > 320.0 ? 18.0 : 0.0
         let additionalBottomInset: CGFloat = layout.size.width > 320.0 ? 80.0 : 10.0
+
+        // Chitgram: the brand and the QR button sit just under the status bar; the QR card stays centred.
+        self.chitgramBrandLabel?.frame = CGRect(x: 20.0, y: insets.top + 12.0, width: 160.0, height: 28.0)
+        self.chitgramQrButton?.frame = CGRect(x: layout.size.width - 16.0 - 44.0, y: insets.top + 4.0, width: 44.0, height: 44.0)
+        self.chitgramQrCard?.center = CGPoint(x: layout.size.width / 2.0, y: layout.size.height / 2.0)
         
         self.titleNode.attributedText = NSAttributedString(string: self.account == nil ? self.strings.Login_NewNumber : self.strings.Login_PhoneTitle, font: Font.bold(28.0), textColor: self.theme.list.itemPrimaryTextColor)
         self.titleActivateAreaNode.accessibilityLabel = self.titleNode.attributedText?.string ?? ""
@@ -710,6 +735,57 @@ final class AuthorizationSequencePhoneEntryControllerNode: ASDisplayNode {
         }
     }
     
+    /// Chitgram: QR login (Android `QrLoginController`): a card with the code another device scans under
+    /// Settings ▸ Devices ▸ Link Device; Telegram's own token export behind it. A second tap hides it.
+    @objc private func chitgramQrPressed() {
+        if let card = self.chitgramQrCard {
+            card.removeFromSuperview()
+            self.chitgramQrCard = nil
+            self.qrNode = nil
+            self.exportTokenDisposable.set(nil)
+            return
+        }
+        let card = UIView()
+        card.backgroundColor = .white
+        card.layer.cornerRadius = 20.0
+        card.layer.shadowColor = UIColor.black.cgColor
+        card.layer.shadowOpacity = 0.2
+        card.layer.shadowRadius = 16.0
+        card.layer.shadowOffset = CGSize()
+
+        let titleLabel = UILabel()
+        titleLabel.text = ChitgramStrings.get(258)
+        titleLabel.font = UIFont.systemFont(ofSize: 18.0, weight: .semibold)
+        titleLabel.textColor = .black
+        titleLabel.textAlignment = .center
+        titleLabel.frame = CGRect(x: 16.0, y: 16.0, width: 248.0, height: 24.0)
+        card.addSubview(titleLabel)
+
+        let qrNode = ASImageNode()
+        qrNode.displaysAsynchronously = false
+        qrNode.frame = CGRect(x: 40.0, y: 52.0, width: 200.0, height: 200.0)
+        card.addSubview(qrNode.view)
+        self.qrNode = qrNode
+
+        let textLabel = UILabel()
+        textLabel.text = ChitgramStrings.get(259)
+        textLabel.font = UIFont.systemFont(ofSize: 14.0)
+        textLabel.textColor = UIColor(white: 0.25, alpha: 1.0)
+        textLabel.numberOfLines = 0
+        let textSize = textLabel.sizeThatFits(CGSize(width: 248.0, height: 400.0))
+        textLabel.frame = CGRect(x: 16.0, y: 264.0, width: 248.0, height: textSize.height)
+        card.addSubview(textLabel)
+
+        card.bounds = CGRect(x: 0.0, y: 0.0, width: 280.0, height: 264.0 + textSize.height + 16.0)
+        card.center = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
+        card.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.chitgramQrPressed)))
+        self.view.addSubview(card)
+        self.chitgramQrCard = card
+        self.view.endEditing(true)
+
+        self.refreshQrToken()
+    }
+
     @objc private func debugQrTap(_ recognizer: UITapGestureRecognizer) {
         if self.qrNode == nil {
             let qrNode = ASImageNode()
