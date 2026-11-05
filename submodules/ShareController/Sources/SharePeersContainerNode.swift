@@ -13,6 +13,7 @@ import PeerPresenceStatusManager
 import AppBundle
 import SegmentedControlNode
 import ContextUI
+import ChitgramCore
 
 private let subtitleFont = Font.regular(12.0)
 
@@ -145,6 +146,16 @@ final class SharePeersContainerNode: ASDisplayNode, ShareContentContainerNode {
         }
     }
     private let tick = ValuePromise<Int>(0)
+
+    // Chitgram: the categories row (Android `ShareBar`).
+    private let chitgramCategory = ValuePromise<ChitgramShareCategory>(.all, ignoreRepeated: true)
+    private var chitgramCategoryValue: ChitgramShareCategory = .all
+    private let chitgramFolders = Promise<[ChatListFilter]>([])
+    private var chitgramFoldersValue: [ChatListFilter] = []
+    private var chitgramFoldersDisposable: Disposable?
+    private var chitgramBar: ChitgramShareCategoryBar?
+    /// Shown in place of the category line after a bulk tick hit the cap, until the category changes.
+    private var chitgramHint: String?
     
     init(environment: ShareControllerEnvironment, context: ShareControllerAccountContext, switchableAccounts: [ShareControllerSwitchableAccount], theme: PresentationTheme, strings: PresentationStrings, nameDisplayOrder: PresentationPersonNameOrder, peers: [(peer: EngineRenderedPeer, presence: EnginePeer.Presence?, requiresPremiumForMessaging: Bool, requiresStars: Int64?)], accountPeer: EnginePeer, controllerInteraction: ShareControllerInteraction, externalShare: Bool, isMainApp: Bool, switchToAnotherAccount: @escaping () -> Void, debugAction: @escaping () -> Void, extendedInitialReveal: Bool, segmentedValues: [ShareControllerSegmentedValue]?, fromPublicChannel: Bool) {
         self.environment = environment
@@ -165,12 +176,13 @@ final class SharePeersContainerNode: ASDisplayNode, ShareContentContainerNode {
         
         let canShareStory = controllerInteraction.shareStory != nil
         
-        let items: Signal<[SharePeerEntry], NoError> = combineLatest(self.peersValue.get(), self.foundPeers.get(), self.tick.get(), self.themePromise.get())
-        |> map { [weak controllerInteraction] initialPeers, foundPeers, _, theme -> [SharePeerEntry] in
+        let items: Signal<[SharePeerEntry], NoError> = combineLatest(self.peersValue.get(), self.foundPeers.get(), self.tick.get(), self.themePromise.get(), self.chitgramCategory.get(), self.chitgramFolders.get())
+        |> map { [weak controllerInteraction] initialPeers, foundPeers, _, theme, chitgramCategory, chitgramFolders -> [SharePeerEntry] in
             var entries: [SharePeerEntry] = []
             var index: Int32 = 0
             
-            if canShareStory {
+            // Chitgram: "My story" and Saved Messages only under All (Android `ShareBar.filter`).
+            if canShareStory && chitgramCategory == .all {
                 let storyMode: ShareControllerPeerGridItem.ShareItem.StoryMode
                 if fromPublicChannel {
                     storyMode = .repostMessage
@@ -186,9 +198,11 @@ final class SharePeersContainerNode: ASDisplayNode, ShareContentContainerNode {
             }
             
             var existingPeerIds: Set<EnginePeer.Id> = Set()
-            entries.append(SharePeerEntry(index: index, item: .peer(peer: EngineRenderedPeer(peer: accountPeer), presence: nil, topicId: nil, threadData: nil, requiresPremiumForMessaging: false, requiresStars: nil), theme: theme, strings: strings))
+            if chitgramCategory == .all {
+                entries.append(SharePeerEntry(index: index, item: .peer(peer: EngineRenderedPeer(peer: accountPeer), presence: nil, topicId: nil, threadData: nil, requiresPremiumForMessaging: false, requiresStars: nil), theme: theme, strings: strings))
+                index += 1
+            }
             existingPeerIds.insert(accountPeer.id)
-            index += 1
             
             for (peer, requiresPremiumForMessaging) in foundPeers.reversed() {
                 if !existingPeerIds.contains(peer.peerId) {
@@ -199,7 +213,7 @@ final class SharePeersContainerNode: ASDisplayNode, ShareContentContainerNode {
             }
             
             for (peer, presence, requiresPremiumForMessaging, requiresStars) in initialPeers {
-                if !existingPeerIds.contains(peer.peerId) {
+                if !existingPeerIds.contains(peer.peerId) && chitgramShareCategoryContains(chitgramCategory, peer: peer, folders: chitgramFolders) {
                     let thread = controllerInteraction?.selectedTopics[peer.peerId]
                     entries.append(SharePeerEntry(index: index, item: .peer(peer: peer, presence: presence, topicId: thread?.0, threadData: thread?.1, requiresPremiumForMessaging: requiresPremiumForMessaging, requiresStars: requiresStars), theme: theme, strings: strings))
                     existingPeerIds.insert(peer.peerId)
@@ -288,6 +302,28 @@ final class SharePeersContainerNode: ASDisplayNode, ShareContentContainerNode {
         self.headerNode.addSubnode(self.shareButtonNode)
         
         self.addSubnode(self.contentSeparatorNode)
+
+        // Chitgram: the categories row, where the sheet lists chats to pick (not with segments).
+        if segmentedValues == nil {
+            let bar = ChitgramShareCategoryBar(theme: theme)
+            bar.selected = { [weak self] category in
+                self?.chitgramSelectCategory(category)
+            }
+            bar.action = { [weak self] in
+                self?.chitgramCategoryAction()
+            }
+            self.contentGridNode.scrollView.addSubview(bar)
+            self.chitgramBar = bar
+            self.chitgramFoldersDisposable = (context.engineData.subscribe(TelegramEngine.EngineData.Item.ChatList.ChitgramFilters())
+            |> deliverOnMainQueue).start(next: { [weak self] filters in
+                guard let self else {
+                    return
+                }
+                self.chitgramFoldersValue = filters
+                self.chitgramFolders.set(.single(filters))
+                self.chitgramUpdateBar()
+            })
+        }
         
         self.shareContainerNode.activated = { [weak self] gesture, _ in
             guard let strongSelf = self else {
@@ -306,6 +342,7 @@ final class SharePeersContainerNode: ASDisplayNode, ShareContentContainerNode {
                 let firstTime = previousEntries == nil
                 let transition = preparedGridEntryTransition(environment: environment, context: context, from: previousEntries ?? [], to: entries, interfaceInteraction: controllerInteraction)
                 strongSelf.enqueueTransition(transition, firstTime: firstTime)
+                strongSelf.chitgramUpdateBar()
             }
         }))
         
@@ -330,6 +367,7 @@ final class SharePeersContainerNode: ASDisplayNode, ShareContentContainerNode {
     
     deinit {
         self.disposable.dispose()
+        self.chitgramFoldersDisposable?.dispose()
     }
     
     func updateTheme(_ theme: PresentationTheme) {
@@ -601,6 +639,12 @@ final class SharePeersContainerNode: ASDisplayNode, ShareContentContainerNode {
         
         self.contentGridNode.transaction(GridNodeTransaction(deleteItems: [], insertItems: [], updateItems: [], scrollToItem: scrollToItem, updateLayout: GridNodeUpdateLayout(layout: GridNodeLayout(size: gridSize, insets: UIEdgeInsets(top: gridTopInset, left: 0.0, bottom: bottomInset, right: 0.0), preloadSize: 80.0, type: .fixed(itemSize: CGSize(width: itemWidth, height: itemWidth + 25.0), fillWidth: nil, lineSpacing: 0.0, itemSpacing: nil)), transition: gridLayoutTransition), itemTransition: .immediate, stationaryItems: .none, updateFirstIndexInSectionOffset: nil), completion: { _ in })
         gridLayoutTransition.updateFrame(node: self.contentGridNode, frame: CGRect(origin: CGPoint(x: floor((size.width - gridSize.width) / 2.0), y: 0.0), size: gridSize))
+
+        // Chitgram: the categories row just above the first row of chats, inside the grid's scroll view.
+        if let bar = self.chitgramBar {
+            bar.isHidden = self.isEmbedded
+            bar.frame = CGRect(x: 0.0, y: -ChitgramShareCategoryBar.height, width: gridSize.width, height: ChitgramShareCategoryBar.height)
+        }
         
         if firstLayout {
             while !self.enqueuedTransitions.isEmpty {
@@ -619,7 +663,9 @@ final class SharePeersContainerNode: ASDisplayNode, ShareContentContainerNode {
         
         let titleAreaHeight: CGFloat = 64.0
         
-        let rawTitleOffset = -titleAreaHeight - presentationLayout.contentOffset.y
+        // Chitgram: the header sits above the categories row, which sits above the first row of chats.
+        let chitgramBarHeight: CGFloat = (self.chitgramBar != nil && !self.isEmbedded) ? ChitgramShareCategoryBar.height : 0.0
+        let rawTitleOffset = -titleAreaHeight - chitgramBarHeight - presentationLayout.contentOffset.y
         let titleOffset = max(-titleAreaHeight, rawTitleOffset)
         
         let headerFrame = CGRect(origin: CGPoint(x: 0.0, y: titleOffset), size: CGSize(width: size.width, height: 64.0))
@@ -661,7 +707,7 @@ final class SharePeersContainerNode: ASDisplayNode, ShareContentContainerNode {
             self.contentSeparatorNode.alpha = 0.0
         }
         
-        self.contentOffsetUpdated?(presentationLayout.contentOffset.y, actualTransition)
+        self.contentOffsetUpdated?(presentationLayout.contentOffset.y + chitgramBarHeight, actualTransition)
     }
     
     func updateVisibleItemsSelection(animated: Bool) {
@@ -681,6 +727,7 @@ final class SharePeersContainerNode: ASDisplayNode, ShareContentContainerNode {
     }
     
     func updateSelectedPeers(animated: Bool = true) {
+        self.chitgramUpdateBar()
         if self.segmentedValues != nil {
             self.contentTitleNode.isHidden = true
             self.contentSubtitleNode.isHidden = true
@@ -778,4 +825,103 @@ func generatePeersMaskImage() -> UIImage? {
             context.fillPath()
         }
     })?.stretchableImage(withLeftCapWidth: 49, topCapHeight: 49)
+}
+
+// Chitgram: the categories row (Android `ShareBar`).
+extension SharePeersContainerNode {
+    /// The chats the grid shows now, other than Saved Messages, and whether each can be ticked in bulk (not one that
+    /// needs Premium or Stars to message, nor a forum, which asks for a topic).
+    fileprivate func chitgramVisiblePeers() -> [(peer: EngineRenderedPeer, eligible: Bool)] {
+        var result: [(peer: EngineRenderedPeer, eligible: Bool)] = []
+        for entry in self.entries {
+            guard case let .peer(peer, _, _, _, requiresPremiumForMessaging, requiresStars) = entry.item, peer.peerId != self.accountPeer.id else {
+                continue
+            }
+            var eligible = !requiresPremiumForMessaging && requiresStars == nil
+            if case let .channel(channel) = peer.peer, channel.isForumOrMonoForum {
+                eligible = false
+            }
+            result.append((peer, eligible))
+        }
+        return result
+    }
+
+    fileprivate func chitgramUpdateBar() {
+        guard let bar = self.chitgramBar else {
+            return
+        }
+        var categories: [(ChitgramShareCategory, String)] = [(.all, ChitgramStrings.get(618))]
+        for filter in self.chitgramFoldersValue {
+            if case let .filter(id, title, _, _) = filter {
+                categories.append((.folder(id), title.text))
+            }
+        }
+        categories.append((.personal, ChitgramStrings.get(619)))
+        categories.append((.groups, ChitgramStrings.get(620)))
+        categories.append((.channels, ChitgramStrings.get(621)))
+        categories.append((.bots, ChitgramStrings.get(344)))
+        if !categories.contains(where: { $0.0 == self.chitgramCategoryValue }) {
+            // The folder was deleted meanwhile.
+            self.chitgramSelectCategory(.all)
+            return
+        }
+
+        let current = self.chitgramCategoryValue
+        let title = categories.first(where: { $0.0 == current })?.1 ?? ChitgramStrings.get(618)
+        let visible = self.chitgramVisiblePeers()
+        let eligible = visible.filter { $0.eligible }.map { $0.peer }
+        let selectedIds = self.controllerInteraction.selectedPeerIds
+        let allTicked = !eligible.isEmpty && eligible.allSatisfy { selectedIds.contains($0.peerId) }
+        let actionTitle: String?
+        if allTicked {
+            actionTitle = ChitgramStrings.get(376)
+        } else if !eligible.isEmpty {
+            actionTitle = "\(ChitgramStrings.get(375)) (\(min(eligible.count, chitgramShareBulkLimit())))"
+        } else if !selectedIds.isEmpty {
+            actionTitle = ChitgramStrings.format(664, selectedIds.count)
+        } else {
+            actionTitle = nil
+        }
+        let caption = self.chitgramHint ?? ChitgramStrings.format(663, title, visible.count)
+        bar.update(categories: categories, current: current, caption: caption, actionTitle: actionTitle, theme: self.theme)
+    }
+
+    fileprivate func chitgramSelectCategory(_ category: ChitgramShareCategory) {
+        self.chitgramHint = nil
+        self.chitgramCategoryValue = category
+        self.chitgramCategory.set(category)
+        self.chitgramUpdateBar()
+    }
+
+    /// Ticks the category up to the cap, or unticks it when all of it is ticked, or clears the selection when the
+    /// category has nothing to tick.
+    fileprivate func chitgramCategoryAction() {
+        let eligible = self.chitgramVisiblePeers().filter { $0.eligible }.map { $0.peer }
+        let interaction = self.controllerInteraction
+        if !eligible.isEmpty && eligible.allSatisfy({ interaction.selectedPeerIds.contains($0.peerId) }) {
+            for peer in eligible {
+                interaction.togglePeer(peer, false)
+            }
+        } else if !eligible.isEmpty {
+            let limit = chitgramShareBulkLimit()
+            var ticked = eligible.filter { interaction.selectedPeerIds.contains($0.peerId) }.count
+            for peer in eligible {
+                if ticked >= limit {
+                    break
+                }
+                if !interaction.selectedPeerIds.contains(peer.peerId) {
+                    interaction.togglePeer(peer, false)
+                    ticked += 1
+                }
+            }
+            if eligible.count > limit {
+                self.chitgramHint = ChitgramStrings.format(628, chitgramShareFreeBulk, chitgramSharePremiumBulk)
+            }
+        } else {
+            for peer in interaction.selectedPeers {
+                interaction.togglePeer(peer, false)
+            }
+        }
+        self.chitgramUpdateBar()
+    }
 }

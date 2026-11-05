@@ -2315,6 +2315,13 @@ public final class ShareController: ViewController {
             let account = currentContext.context.account
             let queue = Queue.mainQueue()
             var displayedError = false
+            // Chitgram: past ten chats the sends go out one by one (Android SharePacer); the notes are shown on the
+            // window, which outlives the sheet.
+            let chitgramWindow = strongSelf.window
+            let chitgramPresentationData = strongSelf.presentationData
+            shareSignals = chitgramPacedShareSignals(shareSignals, notify: { text in
+                chitgramWindow?.present(UndoOverlayController(presentationData: chitgramPresentationData, content: .info(title: nil, text: text, timeout: nil, customUndoText: nil), elevatedLayout: false, action: { _ in return false }), on: .root, blockInteraction: false, completion: {})
+            })
             return combineLatest(queue: queue, shareSignals)
             |> castError(ShareControllerError.self)
             |> mapToSignal { messageIdSets -> Signal<ShareState, ShareControllerError> in
