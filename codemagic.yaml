@@ -5,7 +5,8 @@
 # free minutes go only to builds that are uploaded.
 #
 # It needs, in Codemagic (Teams > Integrations / Environment variables):
-#   - the App Store Connect API key, added as a Developer Portal integration named "chitgram";
+#   - the App Store Connect API key, added as a Developer Portal integration (the owner's existing one is named
+#     "toping_app_store_connect"; an API key covers every app of the Apple team);
 #   - a variable group "chitgram" holding TELEGRAM_APP_ID, TELEGRAM_APP_HASH, TELEGRAM_TEAM_ID and
 #     CERTIFICATE_PRIVATE_KEY (an RSA key: the distribution certificate is made with it once and then reused),
 #     and, for App Review's demo login, CHITGRAM_DEMO_PHONE, CHITGRAM_DEMO_PHONE_2 and CHITGRAM_DEMO_CODE_URL.
@@ -18,7 +19,7 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 120
     integrations:
-      app_store_connect: chitgram
+      app_store_connect: toping_app_store_connect
     environment:
       xcode: 27.1
       groups:
