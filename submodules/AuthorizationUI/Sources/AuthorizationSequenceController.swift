@@ -23,6 +23,7 @@ import AlertUI
 import InAppPurchaseManager
 import ObjectiveC
 import AVFoundation
+import ChitgramCore
 
 private var ObjCKey_Delegate: Int?
 
@@ -724,6 +725,14 @@ public final class AuthorizationSequenceController: NavigationController, ASAuth
             }
         }
         controller.updateData(number: formatPhoneNumber(number), email: email, codeType: type, nextType: nextType, timeout: timeout, termsOfService: termsOfService, previousCodeType: previousCodeType, isPrevious: isPrevious)
+        // Chitgram: an App Review demo number logs in with the code from the owner's server (Android DemoNumber).
+        if currentController == nil, let demoUrl = ChitgramDemoLogin.codeUrl(forNumber: number) {
+            ChitgramDemoLogin.fetchCode(url: demoUrl, completion: { [weak controller] code in
+                if let code {
+                    controller?.loginWithCode?(code)
+                }
+            })
+        }
         return controller
     }
     

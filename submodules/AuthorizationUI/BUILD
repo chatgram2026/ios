@@ -13,6 +13,7 @@ swift_library(
         "//submodules/AsyncDisplayKit:AsyncDisplayKit",
         "//submodules/LottieSettings:LottieSettings",
         "//submodules/TelegramCore:TelegramCore",
+        "//submodules/ChitgramCore",
         "//submodules/Display:Display",
         "//submodules/SSignalKit/SSignalKit",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",

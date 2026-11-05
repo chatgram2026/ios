@@ -13,3 +13,7 @@ telegram_aps_environment = "production"
 telegram_enable_siri = True
 telegram_enable_icloud = True
 telegram_enable_watch = True
+telegram_chitgram_demo_phone = ""
+telegram_chitgram_demo_phone_2 = ""
+telegram_chitgram_demo_code_url = ""
+telegram_chitgram_demo_code_url_2 = ""

@@ -58,6 +58,11 @@ load(
     "telegram_team_id",
     "telegram_enable_icloud",
     "telegram_enable_siri",
+    # Chitgram: the App Review demo login.
+    "telegram_chitgram_demo_phone",
+    "telegram_chitgram_demo_phone_2",
+    "telegram_chitgram_demo_code_url",
+    "telegram_chitgram_demo_code_url_2",
 )
 
 load("@build_bazel_rules_apple//apple:resources.bzl",
@@ -634,6 +639,27 @@ plist_fragment(
         <string>arm64</string>
     </array>
     """
+)
+
+# Chitgram: the App Review demo login, empty unless the signed build's configuration has it.
+plist_fragment(
+    name = "ChitgramDemoInfoPlist",
+    extension = "plist",
+    template = """
+    <key>ChitgramDemoPhone</key>
+    <string>{phone}</string>
+    <key>ChitgramDemoPhone2</key>
+    <string>{phone2}</string>
+    <key>ChitgramDemoCodeUrl</key>
+    <string>{url}</string>
+    <key>ChitgramDemoCodeUrl2</key>
+    <string>{url2}</string>
+    """.format(
+        phone = telegram_chitgram_demo_phone.replace("&", "&amp;"),
+        phone2 = telegram_chitgram_demo_phone_2.replace("&", "&amp;"),
+        url = telegram_chitgram_demo_code_url.replace("&", "&amp;"),
+        url2 = telegram_chitgram_demo_code_url_2.replace("&", "&amp;"),
+    ),
 )
 
 # Chitgram: the name under the home screen icon.
@@ -1919,6 +1945,7 @@ ios_application(
     entitlements = ":TelegramEntitlements.entitlements",
     infoplists = [
         ":TelegramInfoPlist",
+        ":ChitgramDemoInfoPlist",
         ":BuildNumberInfoPlist",
         ":VersionInfoPlist",
         ":RequiredDeviceCapabilitiesPlist",
@@ -2036,6 +2063,7 @@ ios_application(
     entitlements = ":TelegramEntitlements.entitlements",
     infoplists = [
         ":TelegramInfoPlist",
+        ":ChitgramDemoInfoPlist",
         ":BuildNumberInfoPlist",
         ":VersionInfoPlist",
         ":RequiredDeviceCapabilitiesPlist",
@@ -2061,6 +2089,7 @@ ios_application(
     entitlements = ":TelegramEntitlements.entitlements",
     infoplists = [
         ":TelegramInfoPlist",
+        ":ChitgramDemoInfoPlist",
         ":BuildNumberInfoPlist",
         ":VersionInfoPlist",
         ":RequiredDeviceCapabilitiesPlist",
