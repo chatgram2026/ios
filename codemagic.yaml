@@ -63,7 +63,7 @@ workflows:
               "is_internal_build": "false",
               "is_appstore_build": "true",
               # The app's Apple ID from App Store Connect (App Information). Public: it is in the App Store link.
-              "appstore_id": os.environ.get("CHITGRAM_APPSTORE_ID", "").strip() or "6831234865",
+              "appstore_id": os.environ.get("CHITGRAM_APPSTORE_ID", "").strip() or "6831325153",
               "app_specific_url_scheme": "tg",
               "premium_iap_product_id": "",
               "enable_siri": False,
