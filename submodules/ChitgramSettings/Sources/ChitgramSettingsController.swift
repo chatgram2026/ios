@@ -67,6 +67,7 @@ private enum ChitgramSettingsRow: Int32 {
     case storyDownload
     case editSave
     case deleteSave
+    case archiveMedia
     case downloadStop
     case autoAnswerActive
     case autoAnswerText
@@ -99,7 +100,7 @@ private enum ChitgramSettingsRow: Int32 {
         switch self {
         case .storyGhost, .storyHide, .storyDownload:
             return .stories
-        case .editSave, .deleteSave:
+        case .editSave, .deleteSave, .archiveMedia:
             return .messages
         case .downloadStop:
             return .download
@@ -136,6 +137,8 @@ private enum ChitgramSettingsRow: Int32 {
             return 20
         case .deleteSave:
             return 21
+        case .archiveMedia:
+            return 33
         case .downloadStop:
             return 5
         case .autoAnswerActive:
@@ -206,6 +209,8 @@ private enum ChitgramSettingsRow: Int32 {
             return (23, 72)
         case .deleteSave:
             return (31, 235)
+        case .archiveMedia:
+            return (556, 557)
         case .downloadStop:
             return (183, 196)
         case .autoAnswerActive:
@@ -277,6 +282,8 @@ private enum ChitgramSettingsRow: Int32 {
             return .storyDownload
         case .editSave:
             return .saveEdited
+        case .archiveMedia:
+            return .archiveMedia
         case .autoAnswerActive:
             return .autoAnswerActive
         case .ghostMode:
@@ -323,6 +330,8 @@ private enum ChitgramSettingsRow: Int32 {
 private struct ChitgramSettingsState {
     var autoDownload: MediaAutoDownloadSettings
     var accountPeerId: EnginePeer.Id
+    /// Bytes the saved media of deleted messages takes.
+    var archivedMediaSize: Int64
 
     func isOn(_ row: ChitgramSettingsRow) -> Bool {
         let preferences = ChitgramPreferences.shared
@@ -429,6 +438,14 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
     header(.messages)
     toggle(.editSave)
     toggle(.deleteSave)
+    // Only while deleted messages are saved; its line says how much the copies take (Android `archiveMediaLabel`).
+    if state.isOn(.deleteSave) {
+        var text = ChitgramStrings.get(557)
+        if state.isOn(.archiveMedia) && state.archivedMediaSize > 0 {
+            text += " \u{00B7} " + ByteCountFormatter.string(fromByteCount: state.archivedMediaSize, countStyle: .file)
+        }
+        entries.append(.toggle(.archiveMedia, title: ChitgramStrings.get(556), text: text, value: state.isOn(.archiveMedia)))
+    }
 
     header(.download)
     toggle(.downloadStop)
@@ -653,12 +670,18 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
         }
     })
 
+    // Read again with every change of the switches, so turning "Save media" on shows the size there is.
+    let archivedMediaSize = preferences.changes
+    |> mapToSignal { _ -> Signal<Int64, NoError> in
+        return chitgramArchivedMediaSize(account: context.account)
+    }
     let signal = combineLatest(queue: .mainQueue(),
         context.sharedContext.presentationData,
         context.sharedContext.automaticMediaDownloadSettings,
-        preferences.changes
+        preferences.changes,
+        archivedMediaSize
     )
-    |> map { presentationData, autoDownload, _ -> (ItemListControllerState, (ItemListNodeState, Any)) in
+    |> map { presentationData, autoDownload, _, archivedMediaSize -> (ItemListControllerState, (ItemListNodeState, Any)) in
         ChitgramStrings.setLanguageCode(presentationData.strings.primaryComponent.languageCode)
 
         let controllerState = ItemListControllerState(
@@ -670,7 +693,7 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
         )
         let listState = ItemListNodeState(
             presentationData: ItemListPresentationData(presentationData),
-            entries: chitgramSettingsEntries(state: ChitgramSettingsState(autoDownload: autoDownload, accountPeerId: context.account.peerId)),
+            entries: chitgramSettingsEntries(state: ChitgramSettingsState(autoDownload: autoDownload, accountPeerId: context.account.peerId, archivedMediaSize: archivedMediaSize)),
             style: .blocks,
             animateChanges: true
         )

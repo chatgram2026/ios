@@ -4628,6 +4628,7 @@ func replayFinalState(
             case let .DeleteMessagesWithGlobalIds(allIds):
                 // Chitgram: with "Save deleted messages" on, what the other side deletes stays, marked as deleted.
                 let ids = chitgramGlobalIdsToDelete(transaction: transaction, globalIds: allIds)
+                chitgramArchiveKeptMedia(transaction: transaction, mediaBox: mediaBox, ids: chitgramKeptMessageIds(transaction: transaction, allGlobalIds: allIds, deletedGlobalIds: ids))
                 var resourceIds: [MediaResourceId] = []
                 transaction.deleteMessagesWithGlobalIds(ids, forEachMedia: { media in
                     addMessageMediaResourceIdsToRemove(media: media, resourceIds: &resourceIds)
@@ -4639,6 +4640,7 @@ func replayFinalState(
             case let .DeleteMessages(allIds):
                 // Chitgram: as above.
                 let ids = chitgramMessageIdsToDelete(transaction: transaction, ids: allIds)
+                chitgramArchiveKeptMedia(transaction: transaction, mediaBox: mediaBox, ids: chitgramKeptMessageIds(allIds: allIds, deletedIds: ids))
                 _internal_deleteMessages(transaction: transaction, mediaBox: mediaBox, ids: ids, manualAddMessageThreadStatsDifference: { id, add, remove in
                     addMessageThreadStatsDifference(threadKey: id, remove: remove, addedMessagePeer: nil, addedMessageId: nil, isOutgoing: false)
                 })

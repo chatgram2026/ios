@@ -2,6 +2,7 @@ import Foundation
 import UIKit
 import SwiftSignalKit
 import AccountContext
+import TelegramCore
 import ChitgramCore
 
 /// What Chitgram runs in the background of each signed-in account in the main app: the auto answer now, the
@@ -18,6 +19,8 @@ public final class ChitgramAccountServices {
         self.autoAcceptJoin = ChitgramAutoAcceptJoin(context: context)
         self.messageReminder = ChitgramMessageReminder(context: context)
         self.keywordWatch = ChitgramKeywordWatch(context: context)
+        // Saved media of kept deleted messages goes back into a cache that was cleared (Android ChitgramArchive).
+        chitgramRestoreArchivedMedia(account: context.account)
         // Starts listening for the auto answer switch, which clears the answered chats when turned off.
         let _ = ChitgramAnsweredChats.shared
         // Chitgram Premium: the prices and this account's status, read again at every launch (Android: on resume).
@@ -45,6 +48,7 @@ public final class ChitgramAccountServices {
             ChitgramAdminFolders.sync(context: context)
             ChitgramAppNotices.show(context: context)
             ChitgramCloud.onResume(context: context)
+            chitgramRestoreArchivedMedia(account: context.account)
         })
     }
 
