@@ -338,6 +338,45 @@ private enum ChitgramSettingsRow: Int32 {
     }
 }
 
+/// A row's tag, so the tour can find the row on screen.
+private struct ChitgramSettingsRowTag: ItemListItemTag {
+    let row: ChitgramSettingsRow
+
+    func isEqual(to other: ItemListItemTag) -> Bool {
+        return (other as? ChitgramSettingsRowTag)?.row == self.row
+    }
+}
+
+/// The tour's stops (Android `FenixSettings.fullSteps`), in the list's order: each row with its title and the line
+/// that explains it. The three confirmation switches share one stop, as on Android.
+private let chitgramSettingsTourSteps: [(row: ChitgramSettingsRow, titleId: Int, bodyId: Int)] = [
+    (.storyGhost, 232, 233),
+    (.storyHide, 136, 137),
+    (.storyDownload, 297, 298),
+    (.editSave, 23, 72),
+    (.deleteSave, 31, 235),
+    (.downloadStop, 183, 196),
+    (.autoAnswerActive, 228, 239),
+    (.ghostMode, 32, 245),
+    (.ghostButton, 342, 343),
+    (.secretChat, 213, 217),
+    (.confirmSticker, 190, 386),
+    (.roundCameraFront, 353, 354),
+    (.voiceMic, 381, 382),
+    (.folderIcons, 240, 241),
+    (.hideTabs, 260, 261),
+    (.tabBar, 406, 407),
+    (.autoAcceptJoin, 263, 264),
+    (.reminderEnabled, 270, 271),
+    (.apkShield, 378, 379)
+]
+
+/// The tour in progress, and the rows the list shows now (a stop whose row is hidden is skipped).
+private final class ChitgramSettingsTourState {
+    var tour: ChitgramTour?
+    var rows = Set<ChitgramSettingsRow>()
+}
+
 /// What the switches show: Chitgram's own preferences, plus the Telegram settings some rows drive.
 private struct ChitgramSettingsState {
     var autoDownload: MediaAutoDownloadSettings
@@ -415,15 +454,15 @@ private enum ChitgramSettingsEntry: ItemListNodeEntry {
             // state instead of flipping on the tap.
             return ItemListSwitchItem(presentationData: presentationData, systemStyle: .glass, title: title, text: text, value: value, enableInteractiveChanges: row != .adminFolders && row != .secretChat, maximumNumberOfLines: 2, sectionId: self.section, style: .blocks, updated: { value in
                 arguments.toggle(row, value)
-            })
+            }, tag: ChitgramSettingsRowTag(row: row))
         case let .button(row, title):
             return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, title: title, label: "", sectionId: self.section, style: .blocks, action: {
                 arguments.open(row)
-            })
+            }, tag: ChitgramSettingsRowTag(row: row))
         case let .valueButton(row, title, value):
             return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, title: title, label: value, sectionId: self.section, style: .blocks, action: {
                 arguments.open(row)
-            })
+            }, tag: ChitgramSettingsRowTag(row: row))
         }
     }
 }
@@ -532,6 +571,8 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
 /// Chitgram ▸ Sozlamalar (Android `FenixSettings`): Chitgram's switches, grouped and ordered as on Android.
 public func chitgramSettingsController(context: AccountContext) -> ViewController {
     let preferences = ChitgramPreferences.shared
+    let tourState = ChitgramSettingsTourState()
+    var startTourImpl: (() -> Void)?
     var pushControllerImpl: ((ViewController) -> Void)?
     var presentControllerImpl: ((ViewController) -> Void)?
     var reportAdminFolders: ((ChitgramAdminFolders.Result) -> Void)?
@@ -706,12 +747,27 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
             presentationData: ItemListPresentationData(presentationData),
             title: .text(ChitgramStrings.get(ChitgramSectionRow.settings.titleId)),
             leftNavigationButton: nil,
-            rightNavigationButton: nil,
+            // Android: a "?" in the toolbar replays the tour.
+            rightNavigationButton: ItemListNavigationButton(content: .text("?"), style: .bold, enabled: true, action: {
+                startTourImpl?()
+            }),
             backNavigationButton: ItemListBackButton(title: presentationData.strings.Common_Back)
         )
+        let entries = chitgramSettingsEntries(state: ChitgramSettingsState(autoDownload: autoDownload, accountPeerId: context.account.peerId, archivedMediaSize: archivedMediaSize))
+        // The tour skips the stops whose rows are hidden now.
+        var rows = Set<ChitgramSettingsRow>()
+        for entry in entries {
+            switch entry {
+            case let .toggle(row, _, _, _), let .button(row, _), let .valueButton(row, _, _):
+                rows.insert(row)
+            case .header:
+                break
+            }
+        }
+        tourState.rows = rows
         let listState = ItemListNodeState(
             presentationData: ItemListPresentationData(presentationData),
-            entries: chitgramSettingsEntries(state: ChitgramSettingsState(autoDownload: autoDownload, accountPeerId: context.account.peerId, archivedMediaSize: archivedMediaSize)),
+            entries: entries,
             style: .blocks,
             animateChanges: true
         )
@@ -720,6 +776,33 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
     let controller = ItemListController(context: context, state: signal)
     pushControllerImpl = { [weak controller] c in
         controller?.push(c)
+    }
+    // Android's coach-mark tour over this list: the "?" replays it, and it plays once on the first open.
+    startTourImpl = { [weak controller] in
+        guard let controller, tourState.tour == nil else {
+            return
+        }
+        let steps = chitgramSettingsTourSteps.filter { tourState.rows.contains($0.row) }.map { step in
+            return ChitgramTour.Step(tag: ChitgramSettingsRowTag(row: step.row), title: ChitgramStrings.get(step.titleId), body: ChitgramStrings.get(step.bodyId))
+        }
+        let tour = ChitgramTour(controller: controller, steps: steps)
+        tourState.tour = tour
+        tour.finished = {
+            tourState.tour = nil
+        }
+        tour.start()
+    }
+    controller.didAppear = { firstTime in
+        let defaults = ChitgramPreferences.shared.userDefaults
+        if firstTime && !defaults.bool(forKey: "fenix_tour_shown") {
+            defaults.set(true, forKey: "fenix_tour_shown")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35, execute: {
+                startTourImpl?()
+            })
+        }
+    }
+    controller.didDisappear = { _ in
+        tourState.tour?.finish()
     }
     presentControllerImpl = { [weak controller] c in
         controller?.present(c, in: .window(.root))
