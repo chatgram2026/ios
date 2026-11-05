@@ -9691,8 +9691,9 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
                 )
             }
         } else {
+            // Chitgram: "go to the first message" (↑) comes with ↓, as on Android.
             self.chatDisplayNode.navigateButtons.directionButtonState = ChatHistoryNavigationButtons.DirectionState(
-                up: nil,
+                up: (self.shouldDisplayDownButton && !recordingMediaMessage) ? ChatHistoryNavigationButtons.ButtonState(isEnabled: true) : nil,
                 down: (self.shouldDisplayDownButton && !recordingMediaMessage) ? ChatHistoryNavigationButtons.ButtonState(isEnabled: true) : nil
             )
         }

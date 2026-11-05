@@ -1397,6 +1397,9 @@ extension ChatControllerImpl {
             
             if self.presentationInterfaceState.search?.resultsState != nil {
                 self.interfaceInteraction?.navigateMessageSearch(.earlier)
+            } else {
+                // Chitgram: outside search, ↑ goes to the chat's first message.
+                self.scrollToStartOfHistory()
             }
         }
         
