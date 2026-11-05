@@ -77,7 +77,7 @@ public enum ChitgramSearchAds {
         // No ad at first, so the search results never wait for the ads backend; typing replaces the search before
         // the debounce ends, which cancels the request.
         return Signal<AdPeer?, NoError>.single(nil)
-        |> then((Signal<Never, NoError>.complete()
+        |> then((Signal<[String: Any]?, NoError>.complete()
         |> delay(self.debounce, queue: Queue.concurrentDefaultQueue())
         |> then(request))
         |> mapToSignal { result -> Signal<AdPeer?, NoError> in
