@@ -64,6 +64,7 @@ import AlertComponent
 import AlertHeaderComponent
 import AvatarComponent
 import ChitgramCore
+import ChitgramSettings
 
 private final class ContextControllerContentSourceImpl: ContextControllerContentSource {
     let controller: ViewController
