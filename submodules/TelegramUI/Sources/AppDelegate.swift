@@ -55,6 +55,7 @@ import PasscodeCore
 import LiquidGlassShapes
 import MTProtoRustEngine
 import ChitgramCore
+import ChitgramEngine
 
 #if DEBUG
 import AlertComponent
@@ -1274,6 +1275,10 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                 return sharedContext.currentPresentationData.with({ $0 })
             })
             let sharedApplicationContext = SharedApplicationContext(sharedContext: sharedContext, notificationManager: notificationManager, wakeupManager: wakeupManager)
+            // Chitgram: where Telegram is blocked, a proxy from the owner's list before login (Android RegionProxyManager).
+            Queue.mainQueue().async {
+                ChitgramRegionProxy.maybeAutoConnect(sharedContext: sharedContext)
+            }
             sharedApplicationContext.sharedContext.mediaManager.overlayMediaManager.attachOverlayMediaController(sharedApplicationContext.overlayMediaController)
             
             return accountManager.transaction { transaction -> (SharedApplicationContext, LoggingSettings) in

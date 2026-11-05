@@ -74,6 +74,7 @@ workflows:
               # The Firestore project the Chitgram badges live in (Android google-services.json).
               "chitgram_firebase_project_id": os.environ.get("CHITGRAM_FIREBASE_PROJECT_ID", "").strip(),
               "chitgram_firebase_api_key": os.environ.get("CHITGRAM_FIREBASE_API_KEY", "").strip(),
+              "chitgram_firebase_app_id": os.environ.get("CHITGRAM_FIREBASE_APP_ID", "").strip(),
           }
           with open(os.path.expanduser("~/chitgram-config/configuration.json"), "w") as file:
               json.dump(configuration, file, indent=2)

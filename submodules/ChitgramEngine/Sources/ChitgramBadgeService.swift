@@ -70,8 +70,9 @@ public enum ChitgramBadgeService {
             if error == nil, let response = response as? HTTPURLResponse, (200 ..< 300).contains(response.statusCode), let data {
                 result = try? JSONSerialization.jsonObject(with: data)
             }
+            let value = result
             DispatchQueue.main.async {
-                completion(result)
+                completion(value)
             }
         }).resume()
     }

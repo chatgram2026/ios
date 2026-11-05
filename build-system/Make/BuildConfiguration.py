@@ -56,7 +56,7 @@ class BuildConfiguration:
         string += 'telegram_enable_siri = {}\n'.format(self.enable_siri)
         string += 'telegram_enable_icloud = {}\n'.format(self.enable_icloud)
         # Chitgram: the App Review demo login and the badges' Firestore project ("" when the configuration has none).
-        for key in ['chitgram_demo_phone', 'chitgram_demo_phone_2', 'chitgram_demo_code_url', 'chitgram_demo_code_url_2', 'chitgram_firebase_project_id', 'chitgram_firebase_api_key']:
+        for key in ['chitgram_demo_phone', 'chitgram_demo_phone_2', 'chitgram_demo_code_url', 'chitgram_demo_code_url_2', 'chitgram_firebase_project_id', 'chitgram_firebase_api_key', 'chitgram_firebase_app_id']:
             string += 'telegram_{} = "{}"\n'.format(key, self.chitgram_demo.get(key, '').replace('"', ''))
         string += 'telegram_enable_watch = True\n'
 
@@ -104,7 +104,7 @@ def build_configuration_from_json(path):
             enable_icloud=configuration_dict['enable_icloud']
         )
         # Chitgram: optional demo login and Firestore keys.
-        for key in ['chitgram_demo_phone', 'chitgram_demo_phone_2', 'chitgram_demo_code_url', 'chitgram_demo_code_url_2', 'chitgram_firebase_project_id', 'chitgram_firebase_api_key']:
+        for key in ['chitgram_demo_phone', 'chitgram_demo_phone_2', 'chitgram_demo_code_url', 'chitgram_demo_code_url_2', 'chitgram_firebase_project_id', 'chitgram_firebase_api_key', 'chitgram_firebase_app_id']:
             configuration.chitgram_demo[key] = str(configuration_dict.get(key, ''))
         return configuration
 

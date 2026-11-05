@@ -147,20 +147,22 @@ extension ChatControllerImpl {
                     let _ = try? FileManager.default.removeItem(atPath: part.path)
                 }
             }
+            let didFail = failed
+            let parts = paths
 
             DispatchQueue.main.async { [weak self] in
                 status.dismiss()
                 guard let self else {
                     return
                 }
-                if failed {
+                if didFail {
                     self.present(UndoOverlayController(presentationData: self.presentationData, content: .info(title: nil, text: ChitgramStrings.get(587), timeout: nil, customUndoText: nil), elevatedLayout: false, action: { _ in return false }), in: .current)
                     return
                 }
                 let groupingKey = Int64.random(in: Int64.min ... Int64.max)
                 let caption = ChitgramStrings.format(583, fileName, chitgramSizeString(size), count)
                 var messages: [EnqueueMessage] = []
-                for (index, part) in paths.enumerated() {
+                for (index, part) in parts.enumerated() {
                     let name = fileName + "." + String(format: "%03d", index + 1)
                     let resource = LocalFileReferenceMediaResource(localFilePath: part.path, randomId: Int64.random(in: Int64.min ... Int64.max), isUniquelyReferencedTemporaryFile: true, size: part.size)
                     let file = TelegramMediaFile(fileId: EngineMedia.Id(namespace: Namespaces.Media.LocalFile, id: Int64.random(in: Int64.min ... Int64.max)), partialReference: nil, resource: resource, previewRepresentations: [], videoThumbnails: [], immediateThumbnailData: nil, mimeType: "application/octet-stream", size: part.size, attributes: [.FileName(fileName: name)], alternativeRepresentations: [])
@@ -271,12 +273,13 @@ extension ChatControllerImpl {
             } catch {
                 ok = false
             }
+            let joined = ok
             DispatchQueue.main.async { [weak self] in
                 status.dismiss()
                 guard let self else {
                     return
                 }
-                if ok {
+                if joined {
                     self.chitgramShowJoinedFile(path: target)
                 } else {
                     self.present(UndoOverlayController(presentationData: self.presentationData, content: .info(title: nil, text: ChitgramStrings.get(587), timeout: nil, customUndoText: nil), elevatedLayout: false, action: { _ in return false }), in: .current)
