@@ -17,6 +17,10 @@ final class ChitgramAutoAcceptJoin {
             guard let self, let context = self.context, ChitgramPreferences.shared.bool(.autoAcceptJoin) else {
                 return
             }
+            // Only where the user wants it: every chat, or the ones picked in the auto-accept screen.
+            if !ChitgramAutoAccept.isChosen(account: context.account.peerId.toInt64(), chat: peerId.toInt64()) {
+                return
+            }
             let _ = chitgramApproveAllJoinRequests(account: context.account, peerId: peerId).startStandalone()
         })
     }

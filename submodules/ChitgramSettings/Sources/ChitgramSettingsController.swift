@@ -331,12 +331,13 @@ private enum ChitgramSettingsEntry: ItemListNodeEntry {
     case header(ChitgramSettingsSection, String)
     case toggle(ChitgramSettingsRow, title: String, text: String, value: Bool)
     case button(ChitgramSettingsRow, title: String)
+    case valueButton(ChitgramSettingsRow, title: String, value: String)
 
     var section: ItemListSectionId {
         switch self {
         case let .header(section, _):
             return section.rawValue
-        case let .toggle(row, _, _, _), let .button(row, _):
+        case let .toggle(row, _, _, _), let .button(row, _), let .valueButton(row, _, _):
             return row.section.rawValue
         }
     }
@@ -345,7 +346,7 @@ private enum ChitgramSettingsEntry: ItemListNodeEntry {
         switch self {
         case let .header(section, _):
             return section.rawValue * 1000
-        case let .toggle(row, _, _, _), let .button(row, _):
+        case let .toggle(row, _, _, _), let .button(row, _), let .valueButton(row, _, _):
             return row.section.rawValue * 1000 + 1 + row.rawValue
         }
     }
@@ -367,6 +368,10 @@ private enum ChitgramSettingsEntry: ItemListNodeEntry {
             })
         case let .button(row, title):
             return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, title: title, label: "", sectionId: self.section, style: .blocks, action: {
+                arguments.open(row)
+            })
+        case let .valueButton(row, title, value):
+            return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, title: title, label: value, sectionId: self.section, style: .blocks, action: {
                 arguments.open(row)
             })
         }
@@ -435,7 +440,8 @@ private func chitgramSettingsEntries(state: ChitgramSettingsState) -> [ChitgramS
     }
 
     header(.channels)
-    toggle(.autoAcceptJoin)
+    // Android: a row showing the state, opening the screen with the switch and the choice of chats.
+    entries.append(.valueButton(.autoAcceptJoin, title: ChitgramStrings.get(263), value: ChitgramAutoAccept.statusLabel(account: state.accountPeerId.toInt64())))
 
     header(.reminder)
     toggle(.reminderEnabled)
@@ -510,6 +516,8 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
             pushControllerImpl?(chitgramReminderDelayController(context: context))
         case .keywordWatch:
             pushControllerImpl?(chitgramKeywordWatchController(context: context))
+        case .autoAcceptJoin:
+            pushControllerImpl?(chitgramAutoAcceptController(context: context))
         case .adminFoldersRefresh:
             let _ = (ChitgramAdminFolders.rebuild(context: context)
             |> deliverOnMainQueue).startStandalone(next: { result in
