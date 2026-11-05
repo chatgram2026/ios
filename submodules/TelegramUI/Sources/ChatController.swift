@@ -904,6 +904,11 @@ public final class ChatControllerImpl: TelegramBaseController, ChatController, G
                 return true
             }
 
+            // Chitgram: one part of a split big file opens the whole file (Android BigFile).
+            if self.chitgramOpenSplitFile(message: EngineMessage(message)) {
+                return true
+            }
+
             if let contextController = self.currentContextController {
                 self.present(contextController, in: .window(.root))
                 Queue.mainQueue().after(0.15) {

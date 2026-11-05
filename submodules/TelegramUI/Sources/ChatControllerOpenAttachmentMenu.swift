@@ -1397,6 +1397,13 @@ extension ChatControllerImpl {
                         if let strongSelf = self {
                             let replyMessageSubject = strongSelf.presentationInterfaceState.interfaceState.replyMessageSubject
 
+                            // Chitgram: one file over this account's upload limit goes out in numbered parts (Android
+                            // BigFile); the limit screen stays for what does not fit in one album.
+                            let chitgramMaxParts = isPremium ? premiumLimits.maxUploadFileParts : limits.maxUploadFileParts
+                            if !editingMessage, results.count == 1, let item = results[0], item.fileSize > Int64(chitgramMaxParts) * 512 * 1024, strongSelf.chitgramSendSplitFile(item: item, maxUploadParts: chitgramMaxParts) {
+                                return
+                            }
+
                             for item in results {
                                 if let item = item {
                                     if item.fileSize > Int64(premiumLimits.maxUploadFileParts) * 512 * 1024 {
