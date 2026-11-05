@@ -1,5 +1,6 @@
 import Foundation
 import Postbox
+import ChitgramCore
 
 public let anonymousSavedMessagesId: Int64 = 2666000
 
@@ -388,7 +389,15 @@ public extension Peer {
     var emojiStatus: PeerEmojiStatus? {
         switch self {
         case let user as TelegramUser:
-            return user.emojiStatus
+            // Chitgram: a Chitgram Premium member's emoji, seen only in Chitgram (Android ChitgramBadges); a real
+            // emoji status wins.
+            if let status = user.emojiStatus {
+                return status
+            }
+            if user.id.namespace == Namespaces.Peer.CloudUser, let emoji = ChitgramBadges.shared.emoji(forUserId: user.id.id._internalGetInt64Value()) {
+                return PeerEmojiStatus(content: .emoji(fileId: emoji), expirationDate: nil)
+            }
+            return nil
         case let channel as TelegramChannel:
             return channel.emojiStatus
         default:

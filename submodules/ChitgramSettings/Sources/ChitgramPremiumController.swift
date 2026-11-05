@@ -10,6 +10,7 @@ import PresentationDataUtils
 import AccountContext
 import UndoUI
 import ChitgramCore
+import EntityKeyboard
 import ChitgramEngine
 
 private final class ChitgramPremiumArguments {
@@ -97,8 +98,8 @@ private enum ChitgramPremiumEntry: ItemListNodeEntry {
                 arguments.restore()
             })
         case let .perk(index, title, text):
-            // The first two perks open their screens (auto messenger, keyword watch), as on Android.
-            let opens = index < 2
+            // The badge and the first two tools open their screens (auto messenger, keyword watch), as on Android.
+            let opens = index < 2 || index == chitgramBadgePerkIndex
             var action: (() -> Void)?
             if opens {
                 action = {
@@ -108,6 +109,79 @@ private enum ChitgramPremiumEntry: ItemListNodeEntry {
             return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, title: title, label: text, labelStyle: .multilineDetailText, sectionId: self.section, style: .blocks, disclosureStyle: opens ? .arrow : .none, action: action)
         }
     }
+}
+
+/// The profile badge perk (Android's first perk, `BadgePicker`).
+private let chitgramBadgePerkIndex = 100
+
+/// The member's own emoji after their name (Android `BadgePicker`): Telegram's emoji status picker, whose choice is
+/// written to the badge instead of the account's Telegram status.
+private func chitgramOpenBadgePicker(context: AccountContext, sourceView: UIView, present: @escaping (ViewController) -> Void, showResult: @escaping (String) -> Void) {
+    let presentationData = context.sharedContext.currentPresentationData.with { $0 }
+    let current = ChitgramBadgeService.myEmoji(context: context)
+    let save: (Int64) -> Void = { emoji in
+        ChitgramBadgeService.setMyEmoji(context: context, emoji: emoji, completion: { error in
+            if let error {
+                showResult(ChitgramStrings.format(685, error))
+            } else {
+                showResult(ChitgramStrings.get(684))
+            }
+        })
+    }
+    let choose: () -> Void = {
+        var selectedItems = Set<AnyHashable>()
+        if current != 0 {
+            selectedItems.insert(EngineMedia.Id(namespace: Namespaces.Media.CloudFile, id: current))
+        }
+        let emojiContent = EmojiPagerContentComponent.emojiInputData(
+            context: context,
+            animationCache: context.animationCache,
+            animationRenderer: context.animationRenderer,
+            isStandalone: false,
+            subject: .status,
+            hasTrending: false,
+            topReactionItems: [],
+            areUnicodeEmojiEnabled: false,
+            areCustomEmojiEnabled: true,
+            chatPeerId: context.account.peerId,
+            selectedItems: selectedItems
+        )
+        |> map { content -> AnyObject in
+            return content
+        }
+        let controller = context.sharedContext.makeEmojiStatusSelectionController(context: context, mode: .customStatusSelection(completion: { file, _ in
+            if let file {
+                save(file.fileId.id)
+            }
+        }), sourceView: sourceView, emojiContent: emojiContent, currentSelection: current != 0 ? current : nil, color: nil, destinationItemView: {
+            return nil
+        })
+        present(controller)
+    }
+    if current == 0 {
+        choose()
+        return
+    }
+    let actionSheet = ActionSheetController(presentationData: presentationData)
+    actionSheet.setItemGroups([
+        ActionSheetItemGroup(items: [
+            ActionSheetTextItem(title: ChitgramStrings.get(678), parseMarkdown: false),
+            ActionSheetButtonItem(title: ChitgramStrings.get(682), color: .accent, action: { [weak actionSheet] in
+                actionSheet?.dismissAnimated()
+                choose()
+            }),
+            ActionSheetButtonItem(title: ChitgramStrings.get(683), color: .destructive, action: { [weak actionSheet] in
+                actionSheet?.dismissAnimated()
+                save(0)
+            })
+        ]),
+        ActionSheetItemGroup(items: [
+            ActionSheetButtonItem(title: presentationData.strings.Common_Cancel, color: .accent, font: .bold, action: { [weak actionSheet] in
+                actionSheet?.dismissAnimated()
+            })
+        ])
+    ])
+    present(actionSheet)
 }
 
 private func chitgramPlanTitle(_ plan: ChitgramPremium.Plan) -> String {
@@ -131,6 +205,7 @@ func chitgramPremiumController(context: AccountContext) -> ViewController {
     let isPaying = ValuePromise<Bool>(false, ignoreRepeated: true)
     var presentImpl: ((ViewController) -> Void)?
     var pushImpl: ((ViewController) -> Void)?
+    var viewImpl: (() -> UIView?)?
 
     let showResult: (String) -> Void = { text in
         let presentationData = context.sharedContext.currentPresentationData.with { $0 }
@@ -175,7 +250,16 @@ func chitgramPremiumController(context: AccountContext) -> ViewController {
             }
         })
     }, openPerk: { index in
-        if index == 0 {
+        if index == chitgramBadgePerkIndex {
+            // Without Premium the buy button is right here on this page (Android: the same).
+            guard ChitgramPremium.isActive(accountPeerId: accountPeerId), let view = viewImpl?() else {
+                showResult(ChitgramStrings.get(687))
+                return
+            }
+            chitgramOpenBadgePicker(context: context, sourceView: view, present: { c in
+                presentImpl?(c)
+            }, showResult: showResult)
+        } else if index == 0 {
             pushImpl?(chitgramAutoPostController(context: context))
         } else {
             pushImpl?(chitgramKeywordWatchController(context: context))
@@ -208,6 +292,7 @@ func chitgramPremiumController(context: AccountContext) -> ViewController {
         entries.append(.payFooter(ChitgramStrings.get(436)))
 
         entries.append(.perksHeader(ChitgramStrings.get(633)))
+        entries.append(.perk(index: chitgramBadgePerkIndex, title: ChitgramStrings.get(678), text: ChitgramStrings.get(679)))
         entries.append(.perk(index: 0, title: ChitgramStrings.get(449), text: ChitgramStrings.get(634)))
         entries.append(.perk(index: 1, title: ChitgramStrings.get(568), text: ChitgramStrings.get(635)))
         entries.append(.perk(index: 2, title: ChitgramStrings.get(637), text: ChitgramStrings.get(638)))
@@ -229,6 +314,9 @@ func chitgramPremiumController(context: AccountContext) -> ViewController {
     }
     pushImpl = { [weak controller] c in
         controller?.push(c)
+    }
+    viewImpl = { [weak controller] in
+        return controller?.view
     }
     // Keep the status fresh when the page opens.
     let _ = ChitgramPremium.refresh(context: context).startStandalone()

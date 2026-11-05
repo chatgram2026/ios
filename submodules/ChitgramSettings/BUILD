@@ -28,6 +28,7 @@ swift_library(
         "//submodules/PresentationDataUtils:PresentationDataUtils",
         "//submodules/AccountContext:AccountContext",
         "//submodules/BuildConfig:BuildConfig",
+        "//submodules/TelegramUI/Components/EntityKeyboard",
     ],
     visibility = [
         "//visibility:public",

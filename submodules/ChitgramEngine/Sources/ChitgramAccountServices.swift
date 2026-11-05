@@ -19,6 +19,8 @@ public final class ChitgramAccountServices {
         self.autoAcceptJoin = ChitgramAutoAcceptJoin(context: context)
         self.messageReminder = ChitgramMessageReminder(context: context)
         self.keywordWatch = ChitgramKeywordWatch(context: context)
+        // Chitgram badges: lookups through Firestore, and this account's own badge.
+        ChitgramBadgeService.start(context: context)
         // Saved media of kept deleted messages goes back into a cache that was cleared (Android ChitgramArchive).
         chitgramRestoreArchivedMedia(account: context.account)
         // Starts listening for the auto answer switch, which clears the answered chats when turned off.
@@ -30,6 +32,8 @@ public final class ChitgramAccountServices {
         |> then(ChitgramPremium.refresh(context: context) |> map { _ -> Bool in return true })
         |> deliverOnMainQueue).startStandalone(completed: {
             ChitgramKeywords.shared.isPremium = ChitgramPremium.isActive(accountPeerId: accountPeerId)
+            // The own badge follows Premium (created with it, its end date kept current).
+            ChitgramBadges.shared.refresh(accountPeerId.id._internalGetInt64Value())
             // Auto messenger: tops the server queue up; the limits it applies depend on Premium.
             ChitgramAutoPost.refill(context: context)
             // Admin folders follow rights that changed while the app was closed.
