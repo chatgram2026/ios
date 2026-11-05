@@ -236,7 +236,11 @@ public enum ChitgramPremium {
             }
             return chitgramPinnedPosts(account: context.account, peerId: channel.id)
             |> map { posts -> Bool in
-                guard let plans = posts.lazy.compactMap({ self.parsePlans($0.text) }).first else {
+                // The same pins carry the owner's notices (maintenance, updates); the prices are read without them.
+                if !posts.isEmpty {
+                    ChitgramAppNotices.apply(posts)
+                }
+                guard let plans = posts.lazy.compactMap({ self.parsePlans(ChitgramAppNotices.stripDirectives($0.text)) }).first else {
                     return false
                 }
                 let text = plans.map { "\($0.months)-\($0.stars)" }.joined(separator: " ")

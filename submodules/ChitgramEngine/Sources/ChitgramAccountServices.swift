@@ -31,6 +31,8 @@ public final class ChitgramAccountServices {
             ChitgramAutoPost.refill(context: context)
             // Admin folders follow rights that changed while the app was closed.
             ChitgramAdminFolders.sync(context: context)
+            // The owner's notices from the same pins: maintenance, a required or a newer version.
+            ChitgramAppNotices.show(context: context)
         })
         // Android refills on every resume (throttled to once in 10 minutes).
         self.foregroundObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main, using: { [weak context] _ in
@@ -39,6 +41,7 @@ public final class ChitgramAccountServices {
             }
             ChitgramAutoPost.refill(context: context)
             ChitgramAdminFolders.sync(context: context)
+            ChitgramAppNotices.show(context: context)
         })
     }
 

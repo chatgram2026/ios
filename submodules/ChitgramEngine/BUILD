@@ -13,6 +13,10 @@ swift_library(
     deps = [
         "//submodules/ChitgramCore",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",
+        "//submodules/AsyncDisplayKit:AsyncDisplayKit",
+        "//submodules/Display:Display",
+        "//submodules/TelegramPresentationData:TelegramPresentationData",
+        "//submodules/PresentationDataUtils:PresentationDataUtils",
         "//submodules/TelegramCore:TelegramCore",
         "//submodules/AccountContext:AccountContext",
         "//submodules/LocalizedPeerData:LocalizedPeerData",
