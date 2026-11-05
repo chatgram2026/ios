@@ -11,7 +11,7 @@
 #     CERTIFICATE_PRIVATE_KEY (an RSA key: the distribution certificate is made with it once and then reused),
 #     and, for App Review's demo login, CHITGRAM_DEMO_PHONE, CHITGRAM_DEMO_PHONE_2 and CHITGRAM_DEMO_CODE_URL.
 # And in the Apple Developer account, made by hand first because the API cannot attach an app group to an App ID:
-# the app group group.com.chatgram.messenger and the seven App IDs below, each with that app group, the main one
+# the app group group.com.chitgram.app and the seven App IDs below, each with that app group, the main one
 # also with Push Notifications.
 workflows:
   testflight:
@@ -25,7 +25,9 @@ workflows:
       groups:
         - chitgram
       vars:
-        BUNDLE_ID: com.chatgram.messenger
+        # The owner's choice (2026-11-06): com.chatgram.messenger was first registered with a capital C and could not
+        # be freed, so the iOS app uses its own id. The app group and the six extensions follow it.
+        BUNDLE_ID: com.chitgram.app
         CONFIGURATION: release_arm64
         CACHE_DIR: /Users/builder/telegram-bazel-cache
         # Codemagic keeps 3 GB of cache per build; the disk cache compresses to about a third.
