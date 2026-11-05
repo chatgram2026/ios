@@ -8,7 +8,9 @@ name: Chitgram iOS build
 
 on:
   push:
-    branches: [ chitgram ]
+    # chitgram-next is checked first; chitgram only gets commits that compiled, so Codemagic always builds a
+    # working tree.
+    branches: [ chitgram, chitgram-next ]
     paths-ignore:
       - 'docs/**'
       - '**.md'
