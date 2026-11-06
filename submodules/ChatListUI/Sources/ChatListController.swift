@@ -310,7 +310,8 @@ public class ChatListControllerImpl: TelegramBaseController, ChatListController 
         switch self.location {
         case let .chatList(groupId):
             if groupId == .root {
-                title = self.presentationData.strings.DialogList_Title
+                // Chitgram: the main list is titled with the app's name, as on Android.
+                title = "Chitgram"
             } else {
                 title = self.presentationData.strings.ChatList_ArchivedChatsTitle
             }
@@ -7278,7 +7279,8 @@ private final class ChatListLocationContext {
         switch location {
         case let .chatList(groupId):
             if groupId == .root {
-                defaultTitle = presentationData.strings.DialogList_Title
+                // Chitgram: the main list is titled with the app's name, as on Android.
+                defaultTitle = "Chitgram"
             } else {
                 defaultTitle = presentationData.strings.ChatList_ArchivedChatsTitle
             }

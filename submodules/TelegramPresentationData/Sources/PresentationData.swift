@@ -149,6 +149,10 @@ public func dictFromLocalization(_ value: Localization) -> [String: String] {
                 dict["\(key)_any"] = other
         }
     }
+    // Chitgram: the app's name in the language pack's texts.
+    for (key, value) in dict where value.contains("Telegram") {
+        dict[key] = chitgramRebranded(key: key, value: value)
+    }
     return dict
 }
 

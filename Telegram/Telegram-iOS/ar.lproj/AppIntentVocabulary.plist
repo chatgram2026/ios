@@ -9,7 +9,7 @@
 			<string>INSendMessageIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>أرسل رسالة لخالد عبر تيليجرام (Telegram) وأخبره أن هديته وصلت إلى المنزل</string>
+				<string>أرسل رسالة لخالد عبر Chitgram وأخبره أن هديته وصلت إلى المنزل</string>
 			</array>
 		</dict>
 		<dict>
@@ -17,7 +17,7 @@
 			<string>INStartAudioCallIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>اتصل بخالد عبر تيليجرام (Telegram)</string>
+				<string>اتصل بخالد عبر Chitgram</string>
 			</array>
 		</dict>
 		<dict>
@@ -25,7 +25,7 @@
 			<string>INSearchForMessagesIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>اقرأ رسائلي غير المقروءة في تيليجرام (Telegram)</string>
+				<string>اقرأ رسائلي غير المقروءة في Chitgram</string>
 			</array>
 		</dict>
 		<dict>
@@ -33,7 +33,7 @@
 			<string>INSetMessageAttributeIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>ضع علامة مقروءة على رسائلي في تيليجرام (Telegram)</string>
+				<string>ضع علامة مقروءة على رسائلي في Chitgram</string>
 			</array>
 		</dict>
 		<dict>
@@ -41,7 +41,7 @@
 			<string>INSearchCallHistoryIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>أظهر مكالماتي الفائتة في تيليجرام (Telegram)</string>
+				<string>أظهر مكالماتي الفائتة في Chitgram</string>
 			</array>
 		</dict>
 	</array>

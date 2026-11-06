@@ -9,7 +9,7 @@
 			<string>INSendMessageIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>Отправить Алисе сообщение в Telegram: я буду через 10 минут</string>
+				<string>Отправить Алисе сообщение в Chitgram: я буду через 10 минут</string>
 			</array>
 		</dict>
 		<dict>
@@ -17,7 +17,7 @@
 			<string>INStartAudioCallIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>Позвони Алисе через Telegram</string>
+				<string>Позвони Алисе через Chitgram</string>
 			</array>
 		</dict>
 		<dict>
@@ -25,7 +25,7 @@
 			<string>INSearchForMessagesIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>Прочитай мои непрочитанные сообщения в Telegram</string>
+				<string>Прочитай мои непрочитанные сообщения в Chitgram</string>
 			</array>
 		</dict>
 		<dict>
@@ -33,7 +33,7 @@
 			<string>INSetMessageAttributeIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>Отметь мои сообщения в Telegram как прочитанные</string>
+				<string>Отметь мои сообщения в Chitgram как прочитанные</string>
 			</array>
 		</dict>
 		<dict>
@@ -41,7 +41,7 @@
 			<string>INSearchCallHistoryIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>Покажи мои пропущенные звонки в Telegram</string>
+				<string>Покажи мои пропущенные звонки в Chitgram</string>
 			</array>
 		</dict>
 	</array>

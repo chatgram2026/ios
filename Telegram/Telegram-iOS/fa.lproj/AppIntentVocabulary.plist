@@ -9,7 +9,7 @@
 			<string>INSendMessageIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>Send a Telegram message to Alex saying I&apos;ll be there in 10 minutes</string>
+				<string>Send a Chitgram message to Alex saying I&apos;ll be there in 10 minutes</string>
 			</array>
 		</dict>
 		<dict>
@@ -17,7 +17,7 @@
 			<string>INStartAudioCallIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>از طریق تلگرام (Telegram) به علی زنگ بزن</string>
+				<string>از طریق Chitgram (Chitgram) به علی زنگ بزن</string>
 			</array>
 		</dict>
 		<dict>
@@ -25,7 +25,7 @@
 			<string>INSearchForMessagesIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>پیام‌های خوانده‌نشدهٔ من در تلگرام (Telegram) را بخوان</string>
+				<string>پیام‌های خوانده‌نشدهٔ من در Chitgram (Chitgram) را بخوان</string>
 			</array>
 		</dict>
 		<dict>
@@ -33,7 +33,7 @@
 			<string>INSetMessageAttributeIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>پیام‌های من در تلگرام (Telegram) را به‌عنوان خوانده‌شده علامت بزن</string>
+				<string>پیام‌های من در Chitgram (Chitgram) را به‌عنوان خوانده‌شده علامت بزن</string>
 			</array>
 		</dict>
 		<dict>
@@ -41,7 +41,7 @@
 			<string>INSearchCallHistoryIntent</string>
 			<key>IntentExamples</key>
 			<array>
-				<string>تماس‌های ازدست‌رفتهٔ من در تلگرام (Telegram) را نشان بده</string>
+				<string>تماس‌های ازدست‌رفتهٔ من در Chitgram (Chitgram) را نشان بده</string>
 			</array>
 		</dict>
 	</array>

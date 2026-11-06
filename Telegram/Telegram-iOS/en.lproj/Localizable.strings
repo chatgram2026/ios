@@ -51,7 +51,7 @@
 "PUSH_MESSAGE_STICKER" = "%1$@|sent you a %2$@sticker";
 "PUSH_CHAT_MESSAGE_STICKER" = "%2$@|%1$@ sent a %3$@sticker";
 
-"PUSH_CONTACT_JOINED" = "%1$@|joined Telegram!";
+"PUSH_CONTACT_JOINED" = "%1$@|joined Chitgram!";
 
 "PUSH_CHANNEL_MESSAGE_TEXT" = "%1$@|%2$@";
 "PUSH_CHANNEL_MESSAGE_NOTEXT" = "%1$@|posted a message";
@@ -206,7 +206,7 @@
 "PUSH_PINNED_GIF" = "%1$@|pinned a GIF";
 "PUSH_PINNED_PAID_MEDIA" = "%1$@|pinned a paid post for %2$@";
 
-"PUSH_CONTACT_JOINED" = "%1$@|joined Telegram!";
+"PUSH_CONTACT_JOINED" = "%1$@|joined Chitgram!";
 
 "PUSH_AUTH_UNKNOWN" = "New login|from unrecognized device %1$@";
 "PUSH_AUTH_REGION" = "New login|from unrecognized device %1$@, location: %2$@";
@@ -402,38 +402,38 @@
 "Date.ChatDateHeaderYear" = "%1$@ %2$@, %3$@";
 
 // Tour
-"Tour.Title1" = "Telegram";
+"Tour.Title1" = "Chitgram";
 "Tour.Text1" = "The world's **fastest** messaging app.\nIt is **free** and **secure**.";
 
 "Tour.Title2" = "Fast";
-"Tour.Text2" = "**Telegram** delivers messages\nfaster than any other application.";
+"Tour.Text2" = "**Chitgram** delivers messages\nfaster than any other application.";
 
 "Tour.Title3" = "Powerful";
-"Tour.Text3" = "**Telegram** has no limits on\nthe size of your media and chats.";
+"Tour.Text3" = "**Chitgram** has no limits on\nthe size of your media and chats.";
 
 "Tour.Title4" = "Secure";
-"Tour.Text4" = "**Telegram** keeps your messages\nsafe from hacker attacks.";
+"Tour.Text4" = "**Chitgram** keeps your messages\nsafe from hacker attacks.";
 
 "Tour.Title5" = "Cloud-Based";
-"Tour.Text5" = "**Telegram** lets you access your\nmessages from multiple devices.";
+"Tour.Text5" = "**Chitgram** lets you access your\nmessages from multiple devices.";
 
 "Tour.Title6" = "Free";
-"Tour.Text6" = "**Telegram** provides free unlimited\ncloud storage for chats and media.";
+"Tour.Text6" = "**Chitgram** provides free unlimited\ncloud storage for chats and media.";
 
 "Tour.StartButton" = "Start Messaging";
 
 // Login
 "Login.PhoneAndCountryHelp" = "Please confirm your country code\nand enter your phone number.";
-"Login.CodeSentInternal" = "We've sent the code to the **Telegram** app on your other device";
+"Login.CodeSentInternal" = "We've sent the code to the **Chitgram** app on your other device";
 "Login.HaveNotReceivedCodeInternal" = "Didn't get the code?";
 "Login.CodeSentSms" = "We've sent you an SMS with the code";
 "Login.Code" = "Code";
-"Login.WillCallYou" = "Telegram will call you in %@";
-"Login.CallRequestState2" = "Requesting a call from Telegram…";
-"Login.CallRequestState3" = "Telegram dialed your number\n[Didn't get the code?]";
+"Login.WillCallYou" = "Chitgram will call you in %@";
+"Login.CallRequestState2" = "Requesting a call from Chitgram…";
+"Login.CallRequestState3" = "Chitgram dialed your number\n[Didn't get the code?]";
 "Login.EmailNotConfiguredError" = "An email account is required so that you can send us details about the error.\n\nPlease go to your device‘s settings > Passwords & Accounts > Add account and set up an email account.";
 "Login.EmailCodeSubject" = "%@, no code";
-"Login.EmailCodeBody" = "My phone number is:\n%@\nI can't get an activation code for Telegram.";
+"Login.EmailCodeBody" = "My phone number is:\n%@\nI can't get an activation code for Chitgram.";
 "Login.UnknownError" = "An error occurred, please try again later.";
 "Login.InvalidCodeError" = "Invalid code, please try again.";
 "Login.NetworkError" = "Please check your internet connection and try again.";
@@ -444,13 +444,13 @@
 "Login.InvalidLastNameError" = "Sorry, this last name can't be used.";
 
 "Login.InvalidPhoneEmailSubject" = "Invalid phone number: %@";
-"Login.InvalidPhoneEmailBody" = "I'm trying to use my mobile phone number: %1$@\nBut Telegram says it's invalid. Please help.\n\nApp version: %2$@\nOS version: %3$@\nLocale: %4$@\nMNC: %5$@";
+"Login.InvalidPhoneEmailBody" = "I'm trying to use my mobile phone number: %1$@\nBut Chitgram says it's invalid. Please help.\n\nApp version: %2$@\nOS version: %3$@\nLocale: %4$@\nMNC: %5$@";
 
 "Login.PhoneBannedEmailSubject" = "Banned phone number: %@";
-"Login.PhoneBannedEmailBody" = "I'm trying to use my mobile phone number: %1$@\nBut Telegram says it's banned. Please help.\n\nApp version: %2$@\nOS version: %3$@\nLocale: %4$@\nMNC: %5$@";
+"Login.PhoneBannedEmailBody" = "I'm trying to use my mobile phone number: %1$@\nBut Chitgram says it's banned. Please help.\n\nApp version: %2$@\nOS version: %3$@\nLocale: %4$@\nMNC: %5$@";
 
-"Login.PhoneGenericEmailSubject" = "Telegram iOS error: %@";
-"Login.PhoneGenericEmailBody" = "I'm trying to use my mobile phone number: %1$@\nBut Telegram shows an error. Please help.\n\nError: %2$@\nApp version: %3$@\nOS version: %4$@\nLocale: %5$@\nMNC: %6$@";
+"Login.PhoneGenericEmailSubject" = "Chitgram iOS error: %@";
+"Login.PhoneGenericEmailBody" = "I'm trying to use my mobile phone number: %1$@\nBut Chitgram shows an error. Please help.\n\nError: %2$@\nApp version: %3$@\nOS version: %4$@\nLocale: %5$@\nMNC: %6$@";
 
 "Login.PhonePaidEmailSubject" = "Payment Issue";
 
@@ -493,11 +493,11 @@
 "Contacts.TabTitle" = "Contacts";
 "Contacts.Title" = "Contacts";
 "Contacts.FailedToSendInvitesMessage" = "An error occurred.";
-"Contacts.AccessDeniedError" = "Telegram does not have access to your contacts";
-"Contacts.AccessDeniedHelpLandscape" = "Please go to your %@ Settings — Privacy — Contacts.\nThen select ON for Telegram.";
-"Contacts.AccessDeniedHelpPortrait" = "Please go to your %@ Settings — Privacy — Contacts. Then select ON for Telegram.";
+"Contacts.AccessDeniedError" = "Chitgram does not have access to your contacts";
+"Contacts.AccessDeniedHelpLandscape" = "Please go to your %@ Settings — Privacy — Contacts.\nThen select ON for Chitgram.";
+"Contacts.AccessDeniedHelpPortrait" = "Please go to your %@ Settings — Privacy — Contacts. Then select ON for Chitgram.";
 "Contacts.AccessDeniedHelpON" = "ON";
-"Contacts.InviteToTelegram" = "Invite to Telegram";
+"Contacts.InviteToTelegram" = "Invite to Chitgram";
 "Contacts.InviteFriends" = "Invite Friends";
 "Contacts.SelectAll" = "Select All";
 
@@ -533,7 +533,7 @@
 "Conversation.Contact" = "Contact";
 "Conversation.BlockUser" = "Block User";
 "Conversation.UnblockUser" = "Unblock User";
-"Conversation.UnsupportedMedia" = "This message is not supported on your version of Telegram. Update the app to view:\nhttps://telegram.org/update";
+"Conversation.UnsupportedMedia" = "This message is not supported on your version of Chitgram. Update the app to view:\nhttps://telegram.org/update";
 "Conversation.EncryptionWaiting" = "Waiting for %@ to get online...";
 "Conversation.EncryptionProcessing" = "Exchanging encryption keys...";
 "Conversation.EmptyPlaceholder" = "No messages here yet...";
@@ -581,7 +581,7 @@
 "Notification.CreatedChannel" = "Channel created";
 "Notification.CreatedGroup" = "Group created";
 "Notification.CreatedChatWithTitle" = "%@ created the group \"%@\" ";
-"Notification.Joined" = "%@ joined Telegram";
+"Notification.Joined" = "%@ joined Chitgram";
 "Notification.ChangedGroupName" = "%@ changed group name to \"%@\" ";
 "Notification.NewAuthDetected" = "%1$@,\nWe detected a login into your account from a new device on %2$@, %3$@ at %4$@\n\nDevice: %5$@\nLocation: %6$@\n\nIf this wasn't you, you can go to Settings — Privacy and Security — Sessions and terminate that session.\n\nIf you think that somebody logged in to your account against your will, you can enable two-step verification in Privacy and Security settings.\n\nSincerely,\nThe Telegram Team";
 "Notification.MessageLifetimeChanged" = "%1$@ set the self-destruct timer to %2$@";
@@ -648,7 +648,7 @@
 
 // User Profile
 "Profile.CreateEncryptedChatError" = "An error occurred.";
-"Profile.CreateEncryptedChatOutdatedError" = "Cannot create a secret chat with %@.\n%@ is using an older version of Telegram and needs to update first.";
+"Profile.CreateEncryptedChatOutdatedError" = "Cannot create a secret chat with %@.\n%@ is using an older version of Chitgram and needs to update first.";
 "Profile.CreateNewContact" = "Create New Contact";
 "Profile.AddToExisting" = "Add to Existing Contact";
 "Profile.EncryptionKey" = "Encryption Key";
@@ -680,7 +680,7 @@
 "UserInfo.NotificationsDisabled" = "Disabled";
 "UserInfo.NotificationsEnable" = "Enable";
 "UserInfo.NotificationsDisable" = "Disable";
-"UserInfo.Invite" = "Invite to Telegram";
+"UserInfo.Invite" = "Invite to Chitgram";
 
 // New Contact
 "NewContact.Title" = "New Contact";
@@ -754,9 +754,9 @@
 "Settings.BlockedUsers" = "Blocked Users";
 "Settings.ChatBackground" = "Chat Background";
 "Settings.Support" = "Ask a Question";
-"Settings.FAQ" = "Telegram FAQ";
+"Settings.FAQ" = "Chitgram FAQ";
 "Settings.FAQ_URL" = "https://telegram.org/faq#general";
-"Settings.FAQ_Intro" = "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlease take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.";
+"Settings.FAQ_Intro" = "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlease take a look at the Chitgram FAQ: it has important troubleshooting tips and answers to most questions.";
 "Settings.FAQ_Button" = "FAQ";
 "Settings.SaveIncomingPhotos" = "Save Incoming Photos";
 
@@ -813,7 +813,7 @@
 "Cache.Title" = "Storage Usage";
 "Cache.ClearCache" = "Clear Cache";
 "Cache.KeepMedia" = "Keep Media";
-"Cache.Help" = "Photos, videos and other files from cloud chats that you have **not accessed** during this period will be removed from this device to save disk space.\n\nAll media will stay in the Telegram cloud and can be re-downloaded if you need it again.";
+"Cache.Help" = "Photos, videos and other files from cloud chats that you have **not accessed** during this period will be removed from this device to save disk space.\n\nAll media will stay in the Chitgram cloud and can be re-downloaded if you need it again.";
 
 // Blocked Users
 "BlockedUsers.Title" = "Blocked";
@@ -837,10 +837,10 @@
 "BroadcastListInfo.AddRecipient" = "Add Recipient";
 
 "Settings.LogoutConfirmationTitle" = "Log out?";
-"Settings.LogoutConfirmationText" = "\nNote that you can seamlessly use Telegram on all your devices at once.\n\nRemember, logging out kills all your Secret Chats.";
-"Settings.LogoutConfirmationTextWithWallets" = "This will cancel all your Secret Chats and **delete wallet backups holding %@**. You will lose access to these funds if you haven't saved their recovery phrases.\n\nYou can use Telegram on all your devices at once and use several accounts in the same app.";
+"Settings.LogoutConfirmationText" = "\nNote that you can seamlessly use Chitgram on all your devices at once.\n\nRemember, logging out kills all your Secret Chats.";
+"Settings.LogoutConfirmationTextWithWallets" = "This will cancel all your Secret Chats and **delete wallet backups holding %@**. You will lose access to these funds if you haven't saved their recovery phrases.\n\nYou can use Chitgram on all your devices at once and use several accounts in the same app.";
 
-"Login.PadPhoneHelp" = "\nYou can use your main mobile number to log in to Telegram on all devices.\nDon't use your iPad's SIM number here — we'll need to send you an SMS.\n\nIs this number correct?\n{number}";
+"Login.PadPhoneHelp" = "\nYou can use your main mobile number to log in to Chitgram on all devices.\nDon't use your iPad's SIM number here — we'll need to send you an SMS.\n\nIs this number correct?\n{number}";
 "Login.PadPhoneHelpTitle" = "Your Number";
 
 "MessageTimer.Custom" = "Custom";
@@ -928,7 +928,7 @@
 "Activity.RecordingAudio" = "recording audio";
 "Activity.RecordingVideoMessage" = "recording video";
 
-"Compatibility.SecretMediaVersionTooLow" = "%@ is using an older version of Telegram, so secret photos will be shown in compatibility mode.\n\nOnce %@ updates Telegram, photos with timers for 1 minute or less will start working in 'Tap and hold to view' mode, and you will be notified whenever the other party takes a screenshot.";
+"Compatibility.SecretMediaVersionTooLow" = "%@ is using an older version of Chitgram, so secret photos will be shown in compatibility mode.\n\nOnce %@ updates Chitgram, photos with timers for 1 minute or less will start working in 'Tap and hold to view' mode, and you will be notified whenever the other party takes a screenshot.";
 
 "Contacts.GlobalSearch" = "Global Search";
 "Profile.Username" = "username";
@@ -937,7 +937,7 @@
 
 "Username.Title" = "Username";
 "Username.Placeholder" = "Your Username";
-"Username.Help" = "You can choose a username on **Telegram**. If you do, other people will be able to find you by this username and contact you without knowing your phone number.\n\nYou can use **a-z**, **0-9** and underscores. Minimum length is **5** characters.";
+"Username.Help" = "You can choose a username on **Chitgram**. If you do, other people will be able to find you by this username and contact you without knowing your phone number.\n\nYou can use **a-z**, **0-9** and underscores. Minimum length is **5** characters.";
 "Username.InvalidTooShort" = "A username must have at least 5 characters.";
 "Username.InvalidStartsWithNumber" = "Sorry, a username can't start with a number.";
 "Username.InvalidCharacters" = "Sorry, this username is invalid.";
@@ -1042,8 +1042,8 @@
 
 "Settings.PhoneNumber" = "Change Number";
 
-"PhoneNumberHelp.Help" = "You can change your Telegram number here. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number.\n\n**Important:** all your Telegram contacts will get your **new number** added to their address book, provided they had your old number and you haven't blocked them in Telegram.";
-"PhoneNumberHelp.Alert" = "All your Telegram contacts will get your new number added to their address book, provided they had your old number and you haven't blocked them in Telegram.";
+"PhoneNumberHelp.Help" = "You can change your Chitgram number here. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number.\n\n**Important:** all your Chitgram contacts will get your **new number** added to their address book, provided they had your old number and you haven't blocked them in Chitgram.";
+"PhoneNumberHelp.Alert" = "All your Chitgram contacts will get your new number added to their address book, provided they had your old number and you haven't blocked them in Chitgram.";
 "PhoneNumberHelp.ChangeNumber" = "Change Number";
 
 "ChangePhoneNumberNumber.Title" = "Change Number";
@@ -1054,9 +1054,9 @@
 "ChangePhoneNumberCode.Code" = "YOUR CODE";
 "ChangePhoneNumberCode.CodePlaceholder" = "Code";
 "ChangePhoneNumberCode.Help" = "We have sent you an SMS with the code";
-"ChangePhoneNumberCode.CallTimer" = "Telegram will call you in %@";
-"ChangePhoneNumberCode.RequestingACall" = "Requesting a call from Telegram...";
-"ChangePhoneNumberCode.Called" = "Telegram dialed your number";
+"ChangePhoneNumberCode.CallTimer" = "Chitgram will call you in %@";
+"ChangePhoneNumberCode.RequestingACall" = "Requesting a call from Chitgram...";
+"ChangePhoneNumberCode.Called" = "Chitgram dialed your number";
 
 "LoginPassword.Title" = "Your Password";
 "LoginPassword.PasswordPlaceholder" = "Password";
@@ -1208,7 +1208,7 @@
 "SharedMedia.EmptyFilesText" = "You can send and receive\nfiles of any type up to 1.5 GB each\nand access them anywhere.";
 
 "ShareFileTip.Title" = "Sharing Files";
-"ShareFileTip.Text" = "You can share **uncompressed** media files from your Camera Roll here.\n\nTo share files of any other type, open them on your %@ (e.g. in your browser), tap **Open in...** or the action button and choose Telegram.";
+"ShareFileTip.Text" = "You can share **uncompressed** media files from your Camera Roll here.\n\nTo share files of any other type, open them on your %@ (e.g. in your browser), tap **Open in...** or the action button and choose Chitgram.";
 "ShareFileTip.CloseTip" = "Close Tip";
 
 "DialogList.SearchSectionDialogs" = "Chats and Contacts";
@@ -1216,7 +1216,7 @@
 "DialogList.SearchSectionGlobal" = "Global Search";
 "DialogList.SearchSectionMessages" = "Messages";
 
-"Username.LinkHint" = "This link opens a chat with you in Telegram:[\nhttps://t.me/%@]";
+"Username.LinkHint" = "This link opens a chat with you in Chitgram:[\nhttps://t.me/%@]";
 "Username.LinkCopied" = "Copied link to clipboard";
 
 "SharedMedia.DeleteItemsConfirmation_1" = "Delete media file?";
@@ -1236,18 +1236,18 @@
 "PasscodeSettings.SimplePasscode" = "Simple Passcode";
 "PasscodeSettings.SimplePasscodeHelp" = "A simple passcode is a 4 digit number.";
 "PasscodeSettings.EncryptData" = "Encrypt Local Database";
-"PasscodeSettings.EncryptDataHelp" = "Experimental feature, use with caution. Encrypt your local Telegram data, using a derivative of your passcode as the key.";
+"PasscodeSettings.EncryptDataHelp" = "Experimental feature, use with caution. Encrypt your local Chitgram data, using a derivative of your passcode as the key.";
 
-"EnterPasscode.EnterTitle" = "Enter your Telegram Passcode";
+"EnterPasscode.EnterTitle" = "Enter your Chitgram Passcode";
 "EnterPasscode.ChangeTitle" = "Change Passcode";
-"EnterPasscode.EnterPasscode" = "Enter your Telegram Passcode";
+"EnterPasscode.EnterPasscode" = "Enter your Chitgram Passcode";
 "EnterPasscode.EnterNewPasscodeNew" = "Enter a passcode";
 "EnterPasscode.EnterNewPasscodeChange" = "Enter your new passcode";
 "EnterPasscode.RepeatNewPasscode" = "Re-enter your new passcode";
 "EnterPasscode.EnterCurrentPasscode" = "Enter your current passcode";
-"EnterPasscode.TouchId" = "Unlock Telegram";
+"EnterPasscode.TouchId" = "Unlock Chitgram";
 
-"DialogList.PasscodeLockHelp" = "Tap to lock Telegram";
+"DialogList.PasscodeLockHelp" = "Tap to lock Chitgram";
 
 "PasscodeSettings.AutoLock" = "Auto-Lock";
 "PasscodeSettings.AutoLock.Disabled" = "Disabled";
@@ -1266,32 +1266,32 @@
 
 "AccessDenied.Title" = "Please Allow Access";
 
-"AccessDenied.Contacts" = "Telegram messaging is based on your existing contact list.\n\nPlease go to Settings > Privacy > Contacts and set Telegram to ON.";
+"AccessDenied.Contacts" = "Chitgram messaging is based on your existing contact list.\n\nPlease go to Settings > Privacy > Contacts and set Chitgram to ON.";
 
-"AccessDenied.VoiceMicrophone" = "Telegram needs access to your microphone to send voice messages.\n\nPlease go to Settings > Privacy > Microphone and set Telegram to ON.";
+"AccessDenied.VoiceMicrophone" = "Chitgram needs access to your microphone to send voice messages.\n\nPlease go to Settings > Privacy > Microphone and set Chitgram to ON.";
 
-"AccessDenied.VideoMicrophone" = "Telegram needs access to your microphone to record sound in videos recording.\n\nPlease go to Settings > Privacy > Microphone and set Telegram to ON.";
+"AccessDenied.VideoMicrophone" = "Chitgram needs access to your microphone to record sound in videos recording.\n\nPlease go to Settings > Privacy > Microphone and set Chitgram to ON.";
 
-"AccessDenied.MicrophoneRestricted" = "Microphone access is restricted for Telegram.\n\nPlease go to Settings > General > Restrictions > Microphone and set Telegram to ON.";
+"AccessDenied.MicrophoneRestricted" = "Microphone access is restricted for Chitgram.\n\nPlease go to Settings > General > Restrictions > Microphone and set Chitgram to ON.";
 
 
-"AccessDenied.Camera" = "Telegram needs access to your camera to take photos and videos.\n\nPlease go to Settings > Privacy > Camera and set Telegram to ON.";
+"AccessDenied.Camera" = "Chitgram needs access to your camera to take photos and videos.\n\nPlease go to Settings > Privacy > Camera and set Chitgram to ON.";
 
-"AccessDenied.CameraRestricted" = "Camera access is restricted for Telegram.\n\nPlease go to Settings > General > Restrictions > Camera and set Telegram to ON.";
+"AccessDenied.CameraRestricted" = "Camera access is restricted for Chitgram.\n\nPlease go to Settings > General > Restrictions > Camera and set Chitgram to ON.";
 
 "AccessDenied.CameraDisabled" = "Camera access is globally restricted on your phone.\n\nPlease go to Settings > General > Restrictions and set Camera to ON";
 
-"AccessDenied.PhotosAndVideos" = "Telegram needs access to your photo library to send photos and videos.\n\nPlease go to Settings > Privacy > Photos and set Telegram to ON.";
+"AccessDenied.PhotosAndVideos" = "Chitgram needs access to your photo library to send photos and videos.\n\nPlease go to Settings > Privacy > Photos and set Chitgram to ON.";
 
-"AccessDenied.SaveMedia" = "Telegram needs access to your photo library to save photos and videos.\n\nPlease go to Settings > Privacy > Photos and set Telegram to ON.";
+"AccessDenied.SaveMedia" = "Chitgram needs access to your photo library to save photos and videos.\n\nPlease go to Settings > Privacy > Photos and set Chitgram to ON.";
 
-"AccessDenied.PhotosRestricted" = "Photo access is restricted for Telegram.\n\nPlease go to Settings > General > Restrictions > Photos and set Telegram to ON.";
+"AccessDenied.PhotosRestricted" = "Photo access is restricted for Chitgram.\n\nPlease go to Settings > General > Restrictions > Photos and set Chitgram to ON.";
 
-"AccessDenied.LocationDenied" = "Telegram needs access to your location so that you can share it with your contacts.\n\nPlease go to Settings > Privacy > Location Services and set Telegram to ON.";
+"AccessDenied.LocationDenied" = "Chitgram needs access to your location so that you can share it with your contacts.\n\nPlease go to Settings > Privacy > Location Services and set Chitgram to ON.";
 
-"AccessDenied.LocationDisabled" = "Telegram needs access to your location so that you can share it with your contacts.\n\nPlease go to Settings > Privacy > Location Services and set it to ON.";
+"AccessDenied.LocationDisabled" = "Chitgram needs access to your location so that you can share it with your contacts.\n\nPlease go to Settings > Privacy > Location Services and set it to ON.";
 
-"AccessDenied.LocationTracking" = "Telegram needs access to your location to show you on the map.\n\nPlease go to Settings > Privacy > Location Services and set it to ON.";
+"AccessDenied.LocationTracking" = "Chitgram needs access to your location to show you on the map.\n\nPlease go to Settings > Privacy > Location Services and set it to ON.";
 
 "AccessDenied.Settings" = "Settings";
 
@@ -1380,7 +1380,7 @@
 "TwoStepAuth.SetupEmail" = "Set Recovery E-Mail";
 "TwoStepAuth.ChangeEmail" = "Change Recovery E-Mail";
 "TwoStepAuth.PendingEmailHelp" = "Your recovery e-mail %@ is not yet active and pending confirmation.";
-"TwoStepAuth.GenericHelp" = "You have enabled Two-Step verification.\nYou'll need the password you set up here to log in to your Telegram account.";
+"TwoStepAuth.GenericHelp" = "You have enabled Two-Step verification.\nYou'll need the password you set up here to log in to your Chitgram account.";
 
 "TwoStepAuth.ConfirmationTitle" = "Two-Step Verification";
 "TwoStepAuth.ConfirmationText" = "Please check your e-mail and click on the validation link to complete Two-Step Verification setup. Be sure to check the spam folder as well.";
@@ -1400,7 +1400,7 @@
 
 "TwoStepAuth.EmailTitle" = "Recovery E-Mail";
 "TwoStepAuth.EmailSkip" = "Skip";
-"TwoStepAuth.EmailSkipAlert" = "No, seriously.\n\nIf you forget your password, you will lose access to your Telegram account. There will be no way to restore it.";
+"TwoStepAuth.EmailSkipAlert" = "No, seriously.\n\nIf you forget your password, you will lose access to your Chitgram account. There will be no way to restore it.";
 "TwoStepAuth.Email" = "E-Mail";
 "TwoStepAuth.EmailPlaceholder" = "Your E-Mail";
 "TwoStepAuth.EmailHelp" = "Please add your valid e-mail. It is the only way to recover a forgotten password.";
@@ -1429,7 +1429,7 @@
 "Conversation.FileDropbox" = "Dropbox";
 
 "Conversation.FileOpenIn" = "Open in...";
-"Conversation.FileHowToText" = "To share files of any type, open them on your %@ (e.g. in your browser), tap **Open in...** or the action button and choose Telegram.";
+"Conversation.FileHowToText" = "To share files of any type, open them on your %@ (e.g. in your browser), tap **Open in...** or the action button and choose Chitgram.";
 
 "Map.LocationTitle" = "Location";
 "Map.OpenInMaps" = "Open in Maps";
@@ -1463,9 +1463,9 @@
 "Map.ETAHours_any" = "%@ h";
 "Map.ETAHours_many" = "%@ h";
 
-"ChangePhone.ErrorOccupied" = "The number %@ is already connected to a Telegram account. Please delete that account before migrating to the new number.";
+"ChangePhone.ErrorOccupied" = "The number %@ is already connected to a Chitgram account. Please delete that account before migrating to the new number.";
 
-"AccessDenied.LocationTracking" = "Telegram needs access to your location to show you on the map.\n\nPlease go to Settings > Privacy > Location Services and set it to ON.";
+"AccessDenied.LocationTracking" = "Chitgram needs access to your location to show you on the map.\n\nPlease go to Settings > Privacy > Location Services and set it to ON.";
 
 "PrivacySettings.AuthSessions" = "Active Sessions";
 "AuthSessions.Title" = "Active Sessions";
@@ -1475,7 +1475,7 @@
 "AuthSessions.TerminateSession" = "Terminate session";
 "AuthSessions.OtherSessions" = "ACTIVE SESSIONS";
 "AuthSessions.EmptyTitle" = "No other sessions";
-"AuthSessions.EmptyText" = "You can log in to Telegram from other mobile, tablet and desktop devices, using the same phone number. All your data will be instantly synchronized.";
+"AuthSessions.EmptyText" = "You can log in to Chitgram from other mobile, tablet and desktop devices, using the same phone number. All your data will be instantly synchronized.";
 "AuthSessions.AppUnofficial" = "(ID: %@)";
 
 "WebPreview.GettingLinkInfo" = "Getting Link Info...";
@@ -1488,7 +1488,7 @@
 
 "GroupInfo.InviteLink.Title" = "Invite Link";
 "GroupInfo.InviteLink.LinkSection" = "LINK";
-"GroupInfo.InviteLink.Help" = "Anyone who has Telegram installed will be able to join your group by following this link.";
+"GroupInfo.InviteLink.Help" = "Anyone who has Chitgram installed will be able to join your group by following this link.";
 "GroupInfo.InviteLink.CopyLink" = "Copy Link";
 "GroupInfo.InviteLink.RevokeLink" = "Revoke Link";
 "GroupInfo.InviteLink.ShareLink" = "Share Link";
@@ -1575,7 +1575,7 @@
 
 "Login.PhoneNumberHelp" = "Help";
 "Login.EmailPhoneSubject" = "Invalid number %@";
-"Login.EmailPhoneBody" = "I'm trying to use my mobile phone number: %@\nBut Telegram says it's invalid. Please help.\nAdditional Info: %@, %@.";
+"Login.EmailPhoneBody" = "I'm trying to use my mobile phone number: %@\nBut Chitgram says it's invalid. Please help.\nAdditional Info: %@, %@.";
 
 "SharedMedia.TitleLink" = "Shared Links";
 "SharedMedia.EmptyLinksText" = "All links shared in this chat will appear here.";
@@ -1602,8 +1602,8 @@
 "Channel.Edit.LinkItem" = "Link";
 
 "Channel.Username.Title" = "Link";
-"Channel.Username.Help" = "You can choose a channel name on **Telegram**. If you do, other people will be able to find your channel by this name.\n\nYou can use **a-z**, **0-9** and underscores. Minimum length is **5** characters.";
-"Channel.Username.LinkHint" = "This link opens your channel in Telegram:[\nhttps://t.me/%@]";
+"Channel.Username.Help" = "You can choose a channel name on **Chitgram**. If you do, other people will be able to find your channel by this name.\n\nYou can use **a-z**, **0-9** and underscores. Minimum length is **5** characters.";
+"Channel.Username.LinkHint" = "This link opens your channel in Chitgram:[\nhttps://t.me/%@]";
 "Channel.Username.InvalidTooShort" = "Channel names must have at least 5 characters.";
 "Channel.Username.InvalidStartsWithNumber" = "Channel names can't start with a number.";
 "Channel.Username.InvalidCharacters" = "Sorry, this name is invalid.";
@@ -1648,7 +1648,7 @@
 
 "Channel.Setup.Title" = "Channel";
 
-"Channel.Username.CreatePublicLinkHelp" = "People can share this link with others and find your channel using Telegram search.";
+"Channel.Username.CreatePublicLinkHelp" = "People can share this link with others and find your channel using Chitgram search.";
 "Channel.Username.CreatePrivateLinkHelp" = "People can join your channel by following this link. You can revoke the link at any time.";
 
 "Channel.Setup.PublicNoLink" = "Please choose a link for your public channel, so that people can find it in search and share with others.\n\nIf you're not interested, we suggest creating a private channel instead.";
@@ -1774,7 +1774,7 @@
 
 "Group.Management.AddModeratorHelp" = "You can add admins to help you manage your group.";
 
-"Watch.AppName" = "Telegram";
+"Watch.AppName" = "Chitgram";
 "Watch.Compose.AddContact" = "Choose Contact";
 "Watch.Compose.CreateMessage" = "Create Message";
 "Watch.Compose.CurrentLocation" = "Current Location";
@@ -1809,7 +1809,7 @@
 
 "Watch.Message.ForwardedFrom" = "Forwarded from";
 
-"Watch.Notification.Joined" = "Joined Telegram";
+"Watch.Notification.Joined" = "Joined Chitgram";
 
 "Watch.MessageView.Title" = "Message";
 "Watch.MessageView.Forward" = "Forward";
@@ -1823,9 +1823,9 @@
 "Watch.Stickers.StickerPacks" = "Sticker Sets";
 
 "Watch.Location.Current" = "Current Location";
-"Watch.Location.Access" = "Allow Telegram to access location on your phone";
+"Watch.Location.Access" = "Allow Chitgram to access location on your phone";
 
-"Watch.AuthRequired" = "Log in to Telegram on your phone to get started";
+"Watch.AuthRequired" = "Log in to Chitgram on your phone to get started";
 
 "Watch.NoConnection" = "No Connection";
 "Watch.ConnectionDescription" = "Your Watch needs to be connected for the app to work";
@@ -1872,7 +1872,7 @@
 "Cache.ClearProgress" = "Please Wait...";
 "Cache.ClearEmpty" = "Empty";
 "Cache.ByPeerHeader" = "CHATS";
-"Cache.Indexing" = "Telegram is calculating current cache size.\nThis can take a few minutes.";
+"Cache.Indexing" = "Chitgram is calculating current cache size.\nThis can take a few minutes.";
 
 "ExplicitContent.AlertTitle" = "Sorry";
 "ExplicitContent.AlertChannel" = "You can't access this channel because it violates App Store rules.";
@@ -1953,7 +1953,7 @@
 "PrivacyLastSeenSettings.GroupsAndChannelsHelp" = "Change who can add you to groups and channels.";
 "MusicPlayer.VoiceNote" = "Voice Message";
 
-"Watch.Microphone.Access" = "Allow Telegram to access the microphone on your phone";
+"Watch.Microphone.Access" = "Allow Chitgram to access the microphone on your phone";
 
 "Settings.AppleWatch" = "Apple Watch";
 "AppleWatch.Title" = "Apple Watch";
@@ -1972,7 +1972,7 @@
 "KeyCommand.SendMessage" = "Send Message";
 "KeyCommand.ChatInfo" = "Chat Info";
 
-"Conversation.SecretLinkPreviewAlert" = "Would you like to enable extended link previews in Secret Chats? Note that link previews are generated on Telegram servers.";
+"Conversation.SecretLinkPreviewAlert" = "Would you like to enable extended link previews in Secret Chats? Note that link previews are generated on Chitgram servers.";
 "Conversation.SecretChatContextBotAlert" = "Please note that inline bots are provided by third-party developers. For the bot to work, the symbols you type after the bot's username are sent to the respective developer.";
 
 "Map.OpenInWaze" = "Open in Waze";
@@ -2046,7 +2046,7 @@
 "Group.Setup.TypePublicHelp" = "Public groups can be found in search, chat history is available to everyone and anyone can join.";
 "Group.Setup.TypePrivateHelp" = "Private groups can only be joined if you were invited or have an invite link.";
 
-"Group.Username.CreatePublicLinkHelp" = "People can share this link with others and find your group using Telegram search.";
+"Group.Username.CreatePublicLinkHelp" = "People can share this link with others and find your group using Chitgram search.";
 "Group.Username.CreatePrivateLinkHelp" = "People can join your group by following this link. You can revoke the link at any time.";
 
 "Conversation.PinMessageAlertGroup" = "Pin this message and notify all members of the group?";
@@ -2150,11 +2150,11 @@
 "Login.CodeSentCall" = "We are calling your phone to dictate a code.";
 
 "Login.WillSendSms" = "You can request an SMS in %@";
-"Login.SmsRequestState2" = "Requesting an SMS from Telegram...";
-"Login.SmsRequestState3" = "Telegram sent you an SMS\n[Didn't get the code?]";
+"Login.SmsRequestState2" = "Requesting an SMS from Chitgram...";
+"Login.SmsRequestState3" = "Chitgram sent you an SMS\n[Didn't get the code?]";
 
 "CancelResetAccount.Title" = "Cancel Account Reset";
-"CancelResetAccount.TextSMS" = "Somebody with access to your phone number %@ has requested to delete your Telegram account and reset your 2-Step Verification password.\n\nIf it wasn't you, please enter the code we've just sent you via SMS to your number.";
+"CancelResetAccount.TextSMS" = "Somebody with access to your phone number %@ has requested to delete your Chitgram account and reset your 2-Step Verification password.\n\nIf it wasn't you, please enter the code we've just sent you via SMS to your number.";
 
 "CancelResetAccount.Success" = "The deletion process was cancelled for your account %@.";
 "MediaPicker.MomentsDateRangeSameMonthYearFormat" = "{month} {day1} – {day2}, {year}";
@@ -2253,7 +2253,7 @@
 "StickerPack.RemoveMaskCount_many" = "Remove %@ Masks";
 "StickerPack.RemoveMaskCount_0" = "Remove %@ Masks";
 
-"Conversation.BotInteractiveUrlAlert" = "Allow %@ to pass your Telegram name and id (not your phone number) to pages you open with this bot?";
+"Conversation.BotInteractiveUrlAlert" = "Allow %@ to pass your Chitgram name and id (not your phone number) to pages you open with this bot?";
 "StickerPacksSettings.ArchivedMasks" = "Archived Masks";
 "StickerSettings.MaskContextInfo" = "If you archive a set of masks, you can quickly restore it later from the Archived Masks section.";
 "StickerPacksSettings.ArchivedMasks.Info" = "You can have up to 200 sets of masks.
@@ -2261,9 +2261,9 @@ Unused sets are archived when you add more.";
 
 "CloudStorage.Title" = "Cloud Storage";
 
-"Widget.AuthRequired" = "Log in to Telegram";
+"Widget.AuthRequired" = "Log in to Chitgram";
 "Widget.NoUsers" = "Start messaging to see your friends here";
-"Widget.GalleryTitle" = "Telegram";
+"Widget.GalleryTitle" = "Chitgram";
 "Widget.GalleryDescription" = "Select chats";
 
 "ShareMenu.CopyShareLinkGame" = "Copy link to game";
@@ -2288,11 +2288,11 @@ Unused sets are archived when you add more.";
 "Conversation.JumpToDate" = "Jump To Date";
 "Conversation.AddToReadingList" = "Add to Reading List";
 
-"AccessDenied.CallMicrophone" = "Telegram needs access to your microphone for voice calls.\n\nPlease go to Settings > Privacy > Microphone and set Telegram to ON.";
+"AccessDenied.CallMicrophone" = "Chitgram needs access to your microphone for voice calls.\n\nPlease go to Settings > Privacy > Microphone and set Chitgram to ON.";
 
 "Call.EncryptionKey.Title" = "Encryption Key";
 
-"Application.Name" = "Telegram";
+"Application.Name" = "Chitgram";
 "DialogList.Pin" = "Pin";
 "DialogList.Unpin" = "Unpin";
 "DialogList.PinLimitError" = "Sorry, you can pin no more than %@ chats to the top.";
@@ -2342,7 +2342,7 @@ Unused sets are archived when you add more.";
 "Calls.AddTab" = "Add Tab";
 "Calls.NewCall" = "New Call";
 
-"Calls.RatingTitle" = "Please rate the quality\nof your Telegram call";
+"Calls.RatingTitle" = "Please rate the quality\nof your Chitgram call";
 "Calls.SubmitRating" = "Submit";
 
 "Call.Seconds_1" = "%@ second";
@@ -2529,14 +2529,14 @@ Unused sets are archived when you add more.";
 
 "Calls.RatingFeedback" = "Write a comment...";
 
-"Call.StatusIncoming" = "Telegram Audio...";
+"Call.StatusIncoming" = "Chitgram Audio...";
 "Call.IncomingVoiceCall" = "Incoming Voice Call";
 "Call.IncomingVideoCall" = "Incoming Video Call";
 "Call.StatusRequesting" = "Contacting...";
 "Call.StatusWaiting" = "Waiting...";
 "Call.StatusRinging" = "Ringing...";
 "Call.StatusConnecting" = "Connecting...";
-"Call.StatusOngoing" = "Telegram Audio %@";
+"Call.StatusOngoing" = "Chitgram Audio %@";
 "Call.StatusEnded" = "Call Ended";
 "Call.StatusFailed" = "Call Failed";
 "Call.StatusBusy" = "Busy";
@@ -2602,7 +2602,7 @@ Unused sets are archived when you add more.";
 "Call.AudioRouteHeadphones" = "Headphones";
 "Call.AudioRouteHide" = "Hide";
 
-"Call.PhoneCallInProgressMessage" = "You can’t place a Telegram call if you’re already on a phone call.";
+"Call.PhoneCallInProgressMessage" = "You can’t place a Chitgram call if you’re already on a phone call.";
 "Call.RecordingDisabledMessage" = "Please end your call before recording a voice message.";
 
 "Call.EmojiDescription" = "If these emoji are the same on %@'s screen, this call is 100%% secure.";
@@ -2612,8 +2612,8 @@ Unused sets are archived when you add more.";
 "Conversation.HoldForAudio" = "Hold to record audio. Tap to switch to video.";
 "Conversation.HoldForVideo" = "Hold to record video. Tap to switch to audio.";
 
-"UserInfo.TelegramCall" = "Telegram Call";
-"UserInfo.TelegramVideoCall" = "Telegram Video Call";
+"UserInfo.TelegramCall" = "Chitgram Call";
+"UserInfo.TelegramVideoCall" = "Chitgram Video Call";
 "UserInfo.PhoneCall" = "Phone Call";
 
 "SharedMedia.CategoryMedia" = "Media";
@@ -2621,8 +2621,8 @@ Unused sets are archived when you add more.";
 "SharedMedia.CategoryLinks" = "Links";
 "SharedMedia.CategoryOther" = "Audio";
 
-"AccessDenied.VideoMessageCamera" = "Telegram needs access to your camera to send video messages.\n\nPlease go to Settings > Privacy > Camera and set Telegram to ON.";
-"AccessDenied.VideoMessageMicrophone" = "Telegram needs access to your microphone to send video messages.\n\nPlease go to Settings > Privacy > Microphone and set Telegram to ON.";
+"AccessDenied.VideoMessageCamera" = "Chitgram needs access to your camera to send video messages.\n\nPlease go to Settings > Privacy > Camera and set Chitgram to ON.";
+"AccessDenied.VideoMessageMicrophone" = "Chitgram needs access to your microphone to send video messages.\n\nPlease go to Settings > Privacy > Microphone and set Chitgram to ON.";
 
 "ChatSettings.AutomaticVideoMessageDownload" = "AUTOMATIC VIDEO MESSAGE DOWNLOAD";
 
@@ -2803,7 +2803,7 @@ Unused sets are archived when you add more.";
 
 "Contacts.PhoneNumber" = "Phone Number";
 "Contacts.AddPhoneNumber" = "Add %@";
-"Contacts.ShareTelegram" = "Share Telegram";
+"Contacts.ShareTelegram" = "Share Chitgram";
 
 "Conversation.ViewChannel" = "VIEW CHANNEL";
 "Conversation.ViewGroup" = "VIEW GROUP";
@@ -2870,7 +2870,7 @@ Unused sets are archived when you add more.";
 "Privacy.Calls.P2PHelp" = "Disabling peer-to-peer will relay all calls through Telegram servers to avoid revealing your IP address, but will slightly decrease audio quality.";
 
 "Privacy.Calls.Integration" = "iOS Call Integration";
-"Privacy.Calls.IntegrationHelp" = "iOS Call Integration shows Telegram calls on the lock screen and in the system's call history. If iCloud sync is enabled, your call history is shared with Apple.";
+"Privacy.Calls.IntegrationHelp" = "iOS Call Integration shows Chitgram calls on the lock screen and in the system's call history. If iCloud sync is enabled, your call history is shared with Apple.";
 
 "Call.ReportPlaceholder" = "What went wrong?";
 "Call.ReportIncludeLog" = "Send technical information";
@@ -2897,12 +2897,12 @@ Unused sets are archived when you add more.";
 
 "Stickers.FrequentlyUsed" = "Recently Used";
 
-"Contacts.ImportersCount_1" = "1 contact on Telegram";
-"Contacts.ImportersCount_2" = "2 contacts on Telegram";
-"Contacts.ImportersCount_3_10" = "%@ contacts on Telegram";
-"Contacts.ImportersCount_any" = "%@ contacts on Telegram";
-"Contacts.ImportersCount_many" = "%@ contacts on Telegram";
-"Contacts.ImportersCount_0" = "%@ contacts on Telegram";
+"Contacts.ImportersCount_1" = "1 contact on Chitgram";
+"Contacts.ImportersCount_2" = "2 contacts on Chitgram";
+"Contacts.ImportersCount_3_10" = "%@ contacts on Chitgram";
+"Contacts.ImportersCount_any" = "%@ contacts on Chitgram";
+"Contacts.ImportersCount_many" = "%@ contacts on Chitgram";
+"Contacts.ImportersCount_0" = "%@ contacts on Chitgram";
 
 "Conversation.ContextMenuBan" = "Restrict";
 
@@ -2910,13 +2910,13 @@ Unused sets are archived when you add more.";
 "SocksProxySetup.UseForCallsHelp" = "Proxy servers may degrade the quality of your calls.";
 
 "InviteText.URL" = "https://telegram.org/dl";
-"InviteText.SingleContact" = "Hey, I'm using Telegram to chat. Join me! Download it here: %@";
-"InviteText.ContactsCountText_1" = "Hey, I'm using Telegram to chat. Join me! Download it here: {url}";
-"InviteText.ContactsCountText_2" = "Hey, I'm using Telegram to chat – and so are 2 of our other contacts. Join us! Download it here: {url}";
-"InviteText.ContactsCountText_3_10" = "Hey, I'm using Telegram to chat – and so are %@ of our other contacts. Join us! Download it here: {url}";
-"InviteText.ContactsCountText_any" = "Hey, I'm using Telegram to chat – and so are %@ of our other contacts. Join us! Download it here: {url}";
-"InviteText.ContactsCountText_many" = "Hey, I'm using Telegram to chat – and so are %@ of our other contacts. Join us! Download it here: {url}";
-"InviteText.ContactsCountText_0" = "Hey, I'm using Telegram to chat. Join me! Download it here: {url}";
+"InviteText.SingleContact" = "Hey, I'm using Chitgram to chat. Join me! Download it here: %@";
+"InviteText.ContactsCountText_1" = "Hey, I'm using Chitgram to chat. Join me! Download it here: {url}";
+"InviteText.ContactsCountText_2" = "Hey, I'm using Chitgram to chat – and so are 2 of our other contacts. Join us! Download it here: {url}";
+"InviteText.ContactsCountText_3_10" = "Hey, I'm using Chitgram to chat – and so are %@ of our other contacts. Join us! Download it here: {url}";
+"InviteText.ContactsCountText_any" = "Hey, I'm using Chitgram to chat – and so are %@ of our other contacts. Join us! Download it here: {url}";
+"InviteText.ContactsCountText_many" = "Hey, I'm using Chitgram to chat – and so are %@ of our other contacts. Join us! Download it here: {url}";
+"InviteText.ContactsCountText_0" = "Hey, I'm using Chitgram to chat. Join me! Download it here: {url}";
 
 "Invite.LargeRecipientsCountWarning" = "Please note that it may take some time for your device to send all of these invitations";
 
@@ -3072,12 +3072,12 @@ Unused sets are archived when you add more.";
 
 "NotificationSettings.ContactJoined" = "New Contacts";
 
-"AccessDenied.LocationAlwaysDenied" = "If you'd like to share your Live Location with friends, Telegram needs location access when the app is in the background.\n\nPlease go to Settings > Privacy > Location Services and set Telegram to Always.";
+"AccessDenied.LocationAlwaysDenied" = "If you'd like to share your Live Location with friends, Chitgram needs location access when the app is in the background.\n\nPlease go to Settings > Privacy > Location Services and set Chitgram to Always.";
 
 "UserInfo.UnblockConfirmation" = "Unblock %@?";
 
 "Login.BannedPhoneSubject" = "Banned phone number: %@";
-"Login.BannedPhoneBody" = "I'm trying to use my mobile phone number: %@\nBut Telegram says it's banned. Please help.";
+"Login.BannedPhoneBody" = "I'm trying to use my mobile phone number: %@\nBut Chitgram says it's banned. Please help.";
 
 "Conversation.StopLiveLocation" = "Stop Sharing";
 
@@ -3148,7 +3148,7 @@ Unused sets are archived when you add more.";
 "Channel.Setup.TypePrivateHelp" = "Private channels can only be joined if you were invited or have an invite link.";
 "Group.Username.InvalidTooShort" = "Group names must have at least 5 characters.";
 "Group.Username.InvalidStartsWithNumber" = "Group names can't start with a number.";
-"Group.Username.CreatePublicLinkHelp" = "People can share this link with others and find your group using Telegram search.";
+"Group.Username.CreatePublicLinkHelp" = "People can share this link with others and find your group using Chitgram search.";
 "Channel.TypeSetup.Title" = "Channel Type";
 
 "Group.Setup.TypePrivate" = "Private";
@@ -3160,16 +3160,16 @@ Unused sets are archived when you add more.";
 
 "Privacy.PaymentsClearInfoDoneHelp" = "Payment & shipping info cleared.";
 
-"InfoPlist.NSContactsUsageDescription" = "Telegram will continuously upload your contacts to its heavily encrypted cloud servers to let you connect with your friends across all your devices.";
-"InfoPlist.NSLocationWhenInUseUsageDescription" = "When you send your location to your friends, Telegram needs access to show them a map.";
+"InfoPlist.NSContactsUsageDescription" = "Chitgram will continuously upload your contacts to its heavily encrypted cloud servers to let you connect with your friends across all your devices.";
+"InfoPlist.NSLocationWhenInUseUsageDescription" = "When you send your location to your friends, Chitgram needs access to show them a map.";
 "InfoPlist.NSCameraUsageDescription" = "We need this so that you can take and share photos and videos, as well as make video calls.";
 "InfoPlist.NSPhotoLibraryUsageDescription" = "We need this so that you can share photos and videos from your photo library.";
 "InfoPlist.NSPhotoLibraryAddUsageDescription" = "We need this so that you can save photos and videos to your photo library.";
 "InfoPlist.NSMicrophoneUsageDescription" = "We need this so that you can record and share voice messages and videos with sound.";
 "InfoPlist.NSSiriUsageDescription" = "You can use Siri to send messages.";
-"InfoPlist.NSLocationAlwaysAndWhenInUseUsageDescription" = "When you choose to share your Live Location with friends in a chat, Telegram needs background access to your location to keep them updated for the duration of the live sharing.";
-"InfoPlist.NSLocationAlwaysUsageDescription" = "When you choose to share your live location with friends in a chat, Telegram needs background access to your location to keep them updated for the duration of the live sharing. You also need this to send locations from an Apple Watch.";
-"InfoPlist.NSLocationWhenInUseUsageDescription" = "When you send your location to your friends, Telegram needs access to show them a map.";
+"InfoPlist.NSLocationAlwaysAndWhenInUseUsageDescription" = "When you choose to share your Live Location with friends in a chat, Chitgram needs background access to your location to keep them updated for the duration of the live sharing.";
+"InfoPlist.NSLocationAlwaysUsageDescription" = "When you choose to share your live location with friends in a chat, Chitgram needs background access to your location to keep them updated for the duration of the live sharing. You also need this to send locations from an Apple Watch.";
+"InfoPlist.NSLocationWhenInUseUsageDescription" = "When you send your location to your friends, Chitgram needs access to show them a map.";
 "InfoPlist.NSFaceIDUsageDescription" = "You can use Face ID to unlock the app.";
 
 "Privacy.Calls.P2PNever" = "Never";
@@ -3213,10 +3213,10 @@ Unused sets are archived when you add more.";
 "Channel.AdminLogFilter.EventsNewSubscribers" = "New Subscribers";
 "Channel.AdminLogFilter.EventsLeavingSubscribers" = "Subscribers Removed";
 
-"Conversation.ClearPrivateHistory" = "This will delete all messages and media in this chat from your Telegram cloud. Your chat partner will still have them.";
-"Conversation.ClearGroupHistory" = "This will delete all messages and media in this chat from your Telegram cloud. Other members of the group will still have them.";
+"Conversation.ClearPrivateHistory" = "This will delete all messages and media in this chat from your Chitgram cloud. Your chat partner will still have them.";
+"Conversation.ClearGroupHistory" = "This will delete all messages and media in this chat from your Chitgram cloud. Other members of the group will still have them.";
 "Conversation.ClearSecretHistory" = "This will delete all messages and media in this chat for both you and your chat partner.";
-"Conversation.ClearSelfHistory" = "This will delete all messages and media in this chat from your Telegram cloud.";
+"Conversation.ClearSelfHistory" = "This will delete all messages and media in this chat from your Chitgram cloud.";
 
 "MediaPicker.LivePhotoDescription" = "The live photo will be sent as a GIF.";
 
@@ -3260,7 +3260,7 @@ Unused sets are archived when you add more.";
 "AuthSessions.Sessions" = "Sessions";
 "AuthSessions.LoggedIn" = "Websites";
 "AuthSessions.LogOutApplications" = "Disconnect All Websites";
-"AuthSessions.LogOutApplicationsHelp" = "You can log in on websites that support signing in with Telegram.";
+"AuthSessions.LogOutApplicationsHelp" = "You can log in on websites that support signing in with Chitgram.";
 "AuthSessions.LoggedInWithTelegram" = "CONNECTED WEBSITES";
 "AuthSessions.LogOut" = "Disconnect";
 "AuthSessions.Message" = "You allowed this bot to message you when you logged in on %@.";
@@ -3315,7 +3315,7 @@ Unused sets are archived when you add more.";
 
 "DialogList.AdLabel" = "Proxy Sponsor";
 "DialogList.AdNoticeAlert" = "The proxy you are using displays a sponsored channel in your chat list.";
-"SocksProxySetup.AdNoticeHelp" = "This proxy may display a sponsored channel in your chat list. This doesn't reveal your Telegram traffic.";
+"SocksProxySetup.AdNoticeHelp" = "This proxy may display a sponsored channel in your chat list. This doesn't reveal your Chitgram traffic.";
 
 "SocksProxySetup.ShareProxyList" = "Share Proxy List";
 
@@ -3593,9 +3593,9 @@ Unused sets are archived when you add more.";
 
 "Passport.NotLoggedInMessage" = "Please log in to your account to use Telegram Passport";
 
-"Update.Title" = "Telegram Update";
-"Update.AppVersion" = "Telegram %@";
-"Update.UpdateApp" = "Update Telegram";
+"Update.Title" = "Chitgram Update";
+"Update.AppVersion" = "Chitgram %@";
+"Update.UpdateApp" = "Update Chitgram";
 "Update.Skip" = "Skip";
 
 "ReportPeer.ReasonCopyright" = "Copyright";
@@ -3786,8 +3786,8 @@ Unused sets are archived when you add more.";
 
 "SocksProxySetup.PasteFromClipboard" = "Paste From Clipboard";
 
-"Share.AuthTitle" = "Log in to Telegram";
-"Share.AuthDescription" = "Open Telegram and log in to share.";
+"Share.AuthTitle" = "Log in to Chitgram";
+"Share.AuthDescription" = "Open Chitgram and log in to share.";
 
 "Notifications.DisplayNamesOnLockScreen" = "Names on lock-screen";
 "Notifications.DisplayNamesOnLockScreenInfoWithLink" = "Display names in notifications when the device is locked. To disable, make sure that \"Show Previews\" is also set to \"When Unlocked\" or \"Never\" in [iOS Settings]";
@@ -3833,7 +3833,7 @@ Unused sets are archived when you add more.";
 "ApplyLanguage.ChangeLanguageAction" = "Change";
 "ApplyLanguage.ApplyLanguageAction" = "Change";
 "ApplyLanguage.UnsufficientDataTitle" = "Insufficient Data";
-"ApplyLanguage.UnsufficientDataText" = "Unfortunately, this custom language pack (%1$@) doesn't contain data for Telegram iOS. You can contribute to this language pack using the [translations platform]()";
+"ApplyLanguage.UnsufficientDataText" = "Unfortunately, this custom language pack (%1$@) doesn't contain data for Chitgram iOS. You can contribute to this language pack using the [translations platform]()";
 "ApplyLanguage.LanguageNotSupportedError" = "Sorry, this language doesn't seem to exist.";
 "ApplyLanguage.ApplySuccess" = "Language changed";
 
@@ -3874,8 +3874,8 @@ Unused sets are archived when you add more.";
 "InstantPage.TapToOpenLink" = "Tap to open the link:";
 "InstantPage.RelatedArticleAuthorAndDateTitle" = "%1$@ • %2$@";
 
-"AuthCode.Alert" = "Your login code is %@. Enter it in the Telegram app where you are trying to log in.\n\nDo not give this code to anyone.";
-"Login.CheckOtherSessionMessages" = "Check your Telegram messages";
+"AuthCode.Alert" = "Your login code is %@. Enter it in the Chitgram app where you are trying to log in.\n\nDo not give this code to anyone.";
+"Login.CheckOtherSessionMessages" = "Check your Chitgram messages";
 "Login.SendCodeViaSms" = "Get the code via SMS";
 "Login.SendCodeViaCall" = "Call me to dictate the code";
 "Login.SendCodeViaFlashCall" = "Get the code via phone call";
@@ -3885,7 +3885,7 @@ Unused sets are archived when you add more.";
 "Login.CodeExpired" = "Code expired, please login again.";
 "Login.CancelSignUpConfirmation" = "Do you want to stop the registration process?";
 
-"Passcode.AppLockedAlert" = "Telegram\nLocked";
+"Passcode.AppLockedAlert" = "Chitgram\nLocked";
 
 "ChatList.ReadAll" = "Read All";
 "ChatList.Read" = "Read";
@@ -3905,7 +3905,7 @@ Unused sets are archived when you add more.";
 "Permissions.Skip" = "Skip";
 
 "Permissions.ContactsTitle.v0" = "Sync Your Contacts";
-"Permissions.ContactsText.v0" = "See who's on Telegram and switch seamlessly, without having to \"add\" your friends.";
+"Permissions.ContactsText.v0" = "See who's on Chitgram and switch seamlessly, without having to \"add\" your friends.";
 "Permissions.ContactsAllow.v0" = "Allow Access";
 "Permissions.ContactsAllowInSettings.v0" = "Allow in Settings";
 
@@ -3916,7 +3916,7 @@ Unused sets are archived when you add more.";
 "Permissions.NotificationsAllowInSettings.v0" = "Turn ON in Settings";
 
 "Permissions.CellularDataTitle.v0" = "Enable Cellular Data";
-"Permissions.CellularDataText.v0" = "Don't worry, Telegram keeps network usage to a minimum. You can further control this in Settings > Data and Storage.";
+"Permissions.CellularDataText.v0" = "Don't worry, Chitgram keeps network usage to a minimum. You can further control this in Settings > Data and Storage.";
 "Permissions.CellularDataAllowInSettings.v0" = "Turn ON in Settings";
 
 "Permissions.SiriTitle.v0" = "Turn ON Siri";
@@ -3927,11 +3927,11 @@ Unused sets are archived when you add more.";
 "Permissions.PrivacyPolicy" = "Privacy Policy";
 
 "Contacts.PermissionsTitle" = "Access to Contacts";
-"Contacts.PermissionsText" = "Please allow Telegram access to your phonebook to seamlessly find all your friends.";
+"Contacts.PermissionsText" = "Please allow Chitgram access to your phonebook to seamlessly find all your friends.";
 "Contacts.PermissionsAllow" = "Allow Access";
 "Contacts.PermissionsAllowInSettings" = "Allow in Settings";
 "Contacts.PermissionsSuppressWarningTitle" = "Keep contacts disabled?";
-"Contacts.PermissionsSuppressWarningText" = "You won't know when your friends join Telegram and become available to chat. We recommend enabling access to contacts in Settings.";
+"Contacts.PermissionsSuppressWarningText" = "You won't know when your friends join Chitgram and become available to chat. We recommend enabling access to contacts in Settings.";
 "Contacts.PermissionsKeepDisabled" = "Keep Disabled";
 "Contacts.PermissionsEnable" = "Enable";
 
@@ -3943,7 +3943,7 @@ Unused sets are archived when you add more.";
 "Notifications.PermissionsAllowInSettings" = "Turn ON in Settings";
 "Notifications.PermissionsOpenSettings" = "Open Settings";
 "Notifications.PermissionsSuppressWarningTitle" = "Keep notifications disabled?";
-"Notifications.PermissionsSuppressWarningText" = "You may miss important messages on Telegram due to your current settings.\n\nFor better results, enable alerts or banners and try muting certain chats or chat types in Telegram settings.";
+"Notifications.PermissionsSuppressWarningText" = "You may miss important messages on Chitgram due to your current settings.\n\nFor better results, enable alerts or banners and try muting certain chats or chat types in Chitgram settings.";
 "Notifications.PermissionsKeepDisabled" = "Keep Disabled";
 "Notifications.PermissionsEnable" = "Enable";
 
@@ -4000,10 +4000,10 @@ Unused sets are archived when you add more.";
 
 "AttachmentMenu.WebSearch" = "Web Search";
 
-"Conversation.UnsupportedMediaPlaceholder" = "This message is not supported on your version of Telegram. Please update to the latest version.";
+"Conversation.UnsupportedMediaPlaceholder" = "This message is not supported on your version of Chitgram. Please update to the latest version.";
 "Conversation.UpdateTelegram" = "UPDATE TELEGRAM";
 "Conversation.UnsupportedMedia.Title" = "Unsupported message";
-"Conversation.UnsupportedMedia.Text" = "Update Telegram to view this message";
+"Conversation.UnsupportedMedia.Text" = "Update Chitgram to view this message";
 "Conversation.UnsupportedMedia.Action" = "Update";
 
 "Cache.LowDiskSpaceText" = "Your phone has run out of available storage. Please free some space to download or upload media.";
@@ -4014,7 +4014,7 @@ Unused sets are archived when you add more.";
 "Contacts.SortedByName" = "Sorted by Name";
 "Contacts.SortedByPresence" = "Sorted by Last Seen Time";
 
-"NotificationSettings.ContactJoinedInfo" = "Receive push notifications when one of your contacts becomes available on Telegram.";
+"NotificationSettings.ContactJoinedInfo" = "Receive push notifications when one of your contacts becomes available on Chitgram.";
 
 "GroupInfo.Permissions" = "Permissions";
 "GroupInfo.Permissions.Title" = "Permissions";
@@ -4141,7 +4141,7 @@ Unused sets are archived when you add more.";
 "Undo.DeletedChannel" = "Deleted channel";
 "Undo.DeletedGroup" = "Deleted group";
 
-"AccessDenied.Wallpapers" = "Telegram needs access to your photo library to set a custom chat background.\n\nPlease go to Settings > Privacy > Photos and set Telegram to ON.";
+"AccessDenied.Wallpapers" = "Chitgram needs access to your photo library to set a custom chat background.\n\nPlease go to Settings > Privacy > Photos and set Chitgram to ON.";
 
 "Conversation.ChatBackground" = "Chat Background";
 "Conversation.ViewBackground" = "VIEW BACKGROUND";
@@ -4440,7 +4440,7 @@ Unused sets are archived when you add more.";
 "ChatList.ClearChatConfirmation" = "Are you sure you want to delete all\nmessages in the chat with %@?";
 
 "Settings.CheckPhoneNumberTitle" = "Is %@ still your number?";
-"Settings.CheckPhoneNumberText" = "Keep your number up to date to ensure you can always log in to Telegram. [Learn more]()";
+"Settings.CheckPhoneNumberText" = "Keep your number up to date to ensure you can always log in to Chitgram. [Learn more]()";
 "Settings.KeepPhoneNumber" = "Keep %@";
 "Settings.ChangePhoneNumber" = "Change Number";
 "Settings.CheckPhoneNumberFAQAnchor" = "q-i-have-a-new-phone-number-what-do-i-do";
@@ -4511,8 +4511,8 @@ Sorry for the inconvenience.";
 
 "Privacy.AddNewPeer" = "Add Users or Groups";
 "PrivacyPhoneNumberSettings.WhoCanSeeMyPhoneNumber" = "WHO CAN SEE MY PHONE NUMBER";
-"PrivacyPhoneNumberSettings.CustomHelp" = "Users who already have your number saved in the contacts will also see it on Telegram.";
-"PrivacyPhoneNumberSettings.CustomDisabledHelp" = "Users who add your number to their contacts will see it on Telegram only if they are your contacts.";
+"PrivacyPhoneNumberSettings.CustomHelp" = "Users who already have your number saved in the contacts will also see it on Chitgram.";
+"PrivacyPhoneNumberSettings.CustomDisabledHelp" = "Users who add your number to their contacts will see it on Chitgram only if they are your contacts.";
 
 "PrivacyPhoneNumberSettings.DiscoveryHeader" = "WHO CAN FIND ME BY MY NUMBER";
 
@@ -4523,7 +4523,7 @@ Sorry for the inconvenience.";
 "PrivacySettings.PasscodeOff" = "Off";
 "PrivacySettings.PasscodeOn" = "On";
 
-"UserInfo.BlockConfirmationTitle" = "Do you want to block %@ from messaging and calling you on Telegram?";
+"UserInfo.BlockConfirmationTitle" = "Do you want to block %@ from messaging and calling you on Chitgram?";
 "UserInfo.BlockActionTitle" = "Block %@";
 "ReportSpam.DeleteThisChat" = "Delete this Chat";
 
@@ -4688,7 +4688,7 @@ Sorry for the inconvenience.";
 
 "Group.PublicLink.Title" = "Public Link";
 "Group.PublicLink.Placeholder" = "link";
-"Group.PublicLink.Info" = "People can share this link with others and find your group using Telegram search.\n\nYou can use **a-z**, **0-9** and underscores. Minimum length is **5** characters.";
+"Group.PublicLink.Info" = "People can share this link with others and find your group using Chitgram search.\n\nYou can use **a-z**, **0-9** and underscores. Minimum length is **5** characters.";
 
 "CreateGroup.ErrorLocatedGroupsTooMuch" = "Sorry, you have too many location-based groups already. Please delete one of your existing ones first.";
 
@@ -5028,12 +5028,12 @@ Sorry for the inconvenience.";
 "TwoFactorSetup.Password.Action" = "Create Password";
 
 "TwoFactorSetup.Email.Title" = "Recovery Email";
-"TwoFactorSetup.Email.Text" = "You can set a recovery email to be able to reset you password and restore access to your Telegram account.";
+"TwoFactorSetup.Email.Text" = "You can set a recovery email to be able to reset you password and restore access to your Chitgram account.";
 "TwoFactorSetup.Email.Placeholder" = "Your email address";
 "TwoFactorSetup.Email.Action" = "Continue";
 "TwoFactorSetup.Email.SkipAction" = "Skip setting email";
 "TwoFactorSetup.Email.SkipConfirmationTitle" = "No, seriously.";
-"TwoFactorSetup.Email.SkipConfirmationText" = "If you forget your password, you will lose access to your Telegram account. There will be no way to restore it.";
+"TwoFactorSetup.Email.SkipConfirmationText" = "If you forget your password, you will lose access to your Chitgram account. There will be no way to restore it.";
 "TwoFactorSetup.Email.SkipConfirmationSkip" = "Skip";
 
 "TwoFactorSetup.EmailVerification.Title" = "Recovery Email";
@@ -5067,11 +5067,11 @@ Sorry for the inconvenience.";
 "Group.ErrorSupergroupConversionNotPossible" = "Sorry, you are a member of too many groups and channels. Please leave some before creating a new one.";
 
 "ClearCache.StorageTitle" = "%@ STORAGE";
-"ClearCache.StorageCache" = "Telegram Cache";
+"ClearCache.StorageCache" = "Chitgram Cache";
 "ClearCache.StorageServiceFiles" = "Telegram Service Files";
 "ClearCache.StorageOtherApps" = "Other Apps";
 "ClearCache.StorageFree" = "Free";
-"ClearCache.ClearCache" = "Clear Telegram Cache";
+"ClearCache.ClearCache" = "Clear Chitgram Cache";
 "ClearCache.Clear" = "Clear";
 "ClearCache.Forever" = "Forever";
 
@@ -5135,8 +5135,8 @@ Sorry for the inconvenience.";
 "AuthSessions.AddDevice.ScanTitle" = "Scan QR Code";
 "AuthSessions.AddDevice.InvalidQRCode" = "Invalid QR Code";
 "AuthSessions.AddDeviceIntro.Title" = "Log in by QR Code";
-"AuthSessions.AddDeviceIntro.Text1" = "Download Telegram on your computer from [desktop.telegram.org]()";
-"AuthSessions.AddDeviceIntro.Text2" = "Run Telegram on your computer to get the QR code";
+"AuthSessions.AddDeviceIntro.Text1" = "Download Chitgram on your computer from [desktop.telegram.org]()";
+"AuthSessions.AddDeviceIntro.Text2" = "Run Chitgram on your computer to get the QR code";
 "AuthSessions.AddDeviceIntro.Text3" = "Scan the QR code to connect your account";
 "AuthSessions.AddDeviceIntro.Action" = "Scan QR Code";
 "AuthSessions.AddedDeviceTitle" = "Login Successful";
@@ -5149,13 +5149,13 @@ Sorry for the inconvenience.";
 "Map.Home" = "Home";
 "Map.Work" = "Work";
 "Map.HomeAndWorkTitle" = "Home & Work Addresses";
-"Map.HomeAndWorkInfo" = "Telegram uses the Home and Work addresses from your Contact Card.\n\nKeep your Contact Card up to date for quick access to sending Home and Work addresses.";
+"Map.HomeAndWorkInfo" = "Chitgram uses the Home and Work addresses from your Contact Card.\n\nKeep your Contact Card up to date for quick access to sending Home and Work addresses.";
 "Map.SearchNoResultsDescription" = "There were no results for \"%@\".\nTry a new search.";
 
 "ChatList.Search.ShowMore" = "Show more";
 "ChatList.Search.ShowLess" = "Show less";
 
-"AuthSessions.OtherDevices" = "The official Telegram App is available for iPhone, iPad, Android, macOS, Windows and Linux. [Learn More]()";
+"AuthSessions.OtherDevices" = "The official Chitgram App is available for iPhone, iPad, Android, macOS, Windows and Linux. [Learn More]()";
 
 "MediaPlayer.UnknownArtist" = "Unknown Artist";
 "MediaPlayer.UnknownTrack" = "Unknown Track";
@@ -5173,7 +5173,7 @@ Sorry for the inconvenience.";
 
 "Theme.Colors.Proceed" = "Proceed";
 
-"AuthSessions.AddDevice.UrlLoginHint" = "This code can be used to allow someone to log in to your Telegram account.\n\nTo confirm Telegram login, please go to Settings > Devices > Scan QR and scan the code.";
+"AuthSessions.AddDevice.UrlLoginHint" = "This code can be used to allow someone to log in to your Chitgram account.\n\nTo confirm Chitgram login, please go to Settings > Devices > Scan QR and scan the code.";
 
 "Appearance.RemoveThemeColor" = "Remove";
 "Appearance.RemoveThemeColorConfirmation" = "Remove Color";
@@ -5683,7 +5683,7 @@ Sorry for the inconvenience.";
 
 "Cache.MaximumCacheSize" = "Maximum Cache Size";
 "Cache.NoLimit" = "No Limit";
-"Cache.MaximumCacheSizeHelp" = "If your cache size exceeds this limit, the oldest media will be deleted.\n\nAll media will stay in the Telegram cloud and can be re-downloaded if you need it again.";
+"Cache.MaximumCacheSizeHelp" = "If your cache size exceeds this limit, the oldest media will be deleted.\n\nAll media will stay in the Chitgram cloud and can be re-downloaded if you need it again.";
 
 "Stats.MessageTitle" = "Message Statistics";
 "Stats.MessageOverview" = "Overview";
@@ -5704,9 +5704,9 @@ Sorry for the inconvenience.";
 "Call.Audio" = "audio";
 "Call.AudioRouteMute" = "Mute Yourself";
 
-"AccessDenied.VideoCallCamera" = "Telegram needs access to your camera to make video calls.\n\nPlease go to Settings > Privacy > Camera and set Telegram to ON.";
+"AccessDenied.VideoCallCamera" = "Chitgram needs access to your camera to make video calls.\n\nPlease go to Settings > Privacy > Camera and set Chitgram to ON.";
 
-"Call.AccountIsLoggedOnCurrentDevice" = "Sorry, you can't call %@ because that account is logged in to Telegram on the device you're using for the call.";
+"Call.AccountIsLoggedOnCurrentDevice" = "Sorry, you can't call %@ because that account is logged in to Chitgram on the device you're using for the call.";
 
 "ChatList.Search.FilterChats" = "Chats";
 "ChatList.Search.FilterMedia" = "Media";
@@ -5858,7 +5858,7 @@ Sorry for the inconvenience.";
 "Conversation.EditingPhotoPanelTitle" = "Edit Photo";
 
 "Media.LimitedAccessTitle" = "Limited Access to Media";
-"Media.LimitedAccessText" = "You've given Telegram access only to select number of photos.";
+"Media.LimitedAccessText" = "You've given Chitgram access only to select number of photos.";
 "Media.LimitedAccessManage" = "Manage";
 "Media.LimitedAccessSelectMore" = "Select More Photos...";
 "Media.LimitedAccessChangeSettings" = "Change Settings";
@@ -6058,8 +6058,8 @@ Sorry for the inconvenience.";
 "InviteLink.PeopleJoined_3_10" = "%@ people joined";
 "InviteLink.PeopleJoined_many" = "%@ people joined";
 "InviteLink.PeopleJoined_any" = "%@ people joined";
-"InviteLink.CreatePrivateLinkHelp" = "Anyone who has Telegram installed will be able to join your group by following this link.";
-"InviteLink.CreatePrivateLinkHelpChannel" = "Anyone who has Telegram installed will be able to join your channel by following this link.";
+"InviteLink.CreatePrivateLinkHelp" = "Anyone who has Chitgram installed will be able to join your group by following this link.";
+"InviteLink.CreatePrivateLinkHelpChannel" = "Anyone who has Chitgram installed will be able to join your channel by following this link.";
 "InviteLink.Manage" = "Manage Invite Links";
 
 "InviteLink.PeopleJoinedShortNoneExpired" = "no one joined";
@@ -6119,8 +6119,8 @@ Sorry for the inconvenience.";
 "InviteLink.Create.Revoke" = "Revoke Link";
 
 "InviteLink.QRCode.Title" = "Invite by QR Code";
-"InviteLink.QRCode.Info" = "Everyone on Telegram can scan this code to join your group.";
-"InviteLink.QRCode.InfoChannel" = "Everyone on Telegram can scan this code to join your channel.";
+"InviteLink.QRCode.Info" = "Everyone on Chitgram can scan this code to join your group.";
+"InviteLink.QRCode.InfoChannel" = "Everyone on Chitgram can scan this code to join your channel.";
 "InviteLink.QRCode.Share" = "Share QR Code";
 
 "InviteLink.InviteLink" = "Invite Link";
@@ -6202,7 +6202,7 @@ Sorry for the inconvenience.";
 "Message.ImportedDateFormat" = "%1$@, %2$@ Imported %3$@";
 
 "ChatImportActivity.Title" = "Importing Chat";
-"ChatImportActivity.OpenApp" = "Open Telegram";
+"ChatImportActivity.OpenApp" = "Open Chitgram";
 "ChatImportActivity.Retry" = "Retry";
 "ChatImportActivity.InProgress" = "Please keep this window open\nuntil the import is completed.";
 "ChatImportActivity.ErrorNotAdmin" = "You need to be an admin in the group to import messages.";
@@ -6354,7 +6354,7 @@ Sorry for the inconvenience.";
 "Widget.UpdatedAt" = "Updated {}";
 
 "Intents.ErrorLockedTitle" = "Locked";
-"Intents.ErrorLockedText" = "Open Telegram and enter passcode to edit widget.";
+"Intents.ErrorLockedText" = "Open Chitgram and enter passcode to edit widget.";
 
 "Conversation.GigagroupDescription" = "Only admins can send messages in this group.";
 
@@ -6375,7 +6375,7 @@ Sorry for the inconvenience.";
 
 "Conversation.UploadFileTooLarge" = "File could not be sent, because it is larger than 2 GB.\n\nYou can send as many files as you like, but each must be smaller than 2 GB.";
 
-"Channel.AddUserLeftError" = "Sorry, if a person is no longer part of a channel, you need to be in their Telegram contacts in order to add them back.\n\nNote that they can still join via the channel's invite link as long as they are not in the Removed Users list.";
+"Channel.AddUserLeftError" = "Sorry, if a person is no longer part of a channel, you need to be in their Chitgram contacts in order to add them back.\n\nNote that they can still join via the channel's invite link as long as they are not in the Removed Users list.";
 
 "Message.ScamAccount" = "Scam";
 "Message.FakeAccount" = "Fake";
@@ -6678,7 +6678,7 @@ Sorry for the inconvenience.";
 "Privacy.PaymentsClear.ShippingInfoCleared" = "Shipping info cleared.";
 "Privacy.PaymentsClear.AllInfoCleared" = "Payment and shipping info cleared.";
 
-"Settings.Tips" = "Telegram Features";
+"Settings.Tips" = "Chitgram Features";
 "Settings.TipsUsername" = "TelegramTips";
 
 "Calls.NoVoiceAndVideoCallsPlaceholder" = "Your recent voice and video calls will appear here.";
@@ -7308,7 +7308,7 @@ Sorry for the inconvenience.";
 
 "Conversation.ContextMenuTranslate" = "Translate";
 
-"ClearCache.ClearDescription" = "All media will stay in the Telegram cloud and can be re-downloaded if you need them again.";
+"ClearCache.ClearDescription" = "All media will stay in the Chitgram cloud and can be re-downloaded if you need them again.";
 
 "ChatSettings.StickersAndReactions" = "Stickers and Emoji";
 
@@ -7330,8 +7330,8 @@ Sorry for the inconvenience.";
 "Contacts.QrCode.MyCode" = "My QR Code";
 "Contacts.QrCode.NoCodeFound" = "No valid QR code found in the image. Please try again.";
 
-"AccessDenied.QrCode" = "Telegram needs access to your photo library to scan QR codes.\n\nOpen your device's Settings > Privacy > Photos and set Telegram to ON.";
-"AccessDenied.QrCamera" = "Telegram needs access to your camera to scan QR codes.\n\nOpen your device's Settings > Privacy > Camera and set Telegram to ON.";
+"AccessDenied.QrCode" = "Chitgram needs access to your photo library to scan QR codes.\n\nOpen your device's Settings > Privacy > Photos and set Chitgram to ON.";
+"AccessDenied.QrCamera" = "Chitgram needs access to your camera to scan QR codes.\n\nOpen your device's Settings > Privacy > Camera and set Chitgram to ON.";
 
 "Share.ShareToInstagramStories" = "Share to Instagram Stories";
 
@@ -7444,8 +7444,8 @@ Sorry for the inconvenience.";
 "Attachment.MediaAccessText" = "Share an unlimited number of photos and videos of up to 2 GB each.";
 "Attachment.MediaAccessStoryText" = "Share an unlimited number of photos and videos of up to 2 GB each.";
 
-"Attachment.LimitedMediaAccessText" = "You have limited Telegram from accessing all of your photos.";
-"Attachment.CameraAccessText" = "Telegram needs camera access so that you can take photos and videos.";
+"Attachment.LimitedMediaAccessText" = "You have limited Chitgram from accessing all of your photos.";
+"Attachment.CameraAccessText" = "Chitgram needs camera access so that you can take photos and videos.";
 "Attachment.Manage" = "Manage";
 
 "Attachment.OpenSettings" = "Go to Settings";
@@ -7460,7 +7460,7 @@ Sorry for the inconvenience.";
 "Attachment.DeselectedItems_1" = "%@ item deselected";
 "Attachment.DeselectedItems_any" = "%@ items deselected";
 
-"PrivacyPhoneNumberSettings.CustomPublicLink" = "Users who have your number saved in their contacts will also see it on Telegram.\n\nThis public link opens a chat with you:\n[https://t.me/%@]()";
+"PrivacyPhoneNumberSettings.CustomPublicLink" = "Users who have your number saved in their contacts will also see it on Chitgram.\n\nThis public link opens a chat with you:\n[https://t.me/%@]()";
 
 "DownloadList.DownloadingHeader" = "Downloading";
 "DownloadList.DownloadedHeader" = "Recently Downloaded";
@@ -7480,7 +7480,7 @@ Sorry for the inconvenience.";
 "DownloadList.RemoveFileAlertRemove" = "Remove";
 
 "DownloadList.ClearAlertTitle" = "Downloaded Files";
-"DownloadList.ClearAlertText" = "Telegram allows to store all received and sent\ndocuments in the cloud and save storage\nspace on your device.";
+"DownloadList.ClearAlertText" = "Chitgram allows to store all received and sent\ndocuments in the cloud and save storage\nspace on your device.";
 
 "ChatList.Search.FilterDownloads" = "Downloads";
 
@@ -7489,8 +7489,8 @@ Sorry for the inconvenience.";
 "LiveStream.ViewerCount_any" = "%@ viewers";
 "LiveStream.Watching" = "watching";
 
-"LiveStream.NoSignalAdminText" = "Oops! Telegram doesn't see any stream\ncoming from your streaming app.\n\nPlease make sure you entered the right Server\nURL and Stream Key in your app.";
-"LiveStream.NoSignalUserText" = "%@ is currently not broadcasting live\nstream data to Telegram.";
+"LiveStream.NoSignalAdminText" = "Oops! Chitgram doesn't see any stream\ncoming from your streaming app.\n\nPlease make sure you entered the right Server\nURL and Stream Key in your app.";
+"LiveStream.NoSignalUserText" = "%@ is currently not broadcasting live\nstream data to Chitgram.";
 
 "LiveStream.ViewCredentials" = "View Stream Key";
 
@@ -7579,7 +7579,7 @@ Sorry for the inconvenience.";
 "Notifications.UploadError.TooLong.Title" = "%@ is too long.";
 "Notifications.UploadError.TooLong.Text" = "Duration must be less than %@.";
 "Notifications.UploadSuccess.Title" = "Sound Added";
-"Notifications.UploadSuccess.Text" = "The sound **%@** was added to your Telegram tones.";
+"Notifications.UploadSuccess.Text" = "The sound **%@** was added to your Chitgram tones.";
 "Notifications.SaveSuccess.Text" = "You can now use this sound as a notification tone in your [custom notification settings]().";
 
 "Conversation.DeleteTimer.SetupTitle" = "Auto-Delete After...";
@@ -7679,7 +7679,7 @@ Sorry for the inconvenience.";
 "Premium.AppIcons.Proceed" = "Unlock Premium Icons";
 "Premium.NoAds.Proceed" = "About Telegram Premium";
 
-"AccessDenied.LocationPreciseDenied" = "To share your specific location in this chat, please go to Settings > Privacy > Location Services > Telegram and set Precise Location to On.";
+"AccessDenied.LocationPreciseDenied" = "To share your specific location in this chat, please go to Settings > Privacy > Location Services > Chitgram and set Precise Location to On.";
 
 "Chat.MultipleTypingPair" = "%@ and %@";
 "Chat.MultipleTypingMore" = "%@ and %@ others";
@@ -8123,7 +8123,7 @@ Sorry for the inconvenience.";
 "Login.EnterCodeSMSText" = "We've sent an SMS with an activation code to your phone **%@**.";
 "Login.SendCodeAsSMS" = "Send the code as an SMS";
 "Login.EnterCodeTelegramTitle" = "Enter Code";
-"Login.EnterCodeTelegramText" = "We've sent the code to the **Telegram app** for %@ on your other device.";
+"Login.EnterCodeTelegramText" = "We've sent the code to the **Chitgram app** for %@ on your other device.";
 "Login.AddEmailTitle" = "Add Email";
 "Login.AddEmailText" = "Please enter your valid email address to protect your account.";
 "Login.AddEmailPlaceholder" = "Enter your email";
@@ -8135,9 +8135,9 @@ Sorry for the inconvenience.";
 "Login.WrongCodeError" = "Wrong code, please try again.";
 
 "PrivacySettings.LoginEmail" = "Login Email";
-"PrivacySettings.LoginEmailInfo" = "Change your email address for Telegram login codes.";
+"PrivacySettings.LoginEmailInfo" = "Change your email address for Chitgram login codes.";
 "Login.EmailChanged" = "Your email has been changed.";
-"PrivacySettings.LoginEmailAlertText" = "This email address will be used every time you login to your Telegram account from a new device.";
+"PrivacySettings.LoginEmailAlertText" = "This email address will be used every time you login to your Chitgram account from a new device.";
 "PrivacySettings.LoginEmailAlertChange" = "Change Email";
 
 "Login.InvalidEmailAddressError" = "An error occurred. Please try again.";
@@ -8384,10 +8384,10 @@ Sorry for the inconvenience.";
 "Navigation.AllChats" = "All Chats";
 
 "Group.Management.AntiSpam" = "Aggressive Anti-Spam";
-"Group.Management.AntiSpamInfo" = "Telegram will filter more spam but may occasionally affect ordinary messages. You can report false positives in Recent Actions.";
+"Group.Management.AntiSpamInfo" = "Chitgram will filter more spam but may occasionally affect ordinary messages. You can report false positives in Recent Actions.";
 
 "Group.Management.AntiSpamMagic" = "magic";
-"Group.AdminLog.AntiSpamTitle" = "Telegram Anti-Spam";
+"Group.AdminLog.AntiSpamTitle" = "Chitgram Anti-Spam";
 "Group.AdminLog.AntiSpamText" = "You can manage anti-spam settings in Group Info > [Administrators]().";
 
 "ChatList.ThreadHideAction" = "Hide";
@@ -8574,7 +8574,7 @@ Sorry for the inconvenience.";
 
 "Conversation.SuggestedPhotoTitle" = "Suggested Photo";
 "Conversation.SuggestedPhotoText" = "**%@** suggests you to use this profile photo.";
-"Conversation.SuggestedPhotoTextExpanded" = "%@ suggests you to use this profile photo for your Telegram account.";
+"Conversation.SuggestedPhotoTextExpanded" = "%@ suggests you to use this profile photo for your Chitgram account.";
 "Conversation.SuggestedPhotoTextYou" = "You suggested **%@** to use this profile photo.";
 "Conversation.SuggestedPhotoView" = "View Photo";
 "Conversation.SuggestedPhotoSuccess" = "Photo updated";
@@ -8582,7 +8582,7 @@ Sorry for the inconvenience.";
 
 "Conversation.SuggestedVideoTitle" = "Suggested Video";
 "Conversation.SuggestedVideoText" = "**%@** suggests you to use this profile video.";
-"Conversation.SuggestedVideoTextExpanded" = "%@ suggests you to use this profile video for your Telegram account.";
+"Conversation.SuggestedVideoTextExpanded" = "%@ suggests you to use this profile video for your Chitgram account.";
 "Conversation.SuggestedVideoTextYou" = "You suggested **%@** to use this profile video.";
 "Conversation.SuggestedVideoView" = "View Video";
 "Conversation.SuggestedVideoSuccess" = "Video updated";
@@ -8663,9 +8663,9 @@ Sorry for the inconvenience.";
 "StorageManagement.Title" = "Storage Usage";
 "StorageManagement.TitleCleared" = "Storage Cleared";
 
-"StorageManagement.DescriptionCleared" = "All media can be re-downloaded from the Telegram cloud if you need it again.";
-"StorageManagement.DescriptionChatUsage" = "This chat uses %1$@% of your Telegram cache.";
-"StorageManagement.DescriptionAppUsage" = "Telegram uses %1$@% of your free disk space.";
+"StorageManagement.DescriptionCleared" = "All media can be re-downloaded from the Chitgram cloud if you need it again.";
+"StorageManagement.DescriptionChatUsage" = "This chat uses %1$@% of your Chitgram cache.";
+"StorageManagement.DescriptionAppUsage" = "Chitgram uses %1$@% of your free disk space.";
 
 "StorageManagement.ClearAll" = "Clear Entire Cache";
 "StorageManagement.ClearSelected" = "Clear Selected";
@@ -8679,7 +8679,7 @@ Sorry for the inconvenience.";
 "StorageManagement.SectionAvatars" = "Avatars";
 "StorageManagement.SectionMiscellaneous" = "Misc";
 
-"StorageManagement.SectionsDescription" = "All media will stay in the Telegram cloud and can be re-downloaded if you need it again.";
+"StorageManagement.SectionsDescription" = "All media will stay in the Chitgram cloud and can be re-downloaded if you need it again.";
 
 "StorageManagement.AutoremoveHeader" = "AUTO-REMOVE CACHED MEDIA";
 "StorageManagement.AutoremoveDescription" = "Photos, videos and other files from cloud chats that you have **not accessed** during this period will be removed from this device to save disk space.";
@@ -9073,7 +9073,7 @@ Sorry for the inconvenience.";
 "PowerSavingScreen.OptionAutoplayEmojiText" = "Loop animated emoji in messages, reactions, statuses.";
 
 "PowerSavingScreen.OptionAutoplayEffectsTitle" = "Interface Effects";
-"PowerSavingScreen.OptionAutoplayEffectsText" = "Various effects and animations that make Telegram look amazing.";
+"PowerSavingScreen.OptionAutoplayEffectsText" = "Various effects and animations that make Chitgram look amazing.";
 
 "PowerSavingScreen.OptionBackgroundTitle" = "Extended Background Time";
 "PowerSavingScreen.OptionBackgroundText" = "Update chats faster when switching between apps.";
@@ -9138,7 +9138,7 @@ Sorry for the inconvenience.";
 
 "Login.Email.CantAccess" = "Can't access this email?";
 "Login.Email.ResetTitle" = "Reset Email";
-"Login.Email.ResetText" = "You can change your login email if you are logged into Telegram from another device. Otherwise, if you don't have access to email %1$@, you can reset this email with an **SMS** code **%2$@**.";
+"Login.Email.ResetText" = "You can change your login email if you are logged into Chitgram from another device. Otherwise, if you don't have access to email %1$@, you can reset this email with an **SMS** code **%2$@**.";
 "Login.Email.Reset" = "Reset";
 "Login.Email.ResetNowViaSMS" = "Reset now via SMS";
 "Login.Email.WillBeResetIn" = "Email will be reset %@";
@@ -9347,7 +9347,7 @@ Sorry for the inconvenience.";
 "ChatListFilter.LinkActionDelete" = "Delete";
 
 "InviteLink.QRCodeFolder.Title" = "Invite by QR Code";
-"InviteLink.QRCodeFolder.Text" = "Everyone on Telegram can scan this code to add this folder and join the chats included in this invite link.";
+"InviteLink.QRCodeFolder.Text" = "Everyone on Chitgram can scan this code to add this folder and join the chats included in this invite link.";
 
 "FolderLinkPreview.IconTabLeft" = "All Chats";
 "FolderLinkPreview.IconTabRight" = "Personal";
@@ -9434,7 +9434,7 @@ Sorry for the inconvenience.";
 "ChatList.PremiumRestoreDiscountTitle" = "Get Premium back with up to %@ off";
 "ChatList.PremiumRestoreDiscountText" = "Your Telegram Premium has recently expired. Tap here to extend it.";
 
-"Login.ErrorAppOutdated" = "Please update Telegram to the latest version to log in.";
+"Login.ErrorAppOutdated" = "Please update Chitgram to the latest version to log in.";
 
 "Login.GetCodeViaFragment" = "Get a code via Fragment";
 
@@ -9603,8 +9603,8 @@ Sorry for the inconvenience.";
 "Story.HeaderEdited" = "edited";
 "Story.CaptionShowMore" = "Show more";
 
-"Story.UnsupportedText" = "This story is not supported by\nyour version of Telegram.";
-"Story.UnsupportedAction" = "Update Telegram";
+"Story.UnsupportedText" = "This story is not supported by\nyour version of Chitgram.";
+"Story.UnsupportedAction" = "Update Chitgram";
 
 "Story.ScreenshotBlockedTitle" = "Screenshot Blocked";
 "Story.ScreenshotBlockedText" = "The story you tried to take a\nscreenshot of is protected from\ncopying by its creator.";
@@ -9679,7 +9679,7 @@ Sorry for the inconvenience.";
 "Story.Camera.SwipeLeftRelease" = "Release to lock";
 "Story.Camera.SwipeRightToFlip" = "Swipe right to flip";
 
-"Story.Camera.AccessPlaceholderTitle" = "Allow Telegram to access your camera and microphone";
+"Story.Camera.AccessPlaceholderTitle" = "Allow Chitgram to access your camera and microphone";
 "Story.Camera.AccessPlaceholderText" = "This lets you share photos and record videos.";
 "Story.Camera.AccessOpenSettings" = "Open Settings";
 
@@ -9968,7 +9968,7 @@ Sorry for the inconvenience.";
 "MediaPicker.Timer.Video.KeepTooltip" = "Video will be kept in chat.";
 
 "WebApp.AllowWriteTitle" = "Allow Sending Messages?";
-"WebApp.AllowWriteConfirmation" = "This will allow the bot **%@** to message you on Telegram.";
+"WebApp.AllowWriteConfirmation" = "This will allow the bot **%@** to message you on Chitgram.";
 
 "WebApp.SharePhoneTitle" = "Share Phone Number?";
 "WebApp.SharePhoneConfirmation" = "**%@** will know your phone number. This can be useful for integration with other services.";
@@ -9996,7 +9996,7 @@ Sorry for the inconvenience.";
 "WebApp.ShortcutsSettingsAdded" = "**%@** shortcut added in attachment menu and Settings.";
 
 "WebApp.AllowWriteTitle" = "Allow Sending Messages?";
-"WebApp.AllowWriteConfirmation" = "This will allow the bot **%@** to message you on Telegram.";
+"WebApp.AllowWriteConfirmation" = "This will allow the bot **%@** to message you on Chitgram.";
 
 "AuthSessions.MessageApp" = "You allowed this bot to message you when you opened %@.";
 
@@ -10035,7 +10035,7 @@ Sorry for the inconvenience.";
 "ChatList.SessionReview.PanelConfirm" = "Yes, it's me";
 "ChatList.SessionReview.PanelReject" = "No, it's not me!";
 
-"SessionReview.NoticeText" = "Never send your login code to anyone or you can lose your Telegram account!";
+"SessionReview.NoticeText" = "Never send your login code to anyone or you can lose your Chitgram account!";
 "SessionReview.Title" = "New Login Prevented";
 "SessionReview.Text" = "We have terminated the login attempt from **%1$@**, **%2$@**";
 "SessionReview.OkAction" = "Got it";
@@ -10198,7 +10198,7 @@ Sorry for the inconvenience.";
 "NameColor.ChatPreview.ReplyText.Channel" = "Reply to your channel message";
 "NameColor.ChatPreview.MessageText.Account" = "Your name and replies to your messages will be shown in the selected color.";
 "NameColor.ChatPreview.MessageText.Channel" = "The name of your channek and replies to its messages will be shown in the selected color.";
-"NameColor.ChatPreview.LinkSite" = "Telegram";
+"NameColor.ChatPreview.LinkSite" = "Chitgram";
 "NameColor.ChatPreview.LinkTitle" = "Link Preview";
 "NameColor.ChatPreview.LinkText" = "Your selected color will also tint the link preview.";
 "NameColor.ChatPreview.Description.Account" = "You can choose an individual color to tint your name, the links you send, and replies to your messages.";
@@ -10880,7 +10880,7 @@ Sorry for the inconvenience.";
 
 "Channel.Appearance.ExampleReplyText" = "Reply to your channel";
 "Channel.Appearance.ExampleText" = "The color you select will be used for the channel's name";
-"Channel.Appearance.ExampleLinkWebsite" = "Telegram";
+"Channel.Appearance.ExampleLinkWebsite" = "Chitgram";
 "Channel.Appearance.ExampleLinkTitle" = "Link Preview";
 "Channel.Appearance.ExampleLinkText" = "This preview will also be tinted.";
 
@@ -11081,7 +11081,7 @@ Sorry for the inconvenience.";
 
 "Conversation.ForwardOptions.SenderNamesRemoved" = "Sender names removed";
 
-"Login.Announce.Info" = "Notify people on Telegram who know my phone number that I signed up.";
+"Login.Announce.Info" = "Notify people on Chitgram who know my phone number that I signed up.";
 "Login.Announce.Notify" = "Notify";
 "Login.Announce.DontNotify" = "Do Not Notify";
 
@@ -11667,7 +11667,7 @@ Sorry for the inconvenience.";
 "ChatbotSetup.TextLink" = "https://telegram.org";
 
 "ChatbotSetup.BotSearchPlaceholder" = "Bot Username";
-"ChatbotSetup.BotSectionFooter" = "Enter the username or URL of the Telegram bot that you want to automatically process your chats.";
+"ChatbotSetup.BotSectionFooter" = "Enter the username or URL of the Chitgram bot that you want to automatically process your chats.";
 
 "ChatbotSetup.RecipientsSectionHeader" = "CHATS ACCESSIBLE FOR THE BOT";
 
@@ -12286,19 +12286,19 @@ Sorry for the inconvenience.";
 "Chat.Context.Phone.CreateNewContact" = "Create New Contact";
 "Chat.Context.Phone.AddToExistingContact" = "Add to Existing Contact";
 "Chat.Context.Phone.SendMessage" = "Send Message";
-"Chat.Context.Phone.TelegramVoiceCall" = "Telegram Voice Call";
-"Chat.Context.Phone.TelegramVideoCall" = "Telegram Video Call";
-"Chat.Context.Phone.InviteToTelegram" = "Invite to Telegram";
+"Chat.Context.Phone.TelegramVoiceCall" = "Chitgram Voice Call";
+"Chat.Context.Phone.TelegramVideoCall" = "Chitgram Video Call";
+"Chat.Context.Phone.InviteToTelegram" = "Invite to Chitgram";
 "Chat.Context.Phone.CallViaCarrier" = "Call via Carrier";
 "Chat.Context.Phone.CopyNumber" = "Copy Number";
-"Chat.Context.Phone.NotOnTelegram" = "This number is not on Telegram.";
+"Chat.Context.Phone.NotOnTelegram" = "This number is not on Chitgram.";
 "Chat.Context.Phone.ViewProfile" = "View Profile";
 
 "Chat.Context.Username.SendMessage" = "Send Message";
 "Chat.Context.Username.OpenGroup" = "Open Group";
 "Chat.Context.Username.OpenChannel" = "Open Channel";
 "Chat.Context.Username.Copy" = "Copy Username";
-"Chat.Context.Username.NotOnTelegram" = "This user doesn't exist on Telegram.";
+"Chat.Context.Username.NotOnTelegram" = "This user doesn't exist on Chitgram.";
 
 "Chat.Context.Hashtag.Search" = "Search";
 "Chat.Context.Hashtag.Copy" = "Copy Hashtag";
@@ -12612,7 +12612,7 @@ Sorry for the inconvenience.";
 "Browser.ContextMenu.CopyLink" = "Copy Link";
 "Browser.ContextMenu.Share" = "Share";
 
-"WebBrowser.Telegram" = "Telegram";
+"WebBrowser.Telegram" = "Chitgram";
 
 "Monetization.Proceeds.Ton.Info" = "GRAM from your total balance can be used for ads or withdrawn as rewards 3 days after they are earned.";
 "Monetization.Proceeds.Stars.Info" = "Stars from your total balance can be used for ads or withdrawn as rewards 21 days after they are earned.";
@@ -12657,11 +12657,11 @@ Sorry for the inconvenience.";
 "WebBrowser.AddressBar.ShowMore" = "Show More";
 
 "WebBrowser.OpenLinksIn.Title" = "OPEN LINKS IN";
-"WebBrowser.AutoLogin" = "Auto-Login via Telegram";
-"WebBrowser.AutoLogin.Info" = "Use your Telegram account to automatically log in to websites opened in the in-app browser.";
+"WebBrowser.AutoLogin" = "Auto-Login via Chitgram";
+"WebBrowser.AutoLogin.Info" = "Use your Chitgram account to automatically log in to websites opened in the in-app browser.";
 
 "WebBrowser.ClearCookies" = "Clear Cookies";
-"WebBrowser.ClearCookies.Info" = "Delete all cookies in the Telegram in-app browser. This action will sign you out of most websites.";
+"WebBrowser.ClearCookies.Info" = "Delete all cookies in the Chitgram in-app browser. This action will sign you out of most websites.";
 "WebBrowser.ClearCookies.Succeed" = "Cookies cleared.";
 
 "WebBrowser.Exceptions.Title" = "NEVER OPEN IN THE IN-APP BROWSER";
@@ -12687,7 +12687,7 @@ Sorry for the inconvenience.";
 
 "WebBrowser.Done" = "Done";
 
-"AccessDenied.LocationWeather" = "Telegram needs access to your location so that you can add the weather widget to your stories.\n\nPlease go to Settings > Privacy > Location Services and set Telegram to ON.";
+"AccessDenied.LocationWeather" = "Chitgram needs access to your location so that you can add the weather widget to your stories.\n\nPlease go to Settings > Privacy > Location Services and set Chitgram to ON.";
 
 "Story.Editor.TooltipWeatherLimitText" = "You can't add more than one weather sticker to a story.";
 
@@ -13427,7 +13427,7 @@ Sorry for the inconvenience.";
 "AffiliateSetup.IntroNew.Title1" = "Share revenue with affiliates";
 "AffiliateSetup.IntroNew.Text1" = "Set the commission for revenue generated by users referred to you.";
 "AffiliateSetup.IntroNew.Title2" = "Launch your affiliate program";
-"AffiliateSetup.IntroNew.Text2" = "Telegram will feature your program for millions of potential affiliates.";
+"AffiliateSetup.IntroNew.Text2" = "Chitgram will feature your program for millions of potential affiliates.";
 "AffiliateSetup.IntroNew.Title3" = "Let affiliates promote you";
 "AffiliateSetup.IntroNew.Text3" = "Affiliates will share your referral link with their audience.";
 
@@ -14163,7 +14163,7 @@ Sorry for the inconvenience.";
 "StoryFeed.AddStory" = "Add Story";
 
 "WebApp.ImportData.Title" = "Import Data";
-"WebApp.ImportData.Description" = "**%@** is requesting permission to import data from a previous Telegram account used on this device.";
+"WebApp.ImportData.Description" = "**%@** is requesting permission to import data from a previous Chitgram account used on this device.";
 "WebApp.ImportData.AccountHeader" = "ACCOUNT TO IMPORT DATA FROM";
 "WebApp.ImportData.CreatedOn" = "created on %@";
 "WebApp.ImportData.Import" = "Import";
@@ -14177,10 +14177,10 @@ Sorry for the inconvenience.";
 
 "VideoChat.RevokeLink" = "Revoke Link";
 
-"InviteLink.GroupCallLinkHelp" = "Anyone on Telegram can join your call by following the link below.";
+"InviteLink.GroupCallLinkHelp" = "Anyone on Chitgram can join your call by following the link below.";
 "InviteLink.CallLinkTitle" = "Call Link";
 "InviteLink.CreatedGroupCallFooter" = "Be the first to join the call and add people from there. [Open Call >](open_call)";
-"InviteLink.QRCode.InfoGroupCall" = "Everyone on Telegram can scan this code to join your group call.";
+"InviteLink.QRCode.InfoGroupCall" = "Everyone on Chitgram can scan this code to join your group call.";
 
 "Call.GenericGroupCallTitle" = "Group Call";
 
@@ -14396,7 +14396,7 @@ Sorry for the inconvenience.";
 "Chat.TrimVoiceMessageToResume.Text" = "Audio outside that range will be discarded, and recording will start immediately.";
 "Chat.TrimVoiceMessageToResume.Proceed" = "Proceed";
 
-"Contacts.LimitedAccess.Text" = "You have limited Telegram from accessing all of your contacts.";
+"Contacts.LimitedAccess.Text" = "You have limited Chitgram from accessing all of your contacts.";
 "Contacts.LimitedAccess.Manage" = "MANAGE";
 
 "Media.PhotoHdOn" = "The photo will be sent in high quality.";
@@ -14741,7 +14741,7 @@ Sorry for the inconvenience.";
 
 "Chat.SensitiveContentShort" = "18+";
 
-"AccessDenied.AgeVerificationCamera" = "Telegram needs access to your camera for age verification.\n\nOpen your device's Settings > Privacy > Camera and set Telegram to ON.";
+"AccessDenied.AgeVerificationCamera" = "Chitgram needs access to your camera for age verification.\n\nOpen your device's Settings > Privacy > Camera and set Chitgram to ON.";
 
 "PeerInfo.Gifts.Collections.All" = "All Gifts";
 "PeerInfo.Gifts.Collections.Add" = "Add Collection";
@@ -15228,7 +15228,7 @@ Error: %8$@";
 "Gift.Setup.AuctionInfo.Bidders_1" = "%@ bidder";
 "Gift.Setup.AuctionInfo.Bidders_any" = "%@ bidders";
 
-"PrivacySettings.LoginEmailSetupInfo" = "Setup your email address for Telegram login codes.";
+"PrivacySettings.LoginEmailSetupInfo" = "Setup your email address for Chitgram login codes.";
 
 "LoginEmail.Title" = "Add Email";
 "LoginEmail.Description" = "Please add your email address to keep access to your account.";
@@ -15396,8 +15396,8 @@ Error: %8$@";
 
 "AddContact.Title" = "New Contact";
 "AddContact.PhoneNumber.IsContact"= "This phone number is already in your contacts. [View >]()";
-"AddContact.PhoneNumber.Registered"= "This phone number is on Telegram.";
-"AddContact.PhoneNumber.NotRegistered"= "This phone number is not on Telegram. [Invite >]()";
+"AddContact.PhoneNumber.Registered"= "This phone number is on Chitgram.";
+"AddContact.PhoneNumber.NotRegistered"= "This phone number is not on Chitgram. [Invite >]()";
 "AddContact.SyncToPhone" = "Sync Contact to Phone";
 "AddContact.NotePlaceholder" = "Add notes only visible to you";
 "AddContact.AddQR" = "Add via QR Code";
@@ -15697,7 +15697,7 @@ Error: %8$@";
 "CocoonInfo.Private.Title" = "Private";
 "CocoonInfo.Private.Text" = "No third party can access any data, such as translations, inside Cocoon.";
 "CocoonInfo.Efficient.Title" = "Efficient";
-"CocoonInfo.Efficient.Text" = "Cocoon has allowed Telegram to reduce translation costs by 6x.";
+"CocoonInfo.Efficient.Text" = "Cocoon has allowed Chitgram to reduce translation costs by 6x.";
 "CocoonInfo.ForEveryone.Title" = "For Everyone";
 "CocoonInfo.ForEveryone.Text" = "Any developer can use Cocoon for AI features. Learn more at [@cocoon](telegram) or [cocoon.org](web).";
 "CocoonInfo.IntergrateInfo" = "Want to integrate Cocoon into your projects?\nReach out at [t.me/cocoon?direct]()";
@@ -15903,8 +15903,8 @@ Error: %8$@";
 "Gift.Craft.UnavailableBlockchain.Text" = "This gift can't be used as the first one in crafting because it has been recorded on the blockchain.";
 
 "AuthConfirmation.Emoji.Title" = "Tap the emoji shown\non your other device";
-"AuthConfirmation.Emoji.Description" = "Telegram wants to make sure it's really you.";
-"AuthConfirmation.Emoji.DescriptionFirst" = "Telegram wants to make sure it's really you trying to log in to **%@**.";
+"AuthConfirmation.Emoji.Description" = "Chitgram wants to make sure it's really you.";
+"AuthConfirmation.Emoji.DescriptionFirst" = "Chitgram wants to make sure it's really you trying to log in to **%@**.";
 
 "Chat.TagPlaceholder" = "Tag";
 
@@ -16266,7 +16266,7 @@ Error: %8$@";
 "Attachment.ChatsMusic" = "YOUR CHATS";
 "Attachment.PublicMusic" = "PUBLIC CHATS";
 
-"PeerInfo.UnofficialSecurityRisk" = "%@ uses an unofficial Telegram client – messages to this user may be less secure.";
+"PeerInfo.UnofficialSecurityRisk" = "%@ uses an unofficial Chitgram client – messages to this user may be less secure.";
 
 "Gallery.Live" = "LIVE";
 
@@ -16406,7 +16406,7 @@ Error: %8$@";
 "SocksProxySetup.QrCode.TgLink" = "tg:// link";
 "SocksProxySetup.QrCode.TMeLink" = "t.me link";
 
-"WebBrowser.OpenLinksInfo" = "Open links inside Telegram instead of your default browser for more privacy.";
+"WebBrowser.OpenLinksInfo" = "Open links inside Chitgram instead of your default browser for more privacy.";
 "WebBrowser.Exceptions.OpenInApp" = "OPEN IN-APP";
 "WebBrowser.Exceptions.DontOpenInApp" = "DON'T OPEN IN-APP";
 "WebBrowser.Exceptions.InAppInfo" = "These sites will still be opened in-app.";
@@ -16750,7 +16750,7 @@ Error: %8$@";
 
 "PasscodeSettings.UpdateError" = "Couldn't update the passcode. Unlock again and try once more.";
 "PasscodeSettings.VerificationError" = "Couldn't verify the passcode. Please try again.";
-"PasscodeSettings.LockTelegram" = "Lock Telegram";
+"PasscodeSettings.LockTelegram" = "Lock Chitgram";
 "PasscodeSettings.LockWallet" = "Lock Money";
 "PasscodeSettings.WalletConfirmWithPasscode" = "Confirm with Passcode";
 "PasscodeSettings.WalletConfirmWithFaceId" = "Confirm with Face ID";
