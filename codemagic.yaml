@@ -228,11 +228,22 @@ workflows:
           print("Profile check: every App Store profile has %s, and %s has Push Notifications (%s)" % (group, bundle, main["aps-environment"]))
           PYEOF
 
-      - name: Metal toolchain
+      - name: Toolchain (Metal, no ccache)
         script: |
           # Since Xcode 26 the Metal compiler is a separate download, and the Codemagic image does not carry it
           # (the QR Studio shaders failed with "missing Metal Toolchain"). Skip the download when it already works.
           set -uo pipefail
+          # The image has Homebrew's ccache. TDLib's CMake finds it and makes it the compiler launcher, but the
+          # td genrule runs with PATH=/bin:/usr/bin:/usr/local/bin, so every compile fails "ccache: command not
+          # found" (Error 127). GitHub's runner has no ccache, which is why CI never saw it.
+          if command -v ccache >/dev/null 2>&1 || [ -e /opt/homebrew/bin/ccache ]; then
+            brew uninstall --ignore-dependencies --force ccache || true
+          fi
+          if [ -e /opt/homebrew/bin/ccache ]; then
+            echo "ccache is still installed; TDLib would fail to build"
+            exit 1
+          fi
+          echo "ccache: not installed"
           if echo 'kernel void k() {}' | xcrun metal -x metal -c -o /dev/null - 2>/dev/null; then
             echo "Metal toolchain: already installed"
           else
