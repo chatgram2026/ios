@@ -228,6 +228,18 @@ workflows:
           print("Profile check: every App Store profile has %s, and %s has Push Notifications (%s)" % (group, bundle, main["aps-environment"]))
           PYEOF
 
+      - name: Metal toolchain
+        script: |
+          # Since Xcode 26 the Metal compiler is a separate download, and the Codemagic image does not carry it
+          # (the QR Studio shaders failed with "missing Metal Toolchain"). Skip the download when it already works.
+          set -uo pipefail
+          if echo 'kernel void k() {}' | xcrun metal -x metal -c -o /dev/null - 2>/dev/null; then
+            echo "Metal toolchain: already installed"
+          else
+            xcodebuild -downloadComponent MetalToolchain
+            echo 'kernel void k() {}' | xcrun metal -x metal -c -o /dev/null -
+          fi
+
       - name: Build
         script: |
           set -uo pipefail
