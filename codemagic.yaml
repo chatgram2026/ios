@@ -289,7 +289,12 @@ workflows:
           print("cache after: %.1f GB" % (total / 2**30))
           EOF
           if [ "$status" -ne 0 ]; then
-            grep -E "(error:|ERROR:)" "$CM_BUILD_DIR/build/build.log" | grep -v "^INFO" | sort -u | head -n 100
+            # A failed genrule (td, ffmpeg, …) prints its own error far above Bazel's summary: show what led to it.
+            echo "===== the output around each failed action ====="
+            grep -n -B 60 -A 30 -E "^ERROR: .* failed: " "$CM_BUILD_DIR/build/build.log" \
+              | grep -v -E "^[0-9]+[-:]\[[0-9,]+ / [0-9,]+\]" | tail -n 400
+            echo "===== error lines ====="
+            grep -E "(error:|ERROR:|CMake Error|\*\*\* |fatal)" "$CM_BUILD_DIR/build/build.log" | grep -v "^INFO" | sort -u | head -n 100
           fi
           exit "$status"
 
