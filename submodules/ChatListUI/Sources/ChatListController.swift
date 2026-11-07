@@ -2088,7 +2088,16 @@ public class ChatListControllerImpl: TelegramBaseController, ChatListController 
         }
         
         if case .chatList(.root) = self.location {
-            self.ready.set(combineLatest([self.mainReady.get(), self.storiesReady.get()])
+            // Chitgram: temporary, for the launch overlay in AppDelegate.
+            let chitgramMainReady: Signal<Bool, NoError> = self.mainReady.get()
+            |> beforeNext { value -> Void in
+                chitgramLaunchNote("mainReady", "\(value)")
+            }
+            let chitgramStoriesReady: Signal<Bool, NoError> = self.storiesReady.get()
+            |> beforeNext { value -> Void in
+                chitgramLaunchNote("storiesReady", "\(value)")
+            }
+            self.ready.set(combineLatest([chitgramMainReady, chitgramStoriesReady])
             |> map { values -> Bool in
                 return !values.contains(where: { !$0 })
             }
@@ -4156,6 +4165,7 @@ public class ChatListControllerImpl: TelegramBaseController, ChatListController 
             }
             strongSelf.chatListDisplayNode.mainContainerNode.updateAvailableFilters(availableFilters, limit: filtersLimit)
             
+            chitgramLaunchNote("filters", "ok")
             if isPremium == nil && items.isEmpty {
                 strongSelf.mainReady.set(strongSelf.chatListDisplayNode.mainContainerNode.currentItemNode.ready)
             } else if !strongSelf.initializedFilters {

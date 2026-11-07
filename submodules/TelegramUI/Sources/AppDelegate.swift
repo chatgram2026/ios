@@ -271,6 +271,8 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
     private let contextDisposable = MetaDisposable()
     
     private var authContextValue: UnauthorizedApplicationContext?
+    // Chitgram: temporary, see ChitgramLaunchOverlay.
+    private var chitgramLaunchOverlay: ChitgramLaunchOverlay?
     private let authContext = Promise<UnauthorizedApplicationContext?>()
     private let authContextDisposable = MetaDisposable()
     
@@ -452,6 +454,10 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         }
         self.window = window
         self.nativeWindow = window
+        // Chitgram: temporary, says on screen what a launch that stays white is waiting for.
+        let chitgramLaunchOverlay = ChitgramLaunchOverlay(window: window)
+        self.chitgramLaunchOverlay = chitgramLaunchOverlay
+        chitgramLaunchOverlay.start()
         
         hostView.containerView.layer.addSublayer(MetalEngine.shared.rootLayer)
         // On the first start after an update, compile the pipelines that would otherwise stall their first use.
@@ -1117,6 +1123,12 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         self.pushRegistry = pushRegistry
         pushRegistry.delegate = self
 
+        self.chitgramLaunchOverlay?.watch(name: "accountManager", ping: { done in
+            let _ = (accountManager.transaction { _ -> Void in
+            }).start(completed: {
+                done()
+            })
+        })
         self.accountManagerState = extractAccountManagerState(records: accountManager._internalAccountRecordsSync())
         let _ = (accountManager.accountRecords()
         |> deliverOnMainQueue).start(next: { view in
@@ -1136,6 +1148,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         }
         |> deliverOnMainQueue
         |> mapToSignal { [self] accountManager, initialPresentationDataAndSettings -> Signal<(SharedApplicationContext, LoggingSettings), NoError> in
+            ChitgramLaunchOverlay.note("presentation")
             self.mainWindow?.hostView.containerView.backgroundColor =  initialPresentationDataAndSettings.presentationData.theme.chatList.backgroundColor
             
             let legacyBasePath = appGroupUrl.path
@@ -1275,6 +1288,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                 return sharedContext.currentPresentationData.with({ $0 })
             })
             let sharedApplicationContext = SharedApplicationContext(sharedContext: sharedContext, notificationManager: notificationManager, wakeupManager: wakeupManager)
+            ChitgramLaunchOverlay.note("shared")
             // Chitgram: where Telegram is blocked, a proxy from the owner's list before login (Android RegionProxyManager).
             Queue.mainQueue().async {
                 ChitgramRegionProxy.maybeAutoConnect(sharedContext: sharedContext)
@@ -1414,6 +1428,16 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             
             Logger.shared.log("App \(self.episodeId)", "received context \(String(describing: context)) account \(String(describing: context?.context.account.id)) network \(String(describing: network))")
             
+            ChitgramLaunchOverlay.note("context", context == nil ? "yo'q" : "bor")
+            if let context {
+                let postbox = context.context.account.postbox
+                self.chitgramLaunchOverlay?.watch(name: "postbox", ping: { done in
+                    let _ = (postbox.transaction { _ -> Void in
+                    }).start(completed: {
+                        done()
+                    })
+                })
+            }
             let firstTime = self.contextValue == nil
             if let contextValue = self.contextValue {
                 contextValue.passcodeController?.dismiss()
@@ -1437,6 +1461,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
 
                     self.mainWindow.debugAction = nil
                     self.mainWindow.viewController = context.rootController
+                    self.chitgramLaunchOverlay?.finish()
                     
                     if firstTime {
                         let layer = context.rootController.view.layer
@@ -1505,6 +1530,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                 }
             }
             self.authContextValue = context
+            ChitgramLaunchOverlay.note("login", context == nil ? "yo'q" : "bor")
             if let context = context {
                 let presentationData = context.sharedContext.currentPresentationData.with({ $0 })
                 
@@ -1528,6 +1554,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                 |> deliverOnMainQueue).start(next: { _ in
                     progressDisposable.dispose()
                     self.mainWindow.present(context.rootController, on: .root)
+                    self.chitgramLaunchOverlay?.finish()
                 }))
             } else {
                 authContextReadyDisposable.set(nil)

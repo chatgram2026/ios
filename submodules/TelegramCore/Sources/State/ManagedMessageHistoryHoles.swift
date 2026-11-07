@@ -142,11 +142,6 @@ private final class ManagedMessageHistoryHolesContext {
     }
     
     func update(entries: Set<MessageHistoryHolesViewEntry>) {
-        // Chitgram: remember the set, or the re-check when a fill completes has nothing to look at. A fill closes its
-        // hole before it completes, so the view's next hole arrives while the fill is still pending and is skipped
-        // (one pending fill per location). Without this it was never started: the chat stayed loading until leaving
-        // and reopening it changed the set again.
-        self.currentEntries = entries
         //let removed: [Disposable] = []
         var added: [PendingEntry] = []
         
