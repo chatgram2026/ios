@@ -109,8 +109,3 @@ func chitgramFolderIcon(emoticon: String?, categories: ChatListFilterPeerCategor
     }
     return "\u{1F4C1}"
 }
-
-/// Temporary: a launch step reached, for the launch overlay in TelegramUI, which this module cannot import.
-func chitgramLaunchNote(_ step: String, _ value: String) {
-    NotificationCenter.default.post(name: Notification.Name("ChitgramLaunchStep"), object: nil, userInfo: ["step": step, "value": value])
-}

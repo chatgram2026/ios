@@ -256,17 +256,7 @@ final class AuthorizedApplicationContext {
         }
         if let tabsController = self.rootController.viewControllers.first as? TabBarController, !tabsController.controllers.isEmpty, tabsController.selectedIndex >= 0 {
             let controller = tabsController.controllers[tabsController.selectedIndex]
-            // Chitgram: temporary, for ChitgramLaunchOverlay.
-            ChitgramLaunchOverlay.note("selected", "\(tabsController.selectedIndex) \(type(of: controller))")
-            let chitgramTabsReady: Signal<Bool, NoError> = tabsController.ready.get()
-            |> beforeNext { value -> Void in
-                ChitgramLaunchOverlay.note("tabs", "\(value)")
-            }
-            let chitgramControllerReady: Signal<Bool, NoError> = controller.ready.get()
-            |> beforeNext { value -> Void in
-                ChitgramLaunchOverlay.note("controller", "\(value)")
-            }
-            let combinedReady = combineLatest(chitgramTabsReady, chitgramControllerReady)
+            let combinedReady = combineLatest(tabsController.ready.get(), controller.ready.get())
             |> map { $0 && $1 }
             |> filter { $0 }
             |> take(1)
