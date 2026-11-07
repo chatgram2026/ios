@@ -22,7 +22,7 @@ unread reminder, auto-accept, …). Branch **`chitgram-nova`** starts from it.
   API, so the hooks are unchanged; Telegram's own ads still follow the "Remove all ads" switch.
 - **Rewired to Chitgram:** demo login reads `ChitgramDemo*` Info.plist keys from the signed build's configuration
   (`NovagramDemoCodeFetcher`, timed for the owner's code server); the update check looks up this app's own listing;
-  the Rate row stays hidden until `ReviewPromptLinks.chitgramAppStoreId` is set; the proxy entry points stay hidden
+  the Rate row opens Chitgram's own App Store page (`ReviewPromptLinks.chitgramAppStoreId` = 6831325153); the proxy entry points stay hidden
   while no proxy list is bundled (Novagram's paid list was never in the repo); brand blue is Chitgram's #0A84FF;
   user-visible "Novagram" became "Chitgram" (type and module names keep `Novagram…`).
 - **The earlier port** (Telegram 13.1.2 + our own `Chitgram…` modules) is kept on `chitgram` / `chitgram-next`. Its

@@ -6,9 +6,9 @@ import Foundation
 ///
 /// On macOS the link uses `macappstore://`, so it opens the App Store app instead of the default browser.
 public enum ReviewPromptLinks {
-    /// Chitgram's App Store id (App Store Connect > the app > App Information > Apple ID). 0 until it is known: the
-    /// Settings "Rate" row stays hidden and nothing links to another app's page.
-    public static let chitgramAppStoreId = 0
+    /// Chitgram's App Store id (App Store Connect > the app > App Information > Apple ID; the same value as
+    /// `appstore_id` in codemagic.yaml). At 0 the Settings "Rate" row is hidden.
+    public static let chitgramAppStoreId = 6831325153
 
     /// `https://apps.apple.com/app/id<appStoreId>?action=write-review` (`macappstore://` on macOS), or nil for an id
     /// that is not positive.
