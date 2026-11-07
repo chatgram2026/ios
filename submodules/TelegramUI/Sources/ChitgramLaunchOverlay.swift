@@ -13,7 +13,7 @@ final class ChitgramLaunchOverlay {
     }
 
     private static let stepNotification = Notification.Name("ChitgramLaunchStep")
-    private static let steps = ["presentation", "shared", "login", "context", "filters", "mainReady", "storiesReady", "tabs", "controller"]
+    private static let steps = ["presentation", "shared", "login", "context", "filters", "mainReady", "storiesReady", "tabs", "controller", "selected"]
     private static let showAfter: Double = 5.0
     private static let keepAfterFinish: Double = 3.0
     private static let slowAnswer: Double = 3.0

@@ -79,6 +79,26 @@ extension TelegramRootController {
         }
     }
 
+    /// Moves from Chats to the start tab once Chats is ready, which is when the launch puts the app on screen. A tab
+    /// is loaded and laid out only once it is on screen, so the launch cannot wait for any other tab.
+    func chitgramOpenStartTab(tabBarController: TabBarController, chats: ViewController, target: ViewController) {
+        let _ = (chats.ready.get()
+        |> filter { $0 }
+        |> take(1)
+        |> deliverOnMainQueue).startStandalone(next: { [weak tabBarController, weak chats, weak target] _ in
+            Queue.mainQueue().after(0.1, {
+                guard let tabBarController, let chats, let target else {
+                    return
+                }
+                // Left alone if the user has already picked a tab.
+                guard let chatsIndex = tabBarController.controllers.firstIndex(where: { $0 === chats }), tabBarController.selectedIndex == chatsIndex, let index = tabBarController.controllers.firstIndex(where: { $0 === target }) else {
+                    return
+                }
+                tabBarController.selectedIndex = index
+            })
+        })
+    }
+
     /// Rebuilds the bar when the Tab bar settings change, with the inputs it was last built from.
     func chitgramObserveTabs(showCallsTab: Bool, showNewsTab: Bool) {
         if self.chitgramExtraObserver == nil {
