@@ -1,4 +1,5 @@
 import Foundation
+import ChitgramCore
 import UIKit
 import AsyncDisplayKit
 import Display
@@ -249,7 +250,7 @@ public final class ChatListSearchRecentPeersNode: ASDisplayNode {
             case let .peers(peers):
                 return combineLatest(queue: .mainQueue(),
                     peers.filter {
-                        !$0.isDeleted && (peerFilter?(EnginePeer($0)) ?? true)
+                        !$0.isDeleted && (peerFilter?(EnginePeer($0)) ?? true) && !ChitgramLock.isSecret($0.id.toInt64())
                     }.map {
                         stateManager.postbox.peerView(id: $0.id)
                     }

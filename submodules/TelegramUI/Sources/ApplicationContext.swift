@@ -1,4 +1,5 @@
 import Foundation
+import ChitgramCore
 import UIKit
 import Intents
 import TelegramPresentationData
@@ -308,6 +309,10 @@ final class AuthorizedApplicationContext {
             |> map { chatListIndexMap in
                 return messageList.filter { item in
                     guard let message = item.0.first else {
+                        return false
+                    }
+                    // Chitgram: a chat in the secret folder never shows a banner (Android NotificationsController).
+                    if ChitgramLock.isSecret(message.id.peerId.toInt64()) {
                         return false
                     }
                     if let maybeChatListIndex = chatListIndexMap[message.id.peerId], maybeChatListIndex != nil {

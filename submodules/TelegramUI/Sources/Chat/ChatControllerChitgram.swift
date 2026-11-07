@@ -103,9 +103,7 @@ extension ChatControllerImpl {
             return
         }
         let chatId = peerId.toInt64()
-        chitgramUnlock(context: self.context, title: ChitgramStrings.get(252), push: { [weak self] c in
-            (self?.navigationController as? NavigationController)?.pushViewController(c)
-        }, check: { passcode in
+        chitgramUnlock(context: self.context, digits: ChitgramLock.passcodeDigits(forChat: chatId), check: { passcode in
             return ChitgramLock.check(chatId, passcode: passcode)
         }, completion: { [weak self] in
             guard let self else {

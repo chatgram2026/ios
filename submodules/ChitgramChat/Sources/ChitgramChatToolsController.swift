@@ -114,7 +114,7 @@ public func chitgramChatToolsController(context: AccountContext, peerId: EngineP
         }
         if ChitgramLock.isLocked(chatId) {
             // Unlocking asks for the chat's passcode first.
-            chitgramUnlock(context: context, title: ChitgramStrings.get(252), push: push, check: { passcode in
+            chitgramUnlock(context: context, digits: ChitgramLock.passcodeDigits(forChat: chatId), check: { passcode in
                 return ChitgramLock.check(chatId, passcode: passcode)
             }, completion: {
                 ChitgramLock.unlock(chatId)

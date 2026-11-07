@@ -60,6 +60,8 @@ public final class PasscodeEntryController: ViewController {
     
     public var presentationCompleted: (() -> Void)?
     public var completed: (() -> Void)?
+    // Chitgram: a passcode that is not the app's (the secret folder, a locked chat), checked by whoever opened this.
+    public var chitgramCheck: ((String) -> Bool)?
     public var authenticated: ((PasscodeSession) -> Void)?
     private var authenticationLifecycle: PasscodeEntryLifecycle
     private var authenticationContext: LAContext?
@@ -199,6 +201,9 @@ public final class PasscodeEntryController: ViewController {
     }
     
     private func refreshCredentialCooldown() {
+        if self.chitgramCheck != nil {
+            return
+        }
         guard self.isNodeLoaded, !self.checkingCode, self.authenticationLifecycle.canAuthenticate else { return }
         self.cooldownRequestId &+= 1
         let requestId = self.cooldownRequestId
@@ -230,6 +235,15 @@ public final class PasscodeEntryController: ViewController {
     }
 
     private func verifyCode(_ code: String) {
+        if let chitgramCheck = self.chitgramCheck {
+            guard self.authenticationLifecycle.canAuthenticate else { return }
+            if chitgramCheck(code) {
+                self.finishAuthentication(.success(nil))
+            } else {
+                self.controllerNode.animateError()
+            }
+            return
+        }
         guard !self.checkingCode, self.authenticationLifecycle.canAuthenticate else { return }
         self.checkingCode = true
         self.cooldownRequestId &+= 1

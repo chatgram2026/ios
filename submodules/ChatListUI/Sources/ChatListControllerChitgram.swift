@@ -58,8 +58,14 @@ private var chitgramSecretPendingIds = Set<EnginePeer.Id>()
 extension ChatListControllerImpl {
     /// The long press on the title: the secret folder's passcode, then its chats.
     func chitgramOpenSecretFolder() {
-        ChitgramSettings.chitgramOpenSecretFolder(context: self.context, push: { [weak self] c in
-            self?.push(c)
+        guard ChitgramLock.hasSecretPassword() else {
+            return
+        }
+        let context = self.context
+        chitgramUnlock(context: context, digits: ChitgramLock.secretPasscodeDigits(), check: { passcode in
+            return ChitgramLock.checkSecretPassword(passcode)
+        }, completion: { [weak self] in
+            self?.push(ChitgramSecretFolderController(context: context))
         })
     }
 

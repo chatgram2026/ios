@@ -1,4 +1,5 @@
 import Foundation
+import ChitgramCore
 import PasscodeCore
 import UserNotifications
 import SwiftSignalKit
@@ -729,16 +730,36 @@ private struct NotificationContent: CustomStringConvertible {
     }
 }
 
+// Chitgram: the chats in the secret folder; this process's store is not pointed at the app group.
+private func chitgramSecretChats() -> Set<Int64> {
+    guard let bundleId = Bundle.main.bundleIdentifier, let lastDot = bundleId.range(of: ".", options: [.backwards]) else {
+        return Set()
+    }
+    return ChitgramLock.secretChats(appGroupName: "group.\(bundleId[..<lastDot.lowerBound])")
+}
+
 private func getCurrentRenderedTotalUnreadCount(accountManager: AccountManager<TelegramAccountManagerTypes>, postbox: Postbox) -> Signal<(Int32, RenderedTotalUnreadCountType), NoError> {
-    let counters = postbox.transaction { transaction -> ChatListTotalUnreadState in
-        return transaction.getTotalUnreadState(groupId: .root)
+    let counters = postbox.transaction { transaction -> (ChatListTotalUnreadState, Int32, Int32) in
+        // Chitgram: a chat in the secret folder never counts towards the badge (Android NotificationsController).
+        var secretMessages: Int32 = 0
+        var secretChats: Int32 = 0
+        for chat in chitgramSecretChats() {
+            if let state = transaction.getCombinedPeerReadState(PeerId(chat)) {
+                secretMessages += state.count
+                if state.isUnread {
+                    secretChats += 1
+                }
+            }
+        }
+        return (transaction.getTotalUnreadState(groupId: .root), secretMessages, secretChats)
     }
     return combineLatest(
         accountManager.sharedData(keys: [ApplicationSpecificSharedDataKeys.inAppNotificationSettings])
         |> take(1),
         counters
     )
-    |> map { sharedData, totalReadCounters -> (Int32, RenderedTotalUnreadCountType) in
+    |> map { sharedData, countersAndSecret -> (Int32, RenderedTotalUnreadCountType) in
+        let (totalReadCounters, secretMessages, secretChats) = countersAndSecret
         let inAppSettings: InAppNotificationSettings
         if let value = sharedData.entries[ApplicationSpecificSharedDataKeys.inAppNotificationSettings]?.get(InAppNotificationSettings.self) {
             inAppSettings = value
@@ -750,7 +771,9 @@ private func getCurrentRenderedTotalUnreadCount(accountManager: AccountManager<T
             case .filtered:
                 type = .filtered
         }
-        return (totalReadCounters.count(for: inAppSettings.totalUnreadCountDisplayStyle.category, in: inAppSettings.totalUnreadCountDisplayCategory.statsType, with: inAppSettings.totalUnreadCountIncludeTags), type)
+        let total = totalReadCounters.count(for: inAppSettings.totalUnreadCountDisplayStyle.category, in: inAppSettings.totalUnreadCountDisplayCategory.statsType, with: inAppSettings.totalUnreadCountIncludeTags)
+        let secret = inAppSettings.totalUnreadCountDisplayCategory == .chats ? secretChats : secretMessages
+        return (max(0, total - secret), type)
     }
 }
 
@@ -1519,6 +1542,12 @@ private final class NotificationServiceHandler {
                             updateCurrentContent(content)
                             completed()
                         case let .poll(peerId, initialContent, messageId, reportDelivery, enableInlineEmoji):
+                            // Chitgram: a chat in the secret folder never notifies (Android NotificationsController).
+                            if chitgramSecretChats().contains(peerId.toInt64()) {
+                                updateCurrentContent(NotificationContent(isLockedMessage: nil))
+                                completed()
+                                return
+                            }
                             Logger.shared.log("NotificationService \(episode)", "Will poll")
                             if let stateManager = strongSelf.stateManager {
                                 let shouldKeepConnection = stateManager.network.shouldKeepConnection

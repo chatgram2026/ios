@@ -1,4 +1,5 @@
 import Foundation
+import ChitgramCore
 import UIKit
 import Display
 import AsyncDisplayKit
@@ -1613,6 +1614,8 @@ public final class ContactListNode: ASDisplayNode {
                             var existingNormalizedPhoneNumbers = Set<DeviceContactNormalizedPhoneNumber>()
                             var excludeSelf = false
                             var requirePhoneNumbers = false
+                            // Chitgram: contacts in the secret folder stay out of contact lists (Android ContactsController).
+                            existingPeerIds.formUnion(ChitgramLock.secretChats().map { EnginePeer.Id($0) })
                             for filter in filters {
                                 switch filter {
                                 case .excludeSelf:
@@ -1946,6 +1949,8 @@ public final class ContactListNode: ASDisplayNode {
                             var existingPeerIds = Set<EnginePeer.Id>()
                             var disabledPeerIds = Set<EnginePeer.Id>()
                             var requirePhoneNumbers = false
+                            // Chitgram: contacts in the secret folder stay out of contact lists (Android ContactsController).
+                            existingPeerIds.formUnion(ChitgramLock.secretChats().map { EnginePeer.Id($0) })
                             for filter in filters {
                                 switch filter {
                                 case .excludeSelf:

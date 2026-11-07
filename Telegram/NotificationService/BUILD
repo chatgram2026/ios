@@ -9,6 +9,8 @@ swift_library(
         "Sources/*.swift",
     ]),
     deps = [
+        # Chitgram: the secret folder.
+        "//submodules/ChitgramCore",
         "//submodules/Postbox:Postbox",
         "//submodules/TelegramCore:TelegramCore",
         "//submodules/BuildConfig:BuildConfig",

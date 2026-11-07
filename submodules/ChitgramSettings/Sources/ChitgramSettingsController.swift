@@ -599,9 +599,7 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
                 let presentationData = context.sharedContext.currentPresentationData.with { $0 }
                 let actionSheet = ActionSheetController(presentationData: presentationData)
                 let unlockThen: (@escaping () -> Void) -> Void = { action in
-                    chitgramUnlock(context: context, title: ChitgramStrings.get(213), push: { c in
-                        pushControllerImpl?(c)
-                    }, check: { passcode in
+                    chitgramUnlock(context: context, digits: ChitgramLock.secretPasscodeDigits(), check: { passcode in
                         return ChitgramLock.checkSecretPassword(passcode)
                     }, completion: action)
                 }
@@ -687,9 +685,7 @@ public func chitgramSettingsController(context: AccountContext) -> ViewControlle
             pushControllerImpl?(chitgramTabBarController(context: context))
         case .changeCommonPassword:
             // The current passcode first, then the new one.
-            chitgramUnlock(context: context, title: ChitgramStrings.get(252), push: { c in
-                pushControllerImpl?(c)
-            }, check: { passcode in
+            chitgramUnlock(context: context, digits: ChitgramLock.commonPasscodeDigits(), check: { passcode in
                 return ChitgramLock.checkCommonPassword(passcode)
             }, completion: {
                 chitgramSetupPasscode(context: context, push: { c in

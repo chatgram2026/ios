@@ -17,6 +17,8 @@ public enum ChitgramLock {
         /// Android `type`: 0 PIN, 1 password. Kept for the shape of the record.
         public var type: Int
         public var fingerPrint: Bool
+        /// How many digits a PIN has, so its screen fits it; nil for a password and for a PIN set before this was kept.
+        public var digits: Int?
     }
 
     private static let commonPasswordKey = "chat_lock_password"
@@ -59,7 +61,7 @@ public enum ChitgramLock {
         if status != errSecSuccess {
             salt = Data(UUID().uuidString.utf8)
         }
-        return Credential(passwordHash: self.derive(passcode, salt: salt).base64EncodedString(), salt: salt.base64EncodedString(), type: numeric ? 0 : 1, fingerPrint: true)
+        return Credential(passwordHash: self.derive(passcode, salt: salt).base64EncodedString(), salt: salt.base64EncodedString(), type: numeric ? 0 : 1, fingerPrint: true, digits: numeric ? passcode.count : nil)
     }
 
     public static func verify(_ passcode: String, credential: Credential) -> Bool {
@@ -189,7 +191,29 @@ public enum ChitgramLock {
         return self.checkCommonPassword(passcode)
     }
 
+    /// How to ask for a chat's passcode: its digits, nil for free text.
+    public static func passcodeDigits(forChat chat: Int64) -> Int? {
+        if let credential = self.individual()[chat] {
+            return credential.digits
+        }
+        return self.commonPasscodeDigits()
+    }
+
+    public static func commonPasscodeDigits() -> Int? {
+        return self.credential(forKey: self.commonPasswordKey)?.digits
+    }
+
     // MARK: Secret folder
+
+    public static func secretPasscodeDigits() -> Int? {
+        return self.credential(forKey: self.secretPasswordKey)?.digits
+    }
+
+    /// For the notification extension, whose store is not pointed at the app group.
+    public static func secretChats(appGroupName: String) -> Set<Int64> {
+        let values = UserDefaults(suiteName: appGroupName)?.array(forKey: self.secretIdsKey) as? [NSNumber] ?? []
+        return Set(values.map { $0.int64Value })
+    }
 
     public static func hasSecretPassword() -> Bool {
         return self.credential(forKey: self.secretPasswordKey) != nil

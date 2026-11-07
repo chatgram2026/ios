@@ -1,4 +1,5 @@
 import Foundation
+import ChitgramCore
 import ChitgramEngine
 import LottieSettings
 import UIKit
@@ -3483,6 +3484,21 @@ final class ChatListSearchListPaneNode: ASDisplayNode, ChatListSearchPaneNode {
                     entries.append(.addContact(finalQuery, presentationData.theme, presentationData.strings))
                 }
 
+                // Chitgram: chats in the secret folder are not found (Android DialogsSearchAdapter).
+                let chitgramSecretChats = ChitgramLock.secretChats()
+                if !chitgramSecretChats.isEmpty {
+                    entries = entries.filter { entry in
+                        switch entry.stableId {
+                        case let .localPeerId(id), let .globalPeerId(id):
+                            return !chitgramSecretChats.contains(id.toInt64())
+                        case let .messageId(id, _):
+                            return !chitgramSecretChats.contains(id.peerId.toInt64())
+                        default:
+                            return true
+                        }
+                    }
+                }
+
                 return (entries, isSearching, query)
             }
         }
@@ -4199,6 +4215,10 @@ final class ChatListSearchListPaneNode: ASDisplayNode, ChatListSearchPaneNode {
                     }
                     peerIds.insert(peer.id)
 
+                    // Chitgram: as above, among the recent searches.
+                    if ChitgramLock.isSecret(peer.id.toInt64()) {
+                        continue
+                    }
                     entries.append(.peer(index: index, peer: searchedPeer, .local, presentationData.theme, presentationData.strings, presentationData.dateTimeFormat, presentationData.nameSortOrder, presentationData.nameDisplayOrder, globalNotificationSettings, peerStoryStats[peer.id], requiresPremiumForMessaging[peer.id] ?? false))
                     index += 1
                 }
