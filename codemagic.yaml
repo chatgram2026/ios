@@ -244,12 +244,39 @@ workflows:
             exit 1
           fi
           echo "ccache: not installed"
-          if echo 'kernel void k() {}' | xcrun metal -x metal -c -o /dev/null - 2>/dev/null; then
+          metal_works() {
+            echo 'kernel void k() {}' | xcrun metal -x metal -c -o /dev/null - 2>/dev/null
+          }
+          if metal_works; then
             echo "Metal toolchain: already installed"
           else
             xcodebuild -downloadComponent MetalToolchain
-            echo 'kernel void k() {}' | xcrun metal -x metal -c -o /dev/null -
           fi
+          # As upstream does for its own builds (build-system/Make/TartBuild.py): the toolchain only works while its
+          # DMG is mounted, and Xcode mounts it lazily, so `xcrun metal` right after the download can still fail, and
+          # Bazel's parallel Metal compiles can race on it. Mount it once here. Once mounted, xcrun finds every Metal
+          # tool in it except `metal`, which a stub of that name in the Xcode toolchain shadows; the stub only prints
+          # "missing Metal Toolchain", so that name is pointed at the real compiler.
+          METAL_REAL=/Volumes/MetalToolchainCryptex/Metal.xctoolchain/usr/bin/metal
+          for attempt in 1 2 3 4 5 6; do
+            if [ -x "$METAL_REAL" ]; then
+              break
+            fi
+            METAL_DMG="$(ls -t /System/Library/AssetsV2/com_apple_MobileAsset_MetalToolchain/*.asset/AssetData/Restore/*.dmg 2>/dev/null | head -n 1)"
+            if [ -n "$METAL_DMG" ]; then
+              hdiutil attach "$METAL_DMG" -mountpoint /Volumes/MetalToolchainCryptex -nobrowse -quiet || true
+            fi
+            if [ ! -x "$METAL_REAL" ]; then
+              echo "Metal toolchain: not mounted yet (attempt $attempt)"
+              sleep 5
+            fi
+          done
+          if [ -x "$METAL_REAL" ] && ! metal_works; then
+            sudo ln -sf "$METAL_REAL" "$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin/metal" || true
+          fi
+          xcrun metal --version || true
+          xcrun -f metallib || true
+          echo 'kernel void k() {}' | xcrun metal -x metal -c -o /dev/null -
 
       - name: Build
         script: |
