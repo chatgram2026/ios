@@ -11,11 +11,15 @@ import ChitgramCore
 ///
 /// Merging is per setting and the newest change wins; a fresh phone's defaults were never "changed", so they never
 /// overwrite what was set elsewhere. Only settings both apps mean the same way are shared; per-chat settings are
-/// left out (chat ids differ between the apps), and so are passwords and per-account data.
+/// left out (chat ids differ between the apps), and so are passwords and per-account data, except Premium's payment
+/// locks (`premiumLocksKey`).
 public enum ChitgramCloud {
     private static let tag = "#chitgram_settings"
     private static let head = "\u{2699}\u{FE0F} Chitgram \u{00B7} sozlamalar nusxasi \u{2014} o'chirmang"
     private static let version = "v1"
+    /// Android's Premium payment locks for this account (its `premium_credits_<slot>`, written to the cloud with the
+    /// slot as "@"). Not a switch: merged lock by lock in `sync`, never through `applySynced`.
+    private static let premiumLocksKey = "premium_credits_@"
     private static let chunk = 3500
     /// Telegram schedules at most a year ahead.
     private static let keepSeconds: Int32 = 360 * 24 * 60 * 60
@@ -174,8 +178,20 @@ public enum ChitgramCloud {
                 times[key] = at
             }
 
+            // Premium: a payment keeps the period it was first locked at, on whichever device saw it first (Android
+            // ChitgramPremium). Without the other phone's locks this one prices old payments at today's prices.
+            let premiumCloudValue = cloud[self.premiumLocksKey].flatMap { $0.type == "s" ? $0.value : nil }
+            if let premiumCloudValue, ChitgramPremium.mergeCloudLocks(premiumCloudValue, accountPeerId: selfId) {
+                let _ = (ChitgramPremium.refresh(context: context)
+                |> deliverOnMainQueue).startStandalone(next: { _ in
+                    ChitgramKeywords.shared.isPremium = ChitgramPremium.isActive(accountPeerId: selfId)
+                    ChitgramBadges.shared.refresh(selfId.id._internalGetInt64Value())
+                })
+            }
+            let premiumLocksNewerHere = !ChitgramPremium.cloudLocksAreCurrent(premiumCloudValue, accountPeerId: selfId)
+
             let local = self.snapshot(times: times)
-            let newerHere = local.contains(where: { key, item in item.at > (cloud[key]?.at ?? 0) })
+            let newerHere = premiumLocksNewerHere || local.contains(where: { key, item in item.at > (cloud[key]?.at ?? 0) })
             let nowSeconds = account.network.getApproximateRemoteTimestamp()
             let aging = newest.map { newest in (newest.parts.map(\.date).min() ?? 0) < nowSeconds + self.refreshBefore } ?? false
             let older = parts.filter { part in newest.map { part.rev < $0.rev } ?? false }.map(\.messageId)
@@ -190,6 +206,9 @@ public enum ChitgramCloud {
             var merged = cloud
             for (key, item) in local where item.at > (merged[key]?.at ?? 0) {
                 merged[key] = item
+            }
+            if premiumLocksNewerHere, let value = ChitgramPremium.cloudLocksValue(accountPeerId: selfId) {
+                merged[self.premiumLocksKey] = Item(type: "s", value: value, at: self.now())
             }
             self.write(account: account, settings: merged, completion: { ok in
                 // The new copy is complete: every older one can go.

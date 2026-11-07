@@ -129,6 +129,83 @@ public enum ChitgramPremium {
         }
     }
 
+    /// The locks as Android writes them to the account's cloud copy (`premium_credits_@`): a JSON object of payment
+    /// id to seconds. Nil when this device has locked nothing.
+    public static func cloudLocksValue(accountPeerId: EnginePeer.Id) -> String? {
+        let locks = self.locks(accountPeerId)
+        if locks.isEmpty {
+            return nil
+        }
+        var object: [String: NSNumber] = [:]
+        for (id, seconds) in locks {
+            object[id] = NSNumber(value: seconds)
+        }
+        guard let data = try? JSONSerialization.data(withJSONObject: object, options: [.sortedKeys]), let text = String(data: data, encoding: .utf8) else {
+            return nil
+        }
+        return text
+    }
+
+    /// Android's cloud value read back, each period clamped as `computeUntil` clamps it; nil when it is not one.
+    private static func parseCloudLocks(_ value: String) -> [String: Int64]? {
+        guard let data = value.data(using: .utf8), let object = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
+            return nil
+        }
+        let longest = self.periodSeconds(months: self.maxMonths)
+        var result: [String: Int64] = [:]
+        for (id, raw) in object {
+            let seconds: Int64
+            if let number = raw as? NSNumber {
+                seconds = number.int64Value
+            } else if let string = raw as? String, let number = Int64(string) {
+                seconds = number
+            } else {
+                continue
+            }
+            result[id] = max(0, min(longest, seconds))
+        }
+        return result
+    }
+
+    /// Takes in the locks another device of this account wrote to the cloud. A payment keeps the longest period any
+    /// device locked for it, so a payment one phone saw at an older, lower price is never priced again at today's
+    /// prices here. True when this device's locks changed.
+    public static func mergeCloudLocks(_ value: String, accountPeerId: EnginePeer.Id) -> Bool {
+        guard let cloud = self.parseCloudLocks(value) else {
+            return false
+        }
+        var locks = self.locks(accountPeerId)
+        var changed = false
+        for (id, seconds) in cloud {
+            if let current = locks[id], current >= seconds {
+                continue
+            }
+            locks[id] = seconds
+            changed = true
+        }
+        if changed {
+            self.storeLocks(locks, accountPeerId)
+        }
+        return changed
+    }
+
+    /// True when the cloud value already holds every lock this device has, so there is nothing to write back.
+    public static func cloudLocksAreCurrent(_ value: String?, accountPeerId: EnginePeer.Id) -> Bool {
+        let locks = self.locks(accountPeerId)
+        if locks.isEmpty {
+            return true
+        }
+        guard let value, let cloud = self.parseCloudLocks(value) else {
+            return false
+        }
+        for (id, seconds) in locks {
+            guard let other = cloud[id], other >= seconds else {
+                return false
+            }
+        }
+        return true
+    }
+
     private static func notifyChanged() {
         NotificationCenter.default.post(name: ChitgramPreferences.didChangeNotification, object: ChitgramPreferences.shared, userInfo: ["key": "chitgram_premium"])
     }
