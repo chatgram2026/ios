@@ -171,6 +171,8 @@ enum PeerInfoSettingsSection {
     case chatFolders
     case novagramMessenger
     case chitgramPremium
+    case chitgramVoiceRoulette
+    case chitgramChatRoulette
     case chitgramAbout
     case novagramBots
     case novagramAccounts

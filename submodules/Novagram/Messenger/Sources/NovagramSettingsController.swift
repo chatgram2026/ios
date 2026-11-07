@@ -73,6 +73,8 @@ private enum NovagramEntry: ItemListNodeEntry {
     case hideFolders(PresentationTheme, String, String, Bool)
     case showStories(PresentationTheme, String, String, Bool)
     case showMutualContactSymbol(PresentationTheme, String, String, Bool)
+    // Chitgram: the tab bar editor (Android: Chitgram settings, "Tab bar").
+    case tabBarEditor(PresentationTheme, String)
     case interfaceFooter(PresentationTheme, String)
 
     // — Messaging Section —
@@ -189,7 +191,7 @@ private enum NovagramEntry: ItemListNodeEntry {
         switch self {
         case .chatHeader, .calls, .deletedMessages, .showViewFirstMessage, .showGhostMode, .longPressCameraSelection, .editedHistoryEnabled, .roundVideoFromGallery, .forwardHideNames, .callRecording, .chatFooter:
             return NovagramSection.chat.rawValue
-        case .interfaceHeader, .hideFolders, .showStories, .showMutualContactSymbol, .unlimitedPins, .interfaceFooter:
+        case .interfaceHeader, .hideFolders, .showStories, .showMutualContactSymbol, .unlimitedPins, .tabBarEditor, .interfaceFooter:
             return NovagramSection.interface.rawValue
         case .messagingHeader, .textStyle, .autoText, .autoTranslate, .translateToggle, .translateMessages, .sendTranslateConfirm, .autoStickerEnabled, .heartEffectEnabled, .keywordWatch, .messagingFooter:
             return NovagramSection.messaging.rawValue
@@ -235,6 +237,7 @@ private enum NovagramEntry: ItemListNodeEntry {
         case .showStories:               return 12
         case .showMutualContactSymbol:   return 13
         case .unlimitedPins:             return 14
+        case .tabBarEditor:              return 100
         case .interfaceFooter:           return 15
         // Calls (53–59; 53 and 56–58 were the old call recording block's header, auto switch, list row and footer)
         case .callDataSaving:            return 54
@@ -326,6 +329,8 @@ private enum NovagramEntry: ItemListNodeEntry {
             return 8 * 10 + 5
         case .keywordWatch:
             return 28 * 10 + 5
+        case .tabBarEditor:
+            return 14 * 10 + 5
         default:
             return Int(self.stableId) * 10
         }
@@ -368,6 +373,8 @@ private enum NovagramEntry: ItemListNodeEntry {
             if case let .showStories(rhsTheme, rhsTitle, rhsText, rhsValue) = rhs, lhsTheme === rhsTheme, lhsTitle == rhsTitle, lhsText == rhsText, lhsValue == rhsValue { return true } else { return false }
         case let .showMutualContactSymbol(lhsTheme, lhsTitle, lhsText, lhsValue):
             if case let .showMutualContactSymbol(rhsTheme, rhsTitle, rhsText, rhsValue) = rhs, lhsTheme === rhsTheme, lhsTitle == rhsTitle, lhsText == rhsText, lhsValue == rhsValue { return true } else { return false }
+        case let .tabBarEditor(lhsTheme, lhsTitle):
+            if case let .tabBarEditor(rhsTheme, rhsTitle) = rhs, lhsTheme === rhsTheme, lhsTitle == rhsTitle { return true } else { return false }
         case let .interfaceFooter(lhsTheme, lhsText):
             if case let .interfaceFooter(rhsTheme, rhsText) = rhs, lhsTheme === rhsTheme, lhsText == rhsText { return true } else { return false }
 
@@ -628,6 +635,10 @@ private enum NovagramEntry: ItemListNodeEntry {
         case let .showMutualContactSymbol(_, title, text, value):
             return ItemListSwitchItem(presentationData: presentationData, icon: novagramSettingsIcon(systemName: "person.2.fill", color: .blue), title: title, text: text, value: value, sectionId: self.section, style: .blocks, updated: { val in
                 arguments.updateShowMutualContactSymbol(val)
+            }, tag: self.novagramTag)
+        case let .tabBarEditor(_, title):
+            return ItemListDisclosureItem(presentationData: presentationData, icon: novagramSettingsIcon(systemName: "dock.rectangle", color: .blue), title: title, label: "", sectionId: self.section, style: .blocks, action: {
+                arguments.openTabBarEditor()
             }, tag: self.novagramTag)
         case let .interfaceFooter(_, text):
             return ItemListTextItem(presentationData: presentationData, text: .plain(text), sectionId: self.section)
@@ -1537,6 +1548,8 @@ private func novagramSettingsEntries(presentationData: PresentationData, state: 
     entries.append(.showStories(presentationData.theme, l10n.settings_interface_stories_title, l10n.settings_interface_stories_subtitle, state.showStories))
     entries.append(.showMutualContactSymbol(presentationData.theme, l10n.settings_interface_mutualSymbol_title, l10n.settings_interface_mutualSymbol_subtitle, state.showMutualContactSymbol))
     entries.append(.unlimitedPins(presentationData.theme, l10n.settings_interface_unlimitedPins_title, l10n.settings_interface_unlimitedPins_subtitle, state.unlimitedPins, true))
+    ChitgramStrings.setLanguageCode(presentationData.strings.primaryComponent.languageCode)
+    entries.append(.tabBarEditor(presentationData.theme, ChitgramStrings.get(406)))
     entries.append(.interfaceFooter(presentationData.theme, l10n.settings_interface_footer))
 
     // ─── CHAT ───
@@ -1762,6 +1775,7 @@ private final class NovagramSettingsArguments {
     var openCallRecordingSettings: () -> Void = {}
     // Chitgram: the keyword watch row, set after init like the one above.
     var openKeywordWatch: () -> Void = {}
+    var openTabBarEditor: () -> Void = {}
 
     init(openAccounts: @escaping () -> Void, openAbout: @escaping () -> Void, openNovagramBots: @escaping () -> Void, openCalls: @escaping () -> Void, updateShowDeletedMessages: @escaping (Bool) -> Void, updateHideFolders: @escaping (Bool) -> Void, updateShowStories: @escaping (Bool) -> Void, updateShowMutualContactSymbol: @escaping (Bool) -> Void, updateShowGhostMode: @escaping (Bool) -> Void, updateShowViewFirstMessage: @escaping (Bool) -> Void, updateLongPressCameraSelection: @escaping (Bool) -> Void, updateEditedHistoryEnabled: @escaping (Bool) -> Void, updateRoundVideoFromGallery: @escaping (Bool) -> Void, updateForwardHideNames: @escaping (Bool) -> Void, updateUnlimitedPins: @escaping (Bool) -> Void, updateCallDataSaving: @escaping (Bool) -> Void, updateTranslateMessages: @escaping (Bool) -> Void, openTranslationSettings: @escaping () -> Void, openTextStyleSettings: @escaping () -> Void, openAutoTextSettings: @escaping () -> Void, openAutoTranslateSettings: @escaping () -> Void, updateSttEnabled: @escaping (Bool) -> Void, openSttLanguageSettings: @escaping () -> Void, updateBlockForeignUsers: @escaping (Bool) -> Void, updateEnableNovagramProxy: @escaping (Bool) -> Void, updateChatLockMaster: @escaping (Bool) -> Void, updateSecretVault: @escaping (Bool) -> Void, updateSecretVaultBiometric: @escaping (Bool) -> Void, updateWhiteThemeAccent: @escaping (Bool) -> Void, updateVoiceTranslate: @escaping (Bool) -> Void, updateAutoDownloadDisabled: @escaping (Bool) -> Void, updateSendTranslateConfirm: @escaping (Bool) -> Void, updateSendConfirmEnabled: @escaping (Bool) -> Void, updateAutoStickerEnabled: @escaping (Bool) -> Void, updateHeartEffectEnabled: @escaping (Bool) -> Void, updateReminderEnabled: @escaping (Bool) -> Void, openReminderTimeSettings: @escaping () -> Void, openReminderSoundSettings: @escaping () -> Void, addRecommendedFolders: @escaping () -> Void, openFolderStyle: @escaping () -> Void, updateChannelHistory: @escaping (Bool) -> Void, updateSettingsLinks: @escaping (Bool) -> Void, shareNovagramProLink: @escaping () -> Void, updateAutoAccept: @escaping (Bool) -> Void, updateAdminFolders: @escaping (Bool) -> Void, updateFoldersPrompt: @escaping (Bool) -> Void, updateShowAds: @escaping (Bool) -> Void, updateAdEventsOff: @escaping (Bool) -> Void, updateCurrencyRatesView: @escaping (Bool) -> Void, updateAdsPanel: @escaping (Bool) -> Void, updateStoryUnlock: @escaping (Bool) -> Void, updateTranslateChatsUnlock: @escaping (Bool) -> Void, openCarPlay: @escaping () -> Void) {
         self.openAccounts = openAccounts
@@ -2532,6 +2546,9 @@ public func novagramSettingsController(context: AccountContext, highlightFeature
     }
     arguments.openKeywordWatch = {
         pushControllerImpl?(chitgramKeywordWatchController(context: context))
+    }
+    arguments.openTabBarEditor = {
+        pushControllerImpl?(chitgramTabBarController(context: context))
     }
     let refreshDeveloperFlags: () -> Void = {
         updateState { state in

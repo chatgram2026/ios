@@ -277,6 +277,13 @@ func settingsItems(data: PeerInfoScreenData?, context: AccountContext, presentat
     items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 1, text: ChitgramStrings.get(427), icon: novagramSettingsIcon(systemName: "star.fill", color: .violet), action: {
         interaction.openSettings(.chitgramPremium)
     }))
+    // Chitgram: the roulettes, after Premium as on Android; "Coming soon" until they are built.
+    items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 3, text: ChitgramStrings.get(698), icon: novagramSettingsIcon(systemName: "waveform", color: .teal), action: {
+        interaction.openSettings(.chitgramVoiceRoulette)
+    }))
+    items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 4, text: ChitgramStrings.get(787), icon: novagramSettingsIcon(systemName: "video.fill", color: .pink), action: {
+        interaction.openSettings(.chitgramChatRoulette)
+    }))
     items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 2, text: ChitgramStrings.get(355), icon: novagramSettingsIcon(systemName: "info.circle.fill", color: .teal), action: {
         interaction.openSettings(.chitgramAbout)
     }))
