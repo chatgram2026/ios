@@ -15,8 +15,22 @@ public enum ChitgramTabs {
     /// Posted when the bar should be rebuilt; the tab bar listens to this only, not to every preference.
     public static let didChangeNotification = Notification.Name("ChitgramTabsDidChange")
 
-    /// Telegram iOS's own order, kept until the user changes something.
-    private static let defaultOrder = [contacts, calls, chats, settings]
+    /// Android's order, Chats first. Settings stands for both Android's Settings and Profile, so it stays last.
+    private static let defaultOrder = [chats, contacts, calls, settings]
+
+    /// The button beside the tabs (Android `EXTRA_*`, the same numbers).
+    public static let extraNone = 0
+    public static let extraSearch = 1
+    public static let extraNewMessage = 2
+    public static let extraSaved = 3
+
+    /// Which tabs show their name (Android `LABELS_*`, the same numbers).
+    public static let labelsAll = 0
+    public static let labelsSelected = 1
+    public static let labelsNone = 2
+
+    /// Posted when the button beside the tabs is pressed; the root controller acts on it.
+    public static let extraButtonPressedNotification = Notification.Name("ChitgramTabsExtraButtonPressed")
 
     private static var defaults: UserDefaults {
         return ChitgramPreferences.shared.userDefaults
@@ -94,8 +108,26 @@ public enum ChitgramTabs {
         self.notifyChanged()
     }
 
+    public static func extraButton() -> Int {
+        return self.defaults.integer(forKey: "tabs_extra")
+    }
+
+    public static func setExtraButton(_ value: Int) {
+        self.defaults.set(value, forKey: "tabs_extra")
+        self.notifyChanged()
+    }
+
+    public static func labelsMode() -> Int {
+        return self.defaults.integer(forKey: "tabs_labels")
+    }
+
+    public static func setLabelsMode(_ value: Int) {
+        self.defaults.set(value, forKey: "tabs_labels")
+        self.notifyChanged()
+    }
+
     public static func reset() {
-        for key in ["tabs_order", "tabs_hidden", "tabs_customized", "tabs_start"] {
+        for key in ["tabs_order", "tabs_hidden", "tabs_customized", "tabs_start", "tabs_extra", "tabs_labels"] {
             self.defaults.removeObject(forKey: key)
         }
         self.notifyChanged()

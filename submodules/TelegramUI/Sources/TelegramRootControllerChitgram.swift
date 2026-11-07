@@ -1,6 +1,9 @@
 import Foundation
 import UIKit
 import Display
+import SwiftSignalKit
+import TelegramCore
+import AccountContext
 import ChitgramCore
 
 // Chitgram: the bottom bar as set in Settings ▸ Chitgram ▸ Sozlamalar ▸ Tab bar (Android `ChatgramTabs`).
@@ -55,8 +58,34 @@ extension TelegramRootController {
         return controllers.firstIndex(where: { $0 === target })
     }
 
+    /// The bottom panel's extra button (Android `MainTabsActivity.addExtraButton`).
+    private func chitgramExtraPressed() {
+        let context = self.chitgramContext
+        switch ChitgramTabs.extraButton() {
+        case ChitgramTabs.extraSearch:
+            self.openChatsController(activateSearch: true)
+        case ChitgramTabs.extraNewMessage:
+            self.chatListController?.activateCompose()
+        case ChitgramTabs.extraSaved:
+            let _ = (context.engine.data.get(TelegramEngine.EngineData.Item.Peer.Peer(id: context.account.peerId))
+            |> deliverOnMainQueue).startStandalone(next: { [weak self] peer in
+                guard let self, let peer else {
+                    return
+                }
+                context.sharedContext.navigateToChatController(NavigateToChatControllerParams(navigationController: self, context: context, chatLocation: .peer(peer)))
+            })
+        default:
+            break
+        }
+    }
+
     /// Rebuilds the bar when the Tab bar settings change, with the inputs it was last built from.
     func chitgramObserveTabs(showCallsTab: Bool, showNewsTab: Bool) {
+        if self.chitgramExtraObserver == nil {
+            self.chitgramExtraObserver = NotificationCenter.default.addObserver(forName: ChitgramTabs.extraButtonPressedNotification, object: nil, queue: .main, using: { [weak self] _ in
+                self?.chitgramExtraPressed()
+            })
+        }
         self.chitgramShowCallsTab = showCallsTab
         self.chitgramShowNewsTab = showNewsTab
         if self.chitgramTabsObserver == nil {

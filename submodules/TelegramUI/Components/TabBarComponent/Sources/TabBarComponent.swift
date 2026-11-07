@@ -248,6 +248,46 @@ public final class NavigationSearchView: UIView {
     }
 }
 
+/// Chitgram: the bottom panel's extra button (Android `ChatgramTabs.extraButton`), a round glass button beside the tabs,
+/// where search sits on the tabs that have it.
+private final class ChitgramTabExtraButtonView: UIView {
+    private let action: () -> Void
+    private let backgroundView = GlassBackgroundView()
+    private let iconView = UIImageView()
+    private var currentSymbol: String?
+
+    init(action: @escaping () -> Void) {
+        self.action = action
+        super.init(frame: CGRect())
+
+        self.addSubview(self.backgroundView)
+        self.iconView.contentMode = .center
+        self.backgroundView.contentView.addSubview(self.iconView)
+        self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.pressed(_:))))
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc private func pressed(_ recognizer: UITapGestureRecognizer) {
+        if case .ended = recognizer.state {
+            self.action()
+        }
+    }
+
+    func update(size: CGSize, symbol: String, theme: PresentationTheme, transition: ComponentTransition) {
+        transition.setFrame(view: self.backgroundView, frame: CGRect(origin: CGPoint(), size: size))
+        self.backgroundView.update(size: size, cornerRadius: size.height * 0.5, isDark: theme.overallDarkAppearance, tintColor: .init(kind: .panel), isInteractive: true, transition: transition)
+        if self.currentSymbol != symbol {
+            self.currentSymbol = symbol
+            self.iconView.image = UIImage(systemName: symbol, withConfiguration: UIImage.SymbolConfiguration(pointSize: 22.0, weight: .medium))?.withRenderingMode(.alwaysTemplate)
+        }
+        self.iconView.tintColor = theme.rootController.tabBar.iconColor
+        self.iconView.frame = CGRect(origin: CGPoint(), size: size)
+    }
+}
+
 public final class TabBarComponent: Component {
     public final class Item: Equatable {
         public enum Content: Equatable {
@@ -360,6 +400,11 @@ public final class TabBarComponent: Component {
     public let axis: Axis
     /// Icons without labels, on either axis.
     public let isCompact: Bool
+    // Chitgram: the bottom panel's settings (Android `ChatgramTabs`): 0 every tab has its name, 1 only the selected one,
+    // 2 none; and the extra button's icon with its action.
+    public let chitgramLabelsMode: Int
+    public let chitgramExtraSymbol: String?
+    public let chitgramExtraAction: (() -> Void)?
     
     public init(
         theme: PresentationTheme,
@@ -371,7 +416,10 @@ public final class TabBarComponent: Component {
         selectedId: AnyHashable?,
         outerInsets: UIEdgeInsets,
         axis: Axis,
-        isCompact: Bool
+        isCompact: Bool,
+        chitgramLabelsMode: Int = 0,
+        chitgramExtraSymbol: String? = nil,
+        chitgramExtraAction: (() -> Void)? = nil
     ) {
         self.theme = theme
         self.tintSelectedItem = tintSelectedItem
@@ -383,9 +431,18 @@ public final class TabBarComponent: Component {
         self.outerInsets = outerInsets
         self.axis = axis
         self.isCompact = isCompact
+        self.chitgramLabelsMode = chitgramLabelsMode
+        self.chitgramExtraSymbol = chitgramExtraSymbol
+        self.chitgramExtraAction = chitgramExtraAction
     }
     
     public static func ==(lhs: TabBarComponent, rhs: TabBarComponent) -> Bool {
+        if lhs.chitgramLabelsMode != rhs.chitgramLabelsMode {
+            return false
+        }
+        if lhs.chitgramExtraSymbol != rhs.chitgramExtraSymbol {
+            return false
+        }
         if lhs.theme !== rhs.theme {
             return false
         }
@@ -429,6 +486,7 @@ public final class TabBarComponent: Component {
         private var selectedItemViews: [AnyHashable: ComponentView<Empty>] = [:]
 
         private var searchView: NavigationSearchView?
+        private var chitgramExtraButtonView: ChitgramTabExtraButtonView?
         
         private var tabSelectionRecognizer: TabSelectionRecognizer?
         private var itemWithActiveContextGesture: AnyHashable?
@@ -726,6 +784,8 @@ public final class TabBarComponent: Component {
             var availableLength: CGFloat = availableSize.width
             if search != nil {
                 availableLength -= barHeight + 8.0
+            } else if component.axis == .horizontal, component.chitgramExtraSymbol != nil {
+                availableLength -= barHeight + 8.0
             }
             let itemsLayout = tabBarItemsLayout(axis: component.axis, isCompact: component.isCompact, unboundItemWidths: unboundItemWidths, availableLength: availableLength)
             let tabsSize = itemsLayout.size
@@ -763,13 +823,14 @@ public final class TabBarComponent: Component {
                     isItemSelected = component.selectedId == item.id
                 }
                 
+                let chitgramShowsTitle = component.chitgramLabelsMode == 0 || (component.chitgramLabelsMode == 1 && isItemSelected)
                 let _ = itemView.update(
                     transition: itemTransition,
                     component: AnyComponent(ItemComponent(
                         item: item,
                         theme: component.theme,
                         isSearchActive: search?.isActive == true,
-                        showsTitle: !component.isCompact,
+                        showsTitle: !component.isCompact && chitgramShowsTitle,
                         isSelected: false,
                         tintSelectedItem: component.tintSelectedItem,
                         isUnconstrained: false
@@ -783,7 +844,7 @@ public final class TabBarComponent: Component {
                         item: item,
                         theme: component.theme,
                         isSearchActive: search?.isActive == true,
-                        showsTitle: !component.isCompact,
+                        showsTitle: !component.isCompact && chitgramShowsTitle,
                         isSelected: true,
                         tintSelectedItem: component.tintSelectedItem,
                         isUnconstrained: false
@@ -930,6 +991,26 @@ public final class TabBarComponent: Component {
                         searchView.removeFromSuperview()
                     })
                 }
+            }
+
+            if search == nil, component.axis == .horizontal, let chitgramExtraSymbol = component.chitgramExtraSymbol {
+                let buttonSize = CGSize(width: barHeight, height: barHeight)
+                let buttonView: ChitgramTabExtraButtonView
+                if let current = self.chitgramExtraButtonView {
+                    buttonView = current
+                } else {
+                    buttonView = ChitgramTabExtraButtonView(action: { [weak self] in
+                        self?.component?.chitgramExtraAction?()
+                    })
+                    self.chitgramExtraButtonView = buttonView
+                    self.backgroundContainer.contentView.addSubview(buttonView)
+                }
+                buttonView.update(size: buttonSize, symbol: chitgramExtraSymbol, theme: component.theme, transition: transition)
+                transition.setFrame(view: buttonView, frame: CGRect(origin: CGPoint(x: size.width + 8.0, y: 0.0), size: buttonSize))
+                size.width += barHeight + 8.0
+            } else if let buttonView = self.chitgramExtraButtonView {
+                self.chitgramExtraButtonView = nil
+                buttonView.removeFromSuperview()
             }
 
             transition.setFrame(view: self.backgroundContainer, frame: CGRect(origin: CGPoint(), size: size))

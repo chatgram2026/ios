@@ -10,6 +10,8 @@ swift_library(
         "-warnings-as-errors",
     ],
     deps = [
+        # Chitgram: the bottom panel's settings.
+        "//submodules/ChitgramCore",
         "//submodules/AsyncDisplayKit",
         "//submodules/LottieSettings:LottieSettings",
         "//submodules/Display",

@@ -85,6 +85,10 @@ public final class TelegramRootController: NavigationController, TelegramRootCon
     var chitgramShowCallsTab: Bool = false
     var chitgramShowNewsTab: Bool = false
     var chitgramTabsObserver: NSObjectProtocol?
+    var chitgramExtraObserver: NSObjectProtocol?
+    var chitgramContext: AccountContext {
+        return self.context
+    }
     
     private var permissionsDisposable: Disposable?
     private var presentationDataDisposable: Disposable?

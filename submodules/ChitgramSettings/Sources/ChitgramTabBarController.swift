@@ -13,12 +13,16 @@ private final class ChitgramTabBarArguments {
     let toggle: (Int, Bool) -> Void
     let reorder: () -> Void
     let setStart: (Int) -> Void
+    let setExtra: (Int) -> Void
+    let setLabels: (Int) -> Void
     let reset: () -> Void
 
-    init(toggle: @escaping (Int, Bool) -> Void, reorder: @escaping () -> Void, setStart: @escaping (Int) -> Void, reset: @escaping () -> Void) {
+    init(toggle: @escaping (Int, Bool) -> Void, reorder: @escaping () -> Void, setStart: @escaping (Int) -> Void, setExtra: @escaping (Int) -> Void, setLabels: @escaping (Int) -> Void, reset: @escaping () -> Void) {
         self.toggle = toggle
         self.reorder = reorder
         self.setStart = setStart
+        self.setExtra = setExtra
+        self.setLabels = setLabels
         self.reset = reset
     }
 }
@@ -28,6 +32,11 @@ private enum ChitgramTabBarEntry: ItemListNodeEntry {
     case tab(index: Int, tab: Int, title: String, visible: Bool, enabled: Bool)
     case order(title: String, value: String)
     case tabsFooter(String)
+    case extraHeader(String)
+    case extra(value: Int, title: String, selected: Bool)
+    case extraFooter(String)
+    case labelsHeader(String)
+    case labels(value: Int, title: String, selected: Bool)
     case startHeader(String)
     case start(index: Int, tab: Int, title: String, selected: Bool)
     case reset(String)
@@ -36,10 +45,14 @@ private enum ChitgramTabBarEntry: ItemListNodeEntry {
         switch self {
         case .tabsHeader, .tab, .order, .tabsFooter:
             return 0
-        case .startHeader, .start:
+        case .extraHeader, .extra, .extraFooter:
             return 1
-        case .reset:
+        case .labelsHeader, .labels:
             return 2
+        case .startHeader, .start:
+            return 3
+        case .reset:
+            return 4
         }
     }
 
@@ -53,6 +66,16 @@ private enum ChitgramTabBarEntry: ItemListNodeEntry {
             return 50
         case .tabsFooter:
             return 51
+        case .extraHeader:
+            return 60
+        case let .extra(value, _, _):
+            return 61 + Int32(value)
+        case .extraFooter:
+            return 69
+        case .labelsHeader:
+            return 70
+        case let .labels(value, _, _):
+            return 71 + Int32(value)
         case .startHeader:
             return 100
         case let .start(index, _, _, _):
@@ -69,7 +92,7 @@ private enum ChitgramTabBarEntry: ItemListNodeEntry {
     func item(presentationData: ItemListPresentationData, arguments: Any) -> ListViewItem {
         let arguments = arguments as! ChitgramTabBarArguments
         switch self {
-        case let .tabsHeader(text), let .startHeader(text):
+        case let .tabsHeader(text), let .startHeader(text), let .extraHeader(text), let .labelsHeader(text):
             return ItemListSectionHeaderItem(presentationData: presentationData, text: text, sectionId: self.section)
         case let .tab(_, tab, title, visible, enabled):
             // Refusals (Chats, or fewer than two tabs) leave the switch where it was.
@@ -80,6 +103,16 @@ private enum ChitgramTabBarEntry: ItemListNodeEntry {
             return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, title: title, label: value, labelStyle: .multilineDetailText, sectionId: self.section, style: .blocks, action: {
                 arguments.reorder()
             })
+        case let .extra(value, title, selected):
+            return ItemListCheckboxItem(presentationData: presentationData, systemStyle: .glass, title: title, style: .left, checked: selected, zeroSeparatorInsets: false, sectionId: self.section, action: {
+                arguments.setExtra(value)
+            })
+        case let .labels(value, title, selected):
+            return ItemListCheckboxItem(presentationData: presentationData, systemStyle: .glass, title: title, style: .left, checked: selected, zeroSeparatorInsets: false, sectionId: self.section, action: {
+                arguments.setLabels(value)
+            })
+        case let .extraFooter(text):
+            return ItemListTextItem(presentationData: presentationData, text: .plain(text), sectionId: self.section)
         case let .tabsFooter(text):
             return ItemListTextItem(presentationData: presentationData, text: .plain(text), sectionId: self.section)
         case let .start(_, tab, title, selected):
@@ -147,6 +180,10 @@ func chitgramTabBarController(context: AccountContext) -> ViewController {
         presentImpl?(actionSheet)
     }, setStart: { tab in
         ChitgramTabs.setStartTab(tab)
+    }, setExtra: { value in
+        ChitgramTabs.setExtraButton(value)
+    }, setLabels: { value in
+        ChitgramTabs.setLabelsMode(value)
     }, reset: {
         ChitgramTabs.reset()
     })
@@ -163,6 +200,20 @@ func chitgramTabBarController(context: AccountContext) -> ViewController {
         let visibleOrder = order.filter { ChitgramTabs.isVisible($0) }.map { chitgramTabTitle($0, strings: strings) }.joined(separator: " · ")
         entries.append(.order(title: ChitgramStrings.get(406), value: visibleOrder))
         entries.append(.tabsFooter(ChitgramStrings.get(407)))
+
+        let extra = ChitgramTabs.extraButton()
+        entries.append(.extraHeader(ChitgramStrings.get(410)))
+        entries.append(.extra(value: ChitgramTabs.extraNone, title: ChitgramStrings.get(411), selected: extra == ChitgramTabs.extraNone))
+        entries.append(.extra(value: ChitgramTabs.extraSearch, title: ChitgramStrings.get(412), selected: extra == ChitgramTabs.extraSearch))
+        entries.append(.extra(value: ChitgramTabs.extraNewMessage, title: ChitgramStrings.get(413), selected: extra == ChitgramTabs.extraNewMessage))
+        entries.append(.extra(value: ChitgramTabs.extraSaved, title: ChitgramStrings.get(414), selected: extra == ChitgramTabs.extraSaved))
+        entries.append(.extraFooter(ChitgramStrings.get(426)))
+
+        let labels = ChitgramTabs.labelsMode()
+        entries.append(.labelsHeader(ChitgramStrings.get(415)))
+        entries.append(.labels(value: ChitgramTabs.labelsAll, title: ChitgramStrings.get(416), selected: labels == ChitgramTabs.labelsAll))
+        entries.append(.labels(value: ChitgramTabs.labelsSelected, title: ChitgramStrings.get(417), selected: labels == ChitgramTabs.labelsSelected))
+        entries.append(.labels(value: ChitgramTabs.labelsNone, title: ChitgramStrings.get(418), selected: labels == ChitgramTabs.labelsNone))
 
         entries.append(.startHeader(ChitgramStrings.get(422)))
         let start = ChitgramTabs.startTab()

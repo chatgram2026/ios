@@ -1,4 +1,5 @@
 import Foundation
+import ChitgramCore
 import UIKit
 import AsyncDisplayKit
 import Display
@@ -321,7 +322,12 @@ final class TabBarControllerNode: ASDisplayNode {
                 selectedId: selectedId,
                 outerInsets: UIEdgeInsets(top: 0.0, left: sideInset, bottom: tabBarBottomInset, right: sideInset),
                 axis: sidePlacement == nil ? .horizontal : .vertical,
-                isCompact: tabBarIsCompact(layout: params.layout, sidePlacement: sidePlacement)
+                isCompact: tabBarIsCompact(layout: params.layout, sidePlacement: sidePlacement),
+                chitgramLabelsMode: ChitgramTabs.labelsMode(),
+                chitgramExtraSymbol: chitgramTabExtraSymbol(),
+                chitgramExtraAction: {
+                    NotificationCenter.default.post(name: ChitgramTabs.extraButtonPressedNotification, object: nil)
+                }
             )),
             environment: {},
             containerSize: sidePlacement?.frame.size ?? CGSize(width: params.layout.size.width - sideInset * 2.0, height: 100.0)
@@ -492,5 +498,19 @@ final class TabBarControllerNode: ASDisplayNode {
         self.selectedIndex = index
         self.isChangingSelectedIndex = true
         self.requestUpdate()
+    }
+}
+
+// Chitgram: the icon of the bottom panel's extra button (Android `ChatgramTabs.extraButton`).
+private func chitgramTabExtraSymbol() -> String? {
+    switch ChitgramTabs.extraButton() {
+    case ChitgramTabs.extraSearch:
+        return "magnifyingglass"
+    case ChitgramTabs.extraNewMessage:
+        return "square.and.pencil"
+    case ChitgramTabs.extraSaved:
+        return "bookmark.fill"
+    default:
+        return nil
     }
 }
