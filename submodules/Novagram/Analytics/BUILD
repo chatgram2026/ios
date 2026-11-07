@@ -1,5 +1,6 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
+# Chitgram: no Novagram statistics server and no closed NovagramServices SDK; see NovagramAnalyticsManager.swift.
 swift_library(
     name = "NovagramAnalytics",
     module_name = "NovagramAnalytics",
@@ -11,20 +12,9 @@ swift_library(
     ],
     deps = [
         "//submodules/Novagram/ReviewPrompt:NovagramReviewPrompt",
-        "//submodules/AsyncDisplayKit:AsyncDisplayKit",
-        "//submodules/Display:Display",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",
         "//submodules/TelegramCore:TelegramCore",
         "//submodules/AccountContext:AccountContext",
-        "//submodules/TelegramPresentationData:TelegramPresentationData",
-        "//submodules/PresentationDataUtils:PresentationDataUtils",
-        "//submodules/AnimatedStickerNode:AnimatedStickerNode",
-        "//submodules/LottieSettings:LottieSettings",
-        "//submodules/TelegramAnimatedStickerNode:TelegramAnimatedStickerNode",
-        "//submodules/Novagram/Localization:NovagramLocalization",
-        "//submodules/TelegramStringFormatting:TelegramStringFormatting",
-        "//submodules/Novagram/Services:NovagramServicesSDK",
-        "//submodules/Novagram/Services:NovagramServicesUISDK",
     ],
     visibility = [
         "//visibility:public",

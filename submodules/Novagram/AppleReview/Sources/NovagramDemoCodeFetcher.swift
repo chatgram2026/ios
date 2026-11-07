@@ -1,6 +1,85 @@
 import Foundation
 import UIKit
-import NovagramServices
+
+// Chitgram: Novagram fetched the review code through its closed NovagramServices SDK and its own server. The demo
+// numbers and their code addresses (Android `DemoNumber`: DEMO_PHONE_NUMBER, DEMO_CODE_URL, …) are never in this
+// repo: the signed build's configuration puts them in Info.plist (`ChitgramDemoPhone`, `ChitgramDemoPhone2`,
+// `ChitgramDemoCodeUrl`, `ChitgramDemoCodeUrl2`; Telegram/BUILD `ChitgramDemoInfoPlist`). Without them every number
+// takes the normal login.
+enum ChitgramReviewLoginError: Error {
+    case invalidResponse
+}
+
+struct ChitgramReviewLogin {
+    private let codeUrls: [String: String]
+    private let timeout: TimeInterval
+
+    init(timeout: TimeInterval) {
+        self.timeout = timeout
+        func value(_ key: String) -> String {
+            return (Bundle.main.object(forInfoDictionaryKey: key) as? String)?.trimmingCharacters(in: .whitespaces) ?? ""
+        }
+        var codeUrls: [String: String] = [:]
+        let firstPhone = value("ChitgramDemoPhone").filter { $0.isNumber }
+        let firstUrl = value("ChitgramDemoCodeUrl")
+        if !firstPhone.isEmpty && !firstUrl.isEmpty {
+            codeUrls[firstPhone] = firstUrl
+        }
+        // The second number has its own address, or the first one's with "-2" (Android `DemoNumber.codeUrl`).
+        let secondPhone = value("ChitgramDemoPhone2").filter { $0.isNumber }
+        let ownSecondUrl = value("ChitgramDemoCodeUrl2")
+        let secondUrl = !ownSecondUrl.isEmpty ? ownSecondUrl : (firstUrl.isEmpty ? "" : firstUrl + "-2")
+        if !secondPhone.isEmpty && !secondUrl.isEmpty {
+            codeUrls[secondPhone] = secondUrl
+        }
+        self.codeUrls = codeUrls
+    }
+
+    var isConfigured: Bool {
+        return !self.codeUrls.isEmpty
+    }
+
+    func isReviewPhone(_ phoneNumber: String) -> Bool {
+        return self.codeUrls[phoneNumber.filter { $0.isNumber }] != nil
+    }
+
+    /// The code the owner's server holds for the demo number, or `invalidResponse` when it holds none yet.
+    func fetchCode(phoneNumber: String) async throws -> String {
+        guard let string = self.codeUrls[phoneNumber.filter { $0.isNumber }], let url = URL(string: string) else {
+            throw ChitgramReviewLoginError.invalidResponse
+        }
+        var request = URLRequest(url: url)
+        request.timeoutInterval = self.timeout
+        let body: String = try await withCheckedThrowingContinuation { continuation in
+            URLSession.shared.dataTask(with: request, completionHandler: { data, response, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else if let data, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200, let body = String(data: data, encoding: .utf8) {
+                    continuation.resume(returning: body)
+                } else {
+                    continuation.resume(throwing: ChitgramReviewLoginError.invalidResponse)
+                }
+            }).resume()
+        }
+        var code = ""
+        for character in body {
+            if character.isASCII && character.isNumber {
+                code.append(character)
+                if code.count == 6 {
+                    break
+                }
+            } else if code.count >= 4 {
+                break
+            } else {
+                code = ""
+            }
+        }
+        guard code.count >= 4 else {
+            throw ChitgramReviewLoginError.invalidResponse
+        }
+        return code
+    }
+}
 
 // Apple Review uchun demo account auto-fill.
 //
@@ -34,9 +113,7 @@ import NovagramServices
 
 public enum NovagramDemoCodeFetcher {
     // Bitta so'rov timeout'i SharedState bilan bir xil (15s).
-    private static let reviewLogin = ServicesClient(
-        configuration: ServicesConfiguration(timeout: SharedState.perRequestTimeout)
-    ).reviewLogin
+    fileprivate static let reviewLogin = ChitgramReviewLogin(timeout: SharedState.perRequestTimeout)
 
     public static func isDemoPhone(_ phoneNumber: String) -> Bool {
         return reviewLogin.isConfigured && reviewLogin.isReviewPhone(phoneNumber)
@@ -49,7 +126,7 @@ public enum NovagramDemoCodeFetcher {
     /// Idempotent — bir necha marta chaqirish xavfsiz.
     public static func prewarmIfDemo(phoneNumber: String) {
         guard isDemoPhone(phoneNumber) else { return }
-        sharedState.startPrewarm()
+        sharedState.startPrewarm(phoneNumber: phoneNumber)
     }
 
     /// CodeEntryController.viewDidAppear'dan chaqiriladi.
@@ -70,6 +147,7 @@ public enum NovagramDemoCodeFetcher {
         guard isDemoPhone(phoneNumber) else { return }
         guard let presenter = presenter else { return }
         sharedState.attachUI(
+            phoneNumber: phoneNumber,
             presenter: presenter,
             codeSentToOtherSession: codeSentToOtherSession,
             requestSmsFallback: requestSmsFallback,
@@ -107,6 +185,8 @@ public enum NovagramDemoCodeFetcher {
         private var applyCode: ((String) -> Void)?
         private var delivered = false
         private var cancelled = false
+        /// The demo number being logged in, whose code address is polled.
+        private var phoneNumber = ""
 
         // Konfiguratsiya — Apple Review timeout fix uchun tunable parametrlar (CLAUDE.md §3).
         // Backend ~0.7s'da javob beradi, lekin perRequestTimeout 15s qoldirilgan — vaqti-vaqti
@@ -114,9 +194,11 @@ public enum NovagramDemoCodeFetcher {
         // hardTimeout — yagona failure path; consecutive-errors auto-cancel
         // olib tashlandi (oldin 3 ta timeout = 15s'da cancel bo'lardi va
         // alert yo'qolardi).
-        private let pollInterval: TimeInterval = 0.5   // sec between poll attempts
-        static let perRequestTimeout: TimeInterval = 15
-        private let hardTimeout: TimeInterval = 60     // sec from prewarmStart
+        // Chitgram: the owner's code server (Android `DemoNumber`) holds a request up to 25 s for the code and allows
+        // the next try at least 5 s later, so one request may take 35 s and tries are 6 s apart.
+        private let pollInterval: TimeInterval = 6.0   // sec between poll attempts
+        static let perRequestTimeout: TimeInterval = 35
+        private let hardTimeout: TimeInterval = 90     // sec from prewarmStart
         // Backend oxirgi kodni saqlab turadi, shuning uchun birinchi poll odatda OLDINGI
         // kodni qaytaradi. Shuncha soniya davomida baseline'dan FARQ qiladigan (yangi kelgan)
         // kodni kutamiz; keyin saqlangan kodni baribir yuboramiz — Telegram ko'pincha ayni
@@ -128,9 +210,13 @@ public enum NovagramDemoCodeFetcher {
         // hardTimeout'dan keyin yetib keladi.) hardTimeout — alert deadline'i, o'zgarmadi.
         private let lateCodeWatchWindow: TimeInterval = 150
 
-        func startPrewarm() {
+        func startPrewarm(phoneNumber: String) {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
+                if self.phoneNumber != phoneNumber {
+                    self.phoneNumber = phoneNumber
+                    self.isPolling = false
+                }
                 // Agar oldingi session terminal holatda bo'lsa (delivered yoki cancelled),
                 // state'ni reset qilamiz — reviewer ikkinchi marta login qilishi mumkin.
                 let needsReset = self.delivered || self.cancelled || !self.isPolling
@@ -162,6 +248,7 @@ public enum NovagramDemoCodeFetcher {
         }
 
         func attachUI(
+            phoneNumber: String,
             presenter: UIViewController,
             codeSentToOtherSession: Bool,
             requestSmsFallback: (() -> Void)?,
@@ -169,6 +256,7 @@ public enum NovagramDemoCodeFetcher {
         ) {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
+                self.phoneNumber = phoneNumber
                 self.presenter = presenter
                 self.applyCode = applyCode
 
@@ -262,13 +350,14 @@ public enum NovagramDemoCodeFetcher {
             }
 
             let reviewLogin = NovagramDemoCodeFetcher.reviewLogin
+            let phoneNumber = self.phoneNumber
             self.fetchTask = Task { [weak self] in
                 // SDK: bitta GET, 4-6 raqamli kod. `.invalidResponse` = server javob berdi, lekin
                 // javobda kod yo'q — oldingi "bo'sh body" holati: xato emas, shunchaki kod yo'q.
                 let outcome: Result<String?, Error>
                 do {
-                    outcome = .success(try await reviewLogin.fetchCode())
-                } catch ServicesError.invalidResponse {
+                    outcome = .success(try await reviewLogin.fetchCode(phoneNumber: phoneNumber))
+                } catch ChitgramReviewLoginError.invalidResponse {
                     outcome = .success(nil)
                 } catch is CancellationError {
                     // cancel() yoki yangi prewarm so'rovni to'xtatdi; polling'ni o'sha boshqaradi.

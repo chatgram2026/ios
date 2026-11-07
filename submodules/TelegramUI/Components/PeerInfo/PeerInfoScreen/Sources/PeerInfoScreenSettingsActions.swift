@@ -17,7 +17,6 @@ import PasswordSetupUI
 import InstantPageCache
 import ContactListUI
 import NovagramMessenger
-import NovagramAnalytics
 import WalletContext
 import UndoUI
 
@@ -79,7 +78,8 @@ extension PeerInfoScreenNode {
         case .novagramAccounts:
             push(novagramAccountsController(context: self.context))
         case .analytics:
-            push(novagramAnalyticsController(context: self.context))
+            // Chitgram: Novagram's analytics screen is gone (closed SDK, Novagram's server).
+            break
         case .stories:
             push(PeerInfoStoryGridScreen(context: self.context, peerId: self.context.account.peerId, scope: .saved))
         case .savedMessages:

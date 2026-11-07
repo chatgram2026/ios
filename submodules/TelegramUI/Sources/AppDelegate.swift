@@ -1024,22 +1024,8 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         }, dismissNativeController: {
             self.window?.rootViewController?.dismiss(animated: true, completion: nil)
         }, getAvailableAlternateIcons: {
-            if #available(iOS 10.3, *) {
-                let icons = [
-                    PresentationAppIcon(name: "AppIconLLCIcon", imageName: "AppIconLLCIcon", isDefault: true),
-                    PresentationAppIcon(name: "NovaBlueIcon", imageName: "NovaBlueIcon"),
-                    PresentationAppIcon(name: "NovaTealIcon", imageName: "NovaTealIcon"),
-                    PresentationAppIcon(name: "NovaPurpleIcon", imageName: "NovaPurpleIcon"),
-                    PresentationAppIcon(name: "NovaPinkIcon", imageName: "NovaPinkIcon"),
-                    PresentationAppIcon(name: "NovaOrangeIcon", imageName: "NovaOrangeIcon"),
-                    PresentationAppIcon(name: "NovaBlackIcon", imageName: "NovaBlackIcon"),
-                    PresentationAppIcon(name: "NovaRedIcon", imageName: "NovaRedIcon")
-                ]
-                
-                return icons
-            } else {
-                return []
-            }
+            // Chitgram: one icon, no alternates (Novagram's carried its brand), so the icon picker stays hidden.
+            return []
         }, getAlternateIconName: {
             if #available(iOS 10.3, *) {
                 return application.alternateIconName
@@ -1316,7 +1302,7 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             NovagramAnalyticsManager.shared.start(sharedContext: sharedApplicationContext.sharedContext)
         })
 
-        // Novagram Auto-Proxy — if the "Enable NovagramProxy" toggle is on, ensure a healthy
+        // Novagram Auto-Proxy — if the "Enable ChitgramProxy" toggle is on, ensure a healthy
         // SOCKS5 proxy from the bundled list is active so Telegram is reachable where blocked.
         _ = (self.sharedContextPromise.get()
         |> take(1)

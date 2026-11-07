@@ -904,7 +904,7 @@ extension PeerInfoScreenNode {
                         })))
                     }
 
-                    items.append(.action(ContextMenuActionItem(text: "Novagram Info", icon: { theme in
+                    items.append(.action(ContextMenuActionItem(text: "Chitgram Info", icon: { theme in
                         generateTintedImage(image: UIImage(bundleImageName: "Chat/Context Menu/Info"), color: theme.contextMenu.primaryColor)
                     }, action: { c, _ in
                         c?.dismiss(completion: nil)
@@ -920,7 +920,7 @@ extension PeerInfoScreenNode {
                         }
 
                         let text = details.joined(separator: "\n")
-                        let alertController = standardTextAlertController(theme: AlertControllerTheme(presentationData: strongSelf.presentationData), title: "Novagram", text: text, actions: [
+                        let alertController = standardTextAlertController(theme: AlertControllerTheme(presentationData: strongSelf.presentationData), title: "Chitgram", text: text, actions: [
                             TextAlertAction(type: .defaultAction, title: strongSelf.presentationData.strings.Common_OK, action: {}),
                             TextAlertAction(type: .genericAction, title: "Copy", action: {
                                 UIPasteboard.general.string = text
@@ -1167,7 +1167,7 @@ extension PeerInfoScreenNode {
                         })))
                     }
 
-                    items.append(.action(ContextMenuActionItem(text: "Novagram Info", icon: { theme in
+                    items.append(.action(ContextMenuActionItem(text: "Chitgram Info", icon: { theme in
                         generateTintedImage(image: UIImage(bundleImageName: "Chat/Context Menu/Info"), color: theme.contextMenu.primaryColor)
                     }, action: { c, _ in
                         c?.dismiss(completion: nil)
@@ -1182,7 +1182,7 @@ extension PeerInfoScreenNode {
                         }
 
                         let text = details.joined(separator: "\n")
-                        let alertController = standardTextAlertController(theme: AlertControllerTheme(presentationData: strongSelf.presentationData), title: "Novagram", text: text, actions: [
+                        let alertController = standardTextAlertController(theme: AlertControllerTheme(presentationData: strongSelf.presentationData), title: "Chitgram", text: text, actions: [
                             TextAlertAction(type: .defaultAction, title: strongSelf.presentationData.strings.Common_OK, action: {}),
                             TextAlertAction(type: .genericAction, title: "Copy", action: {
                                 UIPasteboard.general.string = text
@@ -1380,7 +1380,7 @@ extension PeerInfoScreenNode {
                         })))
                     }
 
-                    items.append(.action(ContextMenuActionItem(text: "Novagram Info", icon: { theme in
+                    items.append(.action(ContextMenuActionItem(text: "Chitgram Info", icon: { theme in
                         generateTintedImage(image: UIImage(bundleImageName: "Chat/Context Menu/Info"), color: theme.contextMenu.primaryColor)
                     }, action: { c, _ in
                         c?.dismiss(completion: nil)
@@ -1393,7 +1393,7 @@ extension PeerInfoScreenNode {
                         }
 
                         let text = details.joined(separator: "\n")
-                        let alertController = standardTextAlertController(theme: AlertControllerTheme(presentationData: strongSelf.presentationData), title: "Novagram", text: text, actions: [
+                        let alertController = standardTextAlertController(theme: AlertControllerTheme(presentationData: strongSelf.presentationData), title: "Chitgram", text: text, actions: [
                             TextAlertAction(type: .defaultAction, title: strongSelf.presentationData.strings.Common_OK, action: {}),
                             TextAlertAction(type: .genericAction, title: "Copy", action: {
                                 UIPasteboard.general.string = text

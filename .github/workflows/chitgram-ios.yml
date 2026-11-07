@@ -1,0 +1,176 @@
+# Chitgram: compile check of the whole app on GitHub's free macOS runners (public repo).
+#
+# The build is the upstream one (Make.py, debug_sim_arm64, fake codesigning), so a red run means the
+# code does not compile, never that signing is missing. Bazel's disk cache is kept between runs in the
+# Actions cache: a run that does not finish inside the job limit still saves what it compiled, and the
+# next run carries on from there.
+name: Chitgram iOS build
+
+on:
+  push:
+    # chitgram-next is checked first; chitgram only gets commits that compiled, so Codemagic always builds a
+    # working tree.
+    branches: [ chitgram, chitgram-next ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+  workflow_dispatch:
+    inputs:
+      configuration:
+        description: 'Make.py configuration'
+        required: false
+        default: 'debug_sim_arm64'
+        type: choice
+        options:
+          - debug_sim_arm64
+          - release_sim_arm64
+
+concurrency:
+  group: chitgram-ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: xcode-27
+    timeout-minutes: 360
+    env:
+      CONFIGURATION: ${{ inputs.configuration || 'debug_sim_arm64' }}
+      CACHE_DIR: /Users/runner/telegram-bazel-cache
+      # The Actions cache takes at most 10 GB per repository; keep the saved disk cache below that.
+      CACHE_LIMIT_MB: '8500'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: false
+
+      # Two submodule URLs are relative (../rlottie.git, ../tgcalls.git), which would resolve to this
+      # fork's organisation. Point them at Telegram's repositories without touching .gitmodules.
+      - name: Fetch submodules
+        run: |
+          set -euo pipefail
+          git submodule init
+          git config submodule.submodules/rlottie/rlottie.url https://github.com/TelegramMessenger/rlottie.git
+          git config submodule.submodules/TgVoipWebrtc/tgcalls.url https://github.com/TelegramMessenger/tgcalls.git
+          git submodule update --depth 1 --jobs 8 --recursive
+          git submodule status --recursive | cut -c1-120
+
+      - name: Free disk space
+        run: |
+          df -h /
+          for app in /Applications/Xcode_*.app; do
+            case "$app" in
+              /Applications/Xcode_27.1.app) ;;
+              *) sudo rm -rf "$app" || true ;;
+            esac
+          done
+          sudo rm -rf "$HOME/Library/Android" /usr/local/share/dotnet "$HOME/.dotnet" /usr/local/lib/node_modules || true
+          df -h /
+
+      - name: Select Xcode
+        run: |
+          XCODE_VERSION=$(python3 -c 'import json;print(json.load(open("versions.json"))["xcode"])')
+          sudo xcode-select -s "/Applications/Xcode_${XCODE_VERSION}.app/Contents/Developer"
+          xcodebuild -version
+          sysctl -n hw.ncpu hw.memsize
+
+      - name: Restore Bazel cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.CACHE_DIR }}
+          key: bazel-${{ env.CONFIGURATION }}-${{ github.run_id }}
+          restore-keys: |
+            bazel-${{ env.CONFIGURATION }}-
+
+      - name: Configure Bazel
+        run: |
+          mkdir -p "$CACHE_DIR/disk" "$CACHE_DIR/repo"
+          du -sh "$CACHE_DIR" || true
+          # 3 cores and 7 GB of RAM: keep Bazel from starting more Swift compiles than fit in memory.
+          # Simulator builds need no provisioning profile, and the fake ones in build-system/fake-codesigning
+          # expired on 2026-10-30 (rules_apple refuses an expired profile), so leave profiles out.
+          cat > "$HOME/.bazelrc" <<EOF
+          build --repository_cache=$CACHE_DIR/repo
+          build --jobs=4
+          build --local_resources=memory=HOST_RAM*.75
+          build --//Telegram:disableProvisioningProfiles
+          EOF
+          cat "$HOME/.bazelrc"
+
+      - name: Build
+        timeout-minutes: 310
+        run: |
+          set -o pipefail
+          python3 build-system/Make/ImportCertificates.py --path build-system/fake-codesigning/certs
+          python3 -u build-system/Make/Make.py \
+            --overrideXcodeVersion \
+            --cacheDir="$CACHE_DIR/disk" \
+            build \
+            --continueOnError \
+            --configurationPath=build-system/appstore-configuration.json \
+            --codesigningInformationPath=build-system/fake-codesigning \
+            --configuration="$CONFIGURATION" \
+            --buildNumber=1 2>&1 | tee "$RUNNER_TEMP/build.log"
+
+      - name: Summarize errors
+        if: always()
+        run: |
+          LOG="$RUNNER_TEMP/build.log"
+          [ -f "$LOG" ] || exit 0
+          {
+            echo "## Build result"
+            tail -n 5 "$LOG" | sed 's/^/    /'
+            echo
+            echo "## Compiler errors (first 200)"
+            echo '```'
+            grep -E "(error:|ERROR:)" "$LOG" | grep -v "^INFO" | sort -u | head -n 200
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-${{ env.CONFIGURATION }}
+          path: ${{ runner.temp }}/build.log
+          retention-days: 14
+          if-no-files-found: ignore
+
+      # Saved even when the build failed or ran out of time, so the next run starts warm. Oldest files go
+      # first when the cache is over the limit.
+      - name: Trim Bazel cache
+        if: always()
+        run: |
+          python3 - <<'EOF'
+          import os
+          root = os.environ["CACHE_DIR"]
+          limit = int(os.environ["CACHE_LIMIT_MB"]) * 1024 * 1024
+          files = []
+          for base, _, names in os.walk(root):
+              for name in names:
+                  path = os.path.join(base, name)
+                  try:
+                      st = os.lstat(path)
+                  except OSError:
+                      continue
+                  files.append((max(st.st_atime, st.st_mtime), st.st_size, path))
+          total = sum(f[1] for f in files)
+          print("cache before: %.1f GB in %d files" % (total / 2**30, len(files)))
+          files.sort()
+          for atime, size, path in files:
+              if total <= limit:
+                  break
+              if "/repo/" in path:
+                  continue
+              os.remove(path)
+              total -= size
+          print("cache after: %.1f GB" % (total / 2**30))
+          EOF
+
+      - name: Save Bazel cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.CACHE_DIR }}
+          key: bazel-${{ env.CONFIGURATION }}-${{ github.run_id }}

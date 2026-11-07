@@ -264,19 +264,19 @@ enum NovagramCarPlayStrings {
 
     static func siriRequiredText(langCode: String) -> String {
         switch langCode {
-        case "uz": return "CarPlay'da Novagram xabarlarini Siri o'qib beradi va javobingizni yuboradi. Keyingi oynada Siri'ga ruxsat bering."
-        case "ru": return "В CarPlay сообщения Novagram читает и отправляет Siri. Разрешите доступ к Siri в следующем окне."
-        case "zh": return "在 CarPlay 中，Siri 会朗读 Novagram 消息并发送你的回复。请在接下来的窗口中允许 Siri 访问。"
-        default:   return "In CarPlay, Siri reads your Novagram messages aloud and sends your replies. Allow Siri access in the next window."
+        case "uz": return "CarPlay'da Chitgram xabarlarini Siri o'qib beradi va javobingizni yuboradi. Keyingi oynada Siri'ga ruxsat bering."
+        case "ru": return "В CarPlay сообщения Chitgram читает и отправляет Siri. Разрешите доступ к Siri в следующем окне."
+        case "zh": return "在 CarPlay 中，Siri 会朗读 Chitgram 消息并发送你的回复。请在接下来的窗口中允许 Siri 访问。"
+        default:   return "In CarPlay, Siri reads your Chitgram messages aloud and sends your replies. Allow Siri access in the next window."
         }
     }
 
     static func footerOn(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Novagram CarPlay'ga tayyor. Mashinada Siri yangi xabarlarni ovoz chiqarib o'qiydi va javobingizni ovoz bilan yuboradi. Sinab ko'ring: «Hey Siri, read my Novagram messages»."
-        case "ru": return "Novagram готов к CarPlay. В машине Siri читает новые сообщения вслух и отправляет ваши ответы голосом. Попробуйте: «Привет, Siri, прочитай сообщения в Novagram»."
-        case "zh": return "Novagram 已可在 CarPlay 中使用。在车内，Siri 会朗读新消息，并用语音发送你的回复。"
-        default:   return "Novagram is ready for CarPlay. In the car, Siri reads new messages aloud and sends your replies by voice. Try: “Hey Siri, read my Novagram messages.”"
+        case "uz": return "Chitgram CarPlay'ga tayyor. Mashinada Siri yangi xabarlarni ovoz chiqarib o'qiydi va javobingizni ovoz bilan yuboradi. Sinab ko'ring: «Hey Siri, read my Chitgram messages»."
+        case "ru": return "Chitgram готов к CarPlay. В машине Siri читает новые сообщения вслух и отправляет ваши ответы голосом. Попробуйте: «Привет, Siri, прочитай сообщения в Chitgram»."
+        case "zh": return "Chitgram 已可在 CarPlay 中使用。在车内，Siri 会朗读新消息，并用语音发送你的回复。"
+        default:   return "Chitgram is ready for CarPlay. In the car, Siri reads new messages aloud and sends your replies by voice. Try: “Hey Siri, read my Chitgram messages.”"
         }
     }
 
@@ -291,19 +291,19 @@ enum NovagramCarPlayStrings {
 
     static func footerBlocked(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Novagram uchun Siri o'chirilgan, shuning uchun CarPlay xabarlarni o'qiy olmaydi va yubora olmaydi. iOS ruxsatni qayta so'rashga yo'l qo'ymaydi: «Sozlamalarni ochish» ni bosing, Siri bo'limida ruxsatni yoqing va ilovaga qayting, holat o'zi yangilanadi."
-        case "ru": return "Siri для Novagram выключена, поэтому CarPlay не может читать и отправлять сообщения. iOS не позволяет запросить доступ повторно: нажмите «Открыть настройки», включите доступ в разделе Siri и вернитесь в приложение, статус обновится сам."
-        case "zh": return "Novagram 的 Siri 已关闭，CarPlay 无法朗读或发送消息。iOS 不允许再次请求权限：点击“打开设置”，在 Siri 中开启访问，然后返回应用，状态会自动更新。"
-        default:   return "Siri is turned off for Novagram, so CarPlay can't read or send messages. iOS doesn't allow asking again: tap “Open Settings”, turn on access under Siri, then come back and the status updates on its own."
+        case "uz": return "Chitgram uchun Siri o'chirilgan, shuning uchun CarPlay xabarlarni o'qiy olmaydi va yubora olmaydi. iOS ruxsatni qayta so'rashga yo'l qo'ymaydi: «Sozlamalarni ochish» ni bosing, Siri bo'limida ruxsatni yoqing va ilovaga qayting, holat o'zi yangilanadi."
+        case "ru": return "Siri для Chitgram выключена, поэтому CarPlay не может читать и отправлять сообщения. iOS не позволяет запросить доступ повторно: нажмите «Открыть настройки», включите доступ в разделе Siri и вернитесь в приложение, статус обновится сам."
+        case "zh": return "Chitgram 的 Siri 已关闭，CarPlay 无法朗读或发送消息。iOS 不允许再次请求权限：点击“打开设置”，在 Siri 中开启访问，然后返回应用，状态会自动更新。"
+        default:   return "Siri is turned off for Chitgram, so CarPlay can't read or send messages. iOS doesn't allow asking again: tap “Open Settings”, turn on access under Siri, then come back and the status updates on its own."
         }
     }
 
     static func mainFooter(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Mashinada Novagram xabarlarini Siri o'qib beradi va javobingizni ovoz bilan yuboradi."
-        case "ru": return "В машине Siri читает сообщения Novagram и отправляет ваши ответы голосом."
-        case "zh": return "在车内，Siri 会朗读 Novagram 消息，并用语音发送你的回复。"
-        default:   return "In the car, Siri reads your Novagram messages aloud and sends your replies by voice."
+        case "uz": return "Mashinada Chitgram xabarlarini Siri o'qib beradi va javobingizni ovoz bilan yuboradi."
+        case "ru": return "В машине Siri читает сообщения Chitgram и отправляет ваши ответы голосом."
+        case "zh": return "在车内，Siri 会朗读 Chitgram 消息，并用语音发送你的回复。"
+        default:   return "In the car, Siri reads your Chitgram messages aloud and sends your replies by voice."
         }
     }
 }

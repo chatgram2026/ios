@@ -1648,7 +1648,7 @@ private func novagramSettingsEntries(presentationData: PresentationData, state: 
     entries.append(.folderStyle(presentationData.theme, NovagramFeaturesStrings.folderStyleTitle(langCode: langCode), folderStyleLabel, false))
     entries.append(.channelHistoryButton(presentationData.theme, NovagramFeaturesStrings.channelHistoryTitle(langCode: langCode), NovagramFeaturesStrings.channelHistoryTip(langCode: langCode), state.channelHistoryEnabled, true))
     entries.append(.autoAcceptRequests(presentationData.theme, NovagramFeaturesStrings.autoAcceptTitle(langCode: langCode), NovagramFeaturesStrings.autoAcceptTip(langCode: langCode), state.autoAcceptEnabled, true))
-    // Feature #40: always-visible "Share Novagram Settings link" button. The toggle was removed —
+    // Feature #40: always-visible "Share Chitgram Settings link" button. The toggle was removed —
     // sharing a link needs no on/off switch, and deep-link handling (OpenResolvedUrl) is independent of it.
     entries.append(.shareNovagramProLink(presentationData.theme, NovagramFeaturesStrings.shareNovagramProLinkTitle(langCode: langCode)))
     entries.append(.storyUnlockEnabled(presentationData.theme, NovagramStoryUnlockStrings.toggleTitle(langCode: langCode), NovagramStoryUnlockStrings.toggleSubtitle(langCode: langCode), state.storyUnlockEnabled, true))
@@ -2558,7 +2558,7 @@ public func novagramSettingsController(context: AccountContext, highlightFeature
             NotificationCenter.default.removeObserver(developerFlagsObserver)
         }
         |> map { presentationData, state, carPlayStatus, callDataSaving -> (ItemListControllerState, (ItemListNodeState, Any)) in
-            let controllerState = ItemListControllerState(presentationData: ItemListPresentationData(presentationData), title: .text("Novagram"), leftNavigationButton: nil, rightNavigationButton: nil, backNavigationButton: ItemListBackButton(title: presentationData.strings.Common_Back))
+            let controllerState = ItemListControllerState(presentationData: ItemListPresentationData(presentationData), title: .text("Chitgram"), leftNavigationButton: nil, rightNavigationButton: nil, backNavigationButton: ItemListBackButton(title: presentationData.strings.Common_Back))
             let entries = novagramSettingsEntries(presentationData: presentationData, state: state, carPlayStatus: carPlayStatus, callDataSaving: callDataSaving)
             _ = latestEntries.swap(entries)
             // ensureVisibleItemTag only reaches rows whose nodes already exist, so a row far down
@@ -2700,10 +2700,10 @@ private enum NovagramAutoDownloadStrings {
 private enum NovagramProxyStrings {
     static func toggleTitle(langCode: String) -> String {
         switch langCode {
-        case "uz": return "NovagramProxy'ni yoqish"
-        case "ru": return "Включить NovagramProxy"
-        case "zh": return "开启 NovagramProxy"
-        default:   return "Enable NovagramProxy"
+        case "uz": return "ChitgramProxy'ni yoqish"
+        case "ru": return "Включить ChitgramProxy"
+        case "zh": return "开启 ChitgramProxy"
+        default:   return "Enable ChitgramProxy"
         }
     }
     static func toggleSubtitle(langCode: String) -> String {
@@ -2737,10 +2737,10 @@ private enum NovagramWhiteThemeStrings {
 
     static func toggleSubtitle(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Yorqin (oq) temada Novagram ko'k rangini accent sifatida qo'llaydi"
-        case "ru": return "Применяет фирменный синий Novagram в качестве акцента в светлой теме"
-        case "zh": return "在浅色主题中使用 Novagram 蓝作为强调色"
-        default:   return "Applies Novagram blue as the accent color in the light theme"
+        case "uz": return "Yorqin (oq) temada Chitgram ko'k rangini accent sifatida qo'llaydi"
+        case "ru": return "Применяет фирменный синий Chitgram в качестве акцента в светлой теме"
+        case "zh": return "在浅色主题中使用 Chitgram 蓝作为强调色"
+        default:   return "Applies Chitgram blue as the accent color in the light theme"
         }
     }
 

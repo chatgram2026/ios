@@ -43,10 +43,10 @@ enum SpeechToTextStrings {
 
     static func languageUnsupported(langName: String) -> String {
         localized(
-            en: "«\(langName)» does not support speech-to-text. Choose a supported language (for example, Russian) in Settings → Novagram → Voice language.",
-            uz: "«\(langName)» tili ovozdan-matnga aylantirishni qo'llab-quvvatlamaydi. Sozlamalar → Novagram → Ovoz tili dan qo'llab-quvvatlanadigan til (masalan, Ruscha) tanlang.",
-            ru: "Язык «\(langName)» не поддерживает преобразование речи в текст. Выберите поддерживаемый язык (например, русский) в Настройки → Novagram → Язык голоса.",
-            zh: "“\(langName)”不支持语音转文字。请在“设置 → Novagram → 识别语言”中选择受支持的语言（例如俄语）。"
+            en: "«\(langName)» does not support speech-to-text. Choose a supported language (for example, Russian) in Settings → Chitgram → Voice language.",
+            uz: "«\(langName)» tili ovozdan-matnga aylantirishni qo'llab-quvvatlamaydi. Sozlamalar → Chitgram → Ovoz tili dan qo'llab-quvvatlanadigan til (masalan, Ruscha) tanlang.",
+            ru: "Язык «\(langName)» не поддерживает преобразование речи в текст. Выберите поддерживаемый язык (например, русский) в Настройки → Chitgram → Язык голоса.",
+            zh: "“\(langName)”不支持语音转文字。请在“设置 → Chitgram → 识别语言”中选择受支持的语言（例如俄语）。"
         )
     }
 

@@ -3,7 +3,7 @@ import SwiftSignalKit
 import TelegramCore
 import AccountContext
 
-// Drives the "Enable NovagramProxy" opt-in. When the user turns the toggle ON (default is OFF),
+// Drives the "Enable ChitgramProxy" opt-in. When the user turns the toggle ON (default is OFF),
 // the app auto-finds a working SOCKS5 proxy from the bundled pool and routes THIS user's Telegram
 // connection through it — so a user in any blocked country can reach Telegram without configuring
 // a proxy by hand. The proxy details are never surfaced by the toggle.
@@ -44,6 +44,12 @@ public final class NovagramAutoProxyManager {
 
     public var isEnabled: Bool {
         return UserDefaults(suiteName: self.defaultsSuite)?.bool(forKey: self.enabledKey) ?? false
+    }
+
+    /// Chitgram: whether the build carries a proxy list. Novagram's own list (its paid proxies) is not in the repo, so
+    /// until Chitgram has one the feature has nothing to connect through and its entry points stay hidden.
+    public var hasProxyPool: Bool {
+        return !NovagramProxyPool.loadShuffled().isEmpty
     }
 
     private func persist(enabled: Bool) {

@@ -58,6 +58,16 @@ load(
     "telegram_team_id",
     "telegram_enable_icloud",
     "telegram_enable_siri",
+    # Chitgram: the App Review demo login.
+    "telegram_chitgram_demo_phone",
+    "telegram_chitgram_demo_phone_2",
+    "telegram_chitgram_demo_code_url",
+    "telegram_chitgram_demo_code_url_2",
+    "telegram_chitgram_firebase_project_id",
+    "telegram_chitgram_firebase_api_key",
+    "telegram_chitgram_firebase_app_id",
+    "telegram_chitgram_ads_base_url",
+    "telegram_chitgram_ads_api_key",
 )
 
 load("@build_bazel_rules_apple//apple:resources.bzl",
@@ -326,23 +336,11 @@ filegroup(
     ]),
 )
 
-alternate_icon_folders = [
-    "AppIconLLCIcon",
-    "NovaBlueIcon",
-    "NovaTealIcon",
-    "NovaPurpleIcon",
-    "NovaPinkIcon",
-    "NovaOrangeIcon",
-    "NovaBlackIcon",
-    "NovaRedIcon",
-]
+# Chitgram: Novagram's alternate icons carry its brand, so the app has only its own icon.
+alternate_icon_folders = []
 
-composer_icon_folders = []
-
-filegroup(
-    name = "AppIcon",
-    srcs = glob(["Telegram-iOS/NovagramAppIcon.xcassets/AppIcon.appiconset/**"]),
-)
+# Chitgram: the home screen icon (Telegram-iOS/Chitgram.icon, made from the owner's logo).
+composer_icon_folders = ["Chitgram"]
 
 [
     filegroup(
@@ -641,13 +639,50 @@ plist_fragment(
     """
 )
 
+# Chitgram: the App Review demo login, empty unless the signed build's configuration has it.
+plist_fragment(
+    name = "ChitgramDemoInfoPlist",
+    extension = "plist",
+    template = """
+    <key>ChitgramDemoPhone</key>
+    <string>{phone}</string>
+    <key>ChitgramDemoPhone2</key>
+    <string>{phone2}</string>
+    <key>ChitgramDemoCodeUrl</key>
+    <string>{url}</string>
+    <key>ChitgramDemoCodeUrl2</key>
+    <string>{url2}</string>
+    <key>ChitgramFirebaseProjectId</key>
+    <string>{firebaseProject}</string>
+    <key>ChitgramFirebaseApiKey</key>
+    <string>{firebaseKey}</string>
+    <key>ChitgramFirebaseAppId</key>
+    <string>{firebaseApp}</string>
+    <key>ChitgramAdsBaseUrl</key>
+    <string>{adsUrl}</string>
+    <key>ChitgramAdsApiKey</key>
+    <string>{adsKey}</string>
+    """.format(
+        phone = telegram_chitgram_demo_phone.replace("&", "&amp;"),
+        phone2 = telegram_chitgram_demo_phone_2.replace("&", "&amp;"),
+        url = telegram_chitgram_demo_code_url.replace("&", "&amp;"),
+        url2 = telegram_chitgram_demo_code_url_2.replace("&", "&amp;"),
+        firebaseProject = telegram_chitgram_firebase_project_id.replace("&", "&amp;"),
+        firebaseKey = telegram_chitgram_firebase_api_key.replace("&", "&amp;"),
+        firebaseApp = telegram_chitgram_firebase_app_id.replace("&", "&amp;"),
+        adsUrl = telegram_chitgram_ads_base_url.replace("&", "&amp;"),
+        adsKey = telegram_chitgram_ads_api_key.replace("&", "&amp;"),
+    ),
+)
+
+# Chitgram: the name under the home screen icon.
 plist_fragment(
     name = "AppNameInfoPlist",
     extension = "plist",
     template =
     """
     <key>CFBundleDisplayName</key>
-    <string>Novagram</string>
+    <string>Chitgram</string>
     """
 )
 
@@ -1046,7 +1081,7 @@ plist_fragment(
     <key>CFBundleIdentifier</key>
     <string>{telegram_bundle_id}.Share</string>
     <key>CFBundleName</key>
-    <string>Novagram</string>
+    <string>Chitgram</string>
     <key>CFBundlePackageType</key>
     <string>XPC!</string>
     <key>NSExtension</key>
@@ -1155,7 +1190,7 @@ plist_fragment(
     <key>CFBundleIdentifier</key>
     <string>{telegram_bundle_id}.NotificationContent</string>
     <key>CFBundleName</key>
-    <string>Novagram</string>
+    <string>Chitgram</string>
     <key>CFBundlePackageType</key>
     <string>XPC!</string>
     <key>NSExtension</key>
@@ -1267,7 +1302,7 @@ plist_fragment(
     <key>CFBundleIdentifier</key>
     <string>{telegram_bundle_id}.Widget</string>
     <key>CFBundleName</key>
-    <string>Novagram</string>
+    <string>Chitgram</string>
     <key>CFBundlePackageType</key>
     <string>XPC!</string>
     <key>NSExtension</key>
@@ -1391,7 +1426,7 @@ plist_fragment(
     <key>CFBundleIdentifier</key>
     <string>{telegram_bundle_id}.SiriIntents</string>
     <key>CFBundleName</key>
-    <string>Novagram</string>
+    <string>Chitgram</string>
     <key>CFBundlePackageType</key>
     <string>XPC!</string>
     <key>NSExtension</key>
@@ -1562,7 +1597,7 @@ plist_fragment(
     <key>CFBundleIdentifier</key>
     <string>{telegram_bundle_id}.BroadcastUpload</string>
     <key>CFBundleName</key>
-    <string>Novagram</string>
+    <string>Chitgram</string>
     <key>CFBundlePackageType</key>
     <string>XPC!</string>
     <key>NSExtension</key>
@@ -1660,7 +1695,7 @@ plist_fragment(
     <key>CFBundleIdentifier</key>
     <string>{telegram_bundle_id}.NotificationService</string>
     <key>CFBundleName</key>
-    <string>Novagram</string>
+    <string>Chitgram</string>
     <key>CFBundlePackageType</key>
     <string>XPC!</string>
     <key>NSExtension</key>
@@ -1729,11 +1764,11 @@ plist_fragment(
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleDisplayName</key>
-    <string>Novagram</string>
+    <string>Chitgram</string>
     <key>CFBundleIdentifier</key>
     <string>{telegram_bundle_id}</string>
     <key>CFBundleName</key>
-    <string>Novagram</string>
+    <string>Chitgram</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleSignature</key>
@@ -1791,19 +1826,19 @@ plist_fragment(
     <key>NSCameraUsageDescription</key>
     <string>We need this so that you can take and share photos and videos.</string>
     <key>NSContactsUsageDescription</key>
-    <string>Telegram stores your contacts heavily encrypted in the cloud to let you connect with your friends across all your devices.</string>
+    <string>Chitgram stores your contacts heavily encrypted in the cloud to let you connect with your friends across all your devices.</string>
     <key>NSFaceIDUsageDescription</key>
     <string>You can use Face ID to unlock the app.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Novagram uses your location only when you actively share it with a chat. We never track you in the background.</string>
+    <string>Chitgram uses your location only when you actively share it with a chat. We never track you in the background.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>When you send your location to your friends, Novagram needs access to show them a map. You also need this to send locations from an Apple Watch.</string>
+    <string>When you send your location to your friends, Chitgram needs access to show them a map. You also need this to send locations from an Apple Watch.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>When you send your location to your friends, Novagram needs access to show them a map.</string>
+    <string>When you send your location to your friends, Chitgram needs access to show them a map.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>We need this so that you can record and share voice messages and videos with sound.</string>
     <key>NSMotionUsageDescription</key>
-    <string>When you send your location to your friends, Telegram needs access to show them a map.</string>
+    <string>When you send your location to your friends, Chitgram needs access to show them a map.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>We need this so that you can share photos and videos from your photo library.</string>
     <key>NSPhotoLibraryUsageDescription</key>
@@ -1936,7 +1971,7 @@ apple_prebuilt_watchos_application(
 
 ios_application(
     name = "Telegram",
-    bundle_name = "Novagram",
+    bundle_name = "Chitgram",
     bundle_id = "{telegram_bundle_id}".format(
         telegram_bundle_id = telegram_bundle_id,
     ),
@@ -1949,12 +1984,13 @@ ios_application(
     entitlements = ":TelegramEntitlements.entitlements",
     infoplists = [
         ":TelegramInfoPlist",
+        ":ChitgramDemoInfoPlist",
         ":BuildNumberInfoPlist",
         ":VersionInfoPlist",
         ":RequiredDeviceCapabilitiesPlist",
         ":UrlTypesInfoPlist",
     ],
-    app_icons = [":AppIcon"],
+    app_icons = [ ":{}_icon".format(name) for name in composer_icon_folders ],
     alternate_icons = [
         ":{}".format(name) for name in alternate_icon_folders
     ],
@@ -2067,6 +2103,7 @@ ios_application(
     entitlements = ":TelegramEntitlements.entitlements",
     infoplists = [
         ":TelegramInfoPlist",
+        ":ChitgramDemoInfoPlist",
         ":BuildNumberInfoPlist",
         ":VersionInfoPlist",
         ":RequiredDeviceCapabilitiesPlist",
@@ -2092,6 +2129,7 @@ ios_application(
     entitlements = ":TelegramEntitlements.entitlements",
     infoplists = [
         ":TelegramInfoPlist",
+        ":ChitgramDemoInfoPlist",
         ":BuildNumberInfoPlist",
         ":VersionInfoPlist",
         ":RequiredDeviceCapabilitiesPlist",

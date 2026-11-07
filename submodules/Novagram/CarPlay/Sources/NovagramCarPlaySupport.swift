@@ -164,7 +164,7 @@ final class NovagramCarPlaySceneDelegate: UIResponder, CPTemplateApplicationScen
     }
 
     func templateApplicationScene(_ templateApplicationScene: CPTemplateApplicationScene, didConnect interfaceController: CPInterfaceController) {
-        let listTemplate = CPListTemplate(title: "Novagram", sections: [])
+        let listTemplate = CPListTemplate(title: "Chitgram", sections: [])
         // Starts a new message through Siri; the button has no handler of its own.
         listTemplate.trailingNavigationBarButtons = [CPMessageComposeBarButton()]
         self.listTemplate = listTemplate
@@ -251,10 +251,10 @@ private enum NovagramCarPlaySceneStrings {
 
     static func loggedOutTitle(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Novagram'ga kiring"
-        case "ru": return "Войдите в Novagram"
-        case "zh": return "请登录 Novagram"
-        default:   return "Log in to Novagram"
+        case "uz": return "Chitgram'ga kiring"
+        case "ru": return "Войдите в Chitgram"
+        case "zh": return "请登录 Chitgram"
+        default:   return "Log in to Chitgram"
         }
     }
 
@@ -269,10 +269,10 @@ private enum NovagramCarPlaySceneStrings {
 
     static func lockedTitle(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Novagram qulflangan"
-        case "ru": return "Novagram заблокирован"
-        case "zh": return "Novagram 已锁定"
-        default:   return "Novagram is locked"
+        case "uz": return "Chitgram qulflangan"
+        case "ru": return "Chitgram заблокирован"
+        case "zh": return "Chitgram 已锁定"
+        default:   return "Chitgram is locked"
         }
     }
 

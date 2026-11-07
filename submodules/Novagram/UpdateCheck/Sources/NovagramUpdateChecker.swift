@@ -3,10 +3,9 @@ import UIKit
 import NovagramLocalization
 import TelegramPresentationData
 
-// Hardcoded App Store bundle ID — DO NOT use Bundle.main.bundleIdentifier here.
-// Dev/sim builds run as "ph.telegra.Telegraph" which returns zero App Store results.
-// The live App Store listing always uses uz.fenixuz.app.
-private let kAppStoreBundleId = "uz.fenixuz.app"
+// Chitgram: the App Store listing of this app itself (Novagram hard-coded its own uz.fenixuz.app here, which would
+// have offered Novagram as an "update"). A simulator build runs as ph.telegra.Telegraph and simply finds nothing.
+private let kAppStoreBundleId = Bundle.main.bundleIdentifier ?? ""
 private let kLookupURL = "https://itunes.apple.com/lookup?bundleId=\(kAppStoreBundleId)"
 private let kTimeoutSeconds: TimeInterval = 8
 

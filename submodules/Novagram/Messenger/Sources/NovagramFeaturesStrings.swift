@@ -94,10 +94,10 @@ enum NovagramFeaturesStrings {
 
     static func settingsLinksTip(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Novagram Settings sahifasiga havolani nusxalash va ulashish imkonini beradi"
-        case "ru": return "Позволяет копировать и делиться ссылкой на страницу Novagram Settings"
-        case "zh": return "可复制并分享 Novagram 设置页面的链接"
-        default:   return "Lets you copy and share a link to the Novagram Settings page"
+        case "uz": return "Chitgram Settings sahifasiga havolani nusxalash va ulashish imkonini beradi"
+        case "ru": return "Позволяет копировать и делиться ссылкой на страницу Chitgram Settings"
+        case "zh": return "可复制并分享 Chitgram 设置页面的链接"
+        default:   return "Lets you copy and share a link to the Chitgram Settings page"
         }
     }
 
@@ -122,10 +122,10 @@ enum NovagramFeaturesStrings {
     // Feature #40: share NovagramPro settings link
     static func shareNovagramProLinkTitle(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Novagram Settings havolasini ulashish"
-        case "ru": return "Поделиться ссылкой Novagram Settings"
-        case "zh": return "分享 Novagram 设置链接"
-        default:   return "Share Novagram Settings link"
+        case "uz": return "Chitgram Settings havolasini ulashish"
+        case "ru": return "Поделиться ссылкой Chitgram Settings"
+        case "zh": return "分享 Chitgram 设置链接"
+        default:   return "Share Chitgram Settings link"
         }
     }
 
@@ -141,13 +141,13 @@ enum NovagramFeaturesStrings {
     static func footer(langCode: String) -> String {
         switch langCode {
         case "uz":
-            return "Novagramning kengaytirilgan imkoniyatlari. Har birini shu yerdan yoqib-o'chirishingiz mumkin."
+            return "Chitgramning kengaytirilgan imkoniyatlari. Har birini shu yerdan yoqib-o'chirishingiz mumkin."
         case "ru":
-            return "Расширенные функции Novagram. Каждую можно включить или выключить здесь."
+            return "Расширенные функции Chitgram. Каждую можно включить или выключить здесь."
         case "zh":
-            return "Novagram 的扩展功能，每一项都可以在这里单独开启或关闭。"
+            return "Chitgram 的扩展功能，每一项都可以在这里单独开启或关闭。"
         default:
-            return "Novagram's extended features. Turn each one on or off right here."
+            return "Chitgram's extended features. Turn each one on or off right here."
         }
     }
 

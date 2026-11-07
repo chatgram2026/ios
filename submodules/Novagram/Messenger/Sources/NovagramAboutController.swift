@@ -9,10 +9,10 @@ import PresentationDataUtils
 import ItemListUI
 import NovagramLocalization
 
-// Novagram "About Novagram" screen.
+// Novagram "About Chitgram" screen.
 //
 // A read-only overview of EVERY Novagram feature currently shipping in the app.
-// Pushed from the Novagram settings screen ("About Novagram" row).
+// Pushed from the Novagram settings screen ("About Chitgram" row).
 //
 // Layout:
 //   • Intro section  — header + one-paragraph product description
@@ -92,10 +92,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "eye.slash.fill", color: .gray,
             title: L3(en: "Ghost Mode", uz: "Ghost rejimi", ru: "Режим «Призрак»", zh: "幽灵模式"),
             enable: L3(
-                en: "Settings → Novagram → Chat → turn on “Ghost mode button”. A ghost icon appears above your chat list — tap it any time to toggle ghost mode instantly.",
-                uz: "Sozlamalar → Novagram → Chat → \"Ghost rejimi tugmasi\"ni yoqing. Chatlar ro'yxati tepasida ghost ikonkasi paydo bo'ladi — istalgan vaqt bosib yoqing yoki o'chiring.",
-                ru: "Настройки → Novagram → Чат → включите «Кнопка режима Призрак». Над списком чатов появится значок призрака — нажимайте его в любой момент.",
-                zh: "设置 → Novagram → 聊天 → 开启“幽灵模式按钮”。聊天列表上方会出现幽灵图标，随时点按即可立即开关幽灵模式。"
+                en: "Settings → Chitgram → Chat → turn on “Ghost mode button”. A ghost icon appears above your chat list — tap it any time to toggle ghost mode instantly.",
+                uz: "Sozlamalar → Chitgram → Chat → \"Ghost rejimi tugmasi\"ni yoqing. Chatlar ro'yxati tepasida ghost ikonkasi paydo bo'ladi — istalgan vaqt bosib yoqing yoki o'chiring.",
+                ru: "Настройки → Chitgram → Чат → включите «Кнопка режима Призрак». Над списком чатов появится значок призрака — нажимайте его в любой момент.",
+                zh: "设置 → Chitgram → 聊天 → 开启“幽灵模式按钮”。聊天列表上方会出现幽灵图标，随时点按即可立即开关幽灵模式。"
             ),
             works: L3(
                 en: "While active, you can read messages, view stories and ads, and stay online without ever sending a “seen”, “typing” or “online” signal to the other side.",
@@ -104,10 +104,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
                 zh: "开启期间，你可以阅读消息、观看动态和广告并保持在线，而不会向对方发送任何“已读”、“正在输入”或“在线”信号。"
             ),
             disable: L3(
-                en: "Tap the ghost icon again, or turn the same switch off in Settings → Novagram → Chat. Read receipts resume normally.",
-                uz: "Ghost ikonkasini yana bosing yoki Sozlamalar → Novagram → Chat bo'limida shu switchni o'chiring. \"Ko'rildi\" signali odatdagidek qaytadi.",
-                ru: "Нажмите значок призрака ещё раз или выключите тот же переключатель в Настройки → Novagram → Чат. Уведомления о прочтении возобновятся.",
-                zh: "再次点按幽灵图标，或在设置 → Novagram → 聊天中关闭同一开关。已读回执将恢复正常。"
+                en: "Tap the ghost icon again, or turn the same switch off in Settings → Chitgram → Chat. Read receipts resume normally.",
+                uz: "Ghost ikonkasini yana bosing yoki Sozlamalar → Chitgram → Chat bo'limida shu switchni o'chiring. \"Ko'rildi\" signali odatdagidek qaytadi.",
+                ru: "Нажмите значок призрака ещё раз или выключите тот же переключатель в Настройки → Chitgram → Чат. Уведомления о прочтении возобновятся.",
+                zh: "再次点按幽灵图标，或在设置 → Chitgram → 聊天中关闭同一开关。已读回执将恢复正常。"
             )
         ),
         // 2. Multi-Account (No Sleep)
@@ -144,10 +144,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
                 zh: "在手机号登录界面，点按导航栏右上角的二维码图标。"
             ),
             works: L3(
-                en: "A QR code appears — scan it from an already-logged-in Telegram/Novagram app (Settings → Devices → Link Desktop Device) to sign in instantly, without typing an SMS code.",
-                uz: "QR kod chiqadi — uni allaqachon tizimga kirgan Telegram/Novagram ilovasidan skanerlang (Sozlamalar → Qurilmalar → Link Desktop Device) — SMS kodni terish shart emas.",
-                ru: "Появится QR-код — отсканируйте его из уже авторизованного приложения Telegram/Novagram (Настройки → Устройства → Подключить устройство) и войдите мгновенно, без ввода SMS-кода.",
-                zh: "界面上会出现一个二维码，用已登录的 Telegram/Novagram 应用扫描它（设置 → 设备 → 关联桌面设备），无需输入短信验证码即可立即登录。"
+                en: "A QR code appears — scan it from an already-logged-in Telegram/Chitgram app (Settings → Devices → Link Desktop Device) to sign in instantly, without typing an SMS code.",
+                uz: "QR kod chiqadi — uni allaqachon tizimga kirgan Telegram/Chitgram ilovasidan skanerlang (Sozlamalar → Qurilmalar → Link Desktop Device) — SMS kodni terish shart emas.",
+                ru: "Появится QR-код — отсканируйте его из уже авторизованного приложения Telegram/Chitgram (Настройки → Устройства → Подключить устройство) и войдите мгновенно, без ввода SMS-кода.",
+                zh: "界面上会出现一个二维码，用已登录的 Telegram/Chitgram 应用扫描它（设置 → 设备 → 关联桌面设备），无需输入短信验证码即可立即登录。"
             ),
             disable: L3(
                 en: "Tap the back arrow inside the QR overlay, or Cancel, to return to normal phone-number entry. There is no persistent toggle — it's a one-time action per login attempt.",
@@ -161,10 +161,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "clock.arrow.circlepath", color: .teal,
             title: L3(en: "Edited Message History", uz: "Tahrirlangan xabar tarixi", ru: "История правок сообщений", zh: "消息编辑记录"),
             enable: L3(
-                en: "Settings → Novagram → Chat → turn on “Edited message history”.",
-                uz: "Sozlamalar → Novagram → Chat → \"Tahrirlangan xabar tarixi\"ni yoqing.",
-                ru: "Настройки → Novagram → Чат → включите «История правок сообщений».",
-                zh: "设置 → Novagram → 聊天 → 开启“消息编辑记录”。"
+                en: "Settings → Chitgram → Chat → turn on “Edited message history”.",
+                uz: "Sozlamalar → Chitgram → Chat → \"Tahrirlangan xabar tarixi\"ni yoqing.",
+                ru: "Настройки → Chitgram → Чат → включите «История правок сообщений».",
+                zh: "设置 → Chitgram → 聊天 → 开启“消息编辑记录”。"
             ),
             works: L3(
                 en: "Every time you or the other person edits a message, the previous version is saved on your device. Long-press any edited message (marked “edited”) and choose “Editing history” to see every past version in order.",
@@ -184,10 +184,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "mic.fill", color: .red,
             title: L3(en: "Voice → Text", uz: "Ovoz → Matn", ru: "Голос → Текст", zh: "语音 → 文字"),
             enable: L3(
-                en: "Settings → Novagram → Voice → Text → turn on “Voice to text”. Optionally pick your “Recognition language” right below it.",
-                uz: "Sozlamalar → Novagram → Ovoz → Matn → \"Ovozni matnga o'girish\"ni yoqing. Xohlasangiz, pastdagi \"Tanish tili\"ni tanlang.",
-                ru: "Настройки → Novagram → Голос → Текст → включите «Голос в текст». При желании выберите «Язык распознавания» ниже.",
-                zh: "设置 → Novagram → 语音 → 文字 → 开启“语音转文字”。还可以在下方选择“识别语言”。"
+                en: "Settings → Chitgram → Voice → Text → turn on “Voice to text”. Optionally pick your “Recognition language” right below it.",
+                uz: "Sozlamalar → Chitgram → Ovoz → Matn → \"Ovozni matnga o'girish\"ni yoqing. Xohlasangiz, pastdagi \"Tanish tili\"ni tanlang.",
+                ru: "Настройки → Chitgram → Голос → Текст → включите «Голос в текст». При желании выберите «Язык распознавания» ниже.",
+                zh: "设置 → Chitgram → 语音 → 文字 → 开启“语音转文字”。还可以在下方选择“识别语言”。"
             ),
             works: L3(
                 en: "A small STT shortcut appears next to the microphone button in every chat. Tap it while recording, or after sending a voice message, to transcribe the speech to text directly on your device.",
@@ -207,10 +207,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "lock.shield.fill", color: .green,
             title: L3(en: "Chat Lock (PIN)", uz: "Chat qulfi (PIN)", ru: "Блокировка чатов (PIN)", zh: "聊天锁（PIN 码）"),
             enable: L3(
-                en: "Long-press any chat → “Set Lock” from the context menu, then set a 4-digit PIN or a password of any length. (Settings → Novagram → Protection also has a “Chat Lock” master toggle that must be on the first time.)",
-                uz: "Istalgan chatni uzoq bosing → context menyudan \"Qulf o'rnatish\"ni tanlang, so'ng 4 xonali PIN yoki istalgan uzunlikdagi parol kiriting. (Sozlamalar → Novagram → Himoya bo'limida ham \"Chat qulfi\" asosiy switchi birinchi marta yoqilgan bo'lishi kerak.)",
-                ru: "Зажмите любой чат → выберите «Установить замок» в контекстном меню, затем задайте 4-значный PIN или пароль любой длины. (В Настройки → Novagram → Защита также есть главный переключатель «Блокировка чата», который должен быть включён в первый раз.)",
-                zh: "长按任意聊天 → 在弹出菜单中选择“设置密码”，然后设置 4 位 PIN 码或任意长度的密码。（设置 → Novagram → 安全防护中还有一个“聊天锁”总开关，首次使用时需要先将其开启。）"
+                en: "Long-press any chat → “Set Lock” from the context menu, then set a 4-digit PIN or a password of any length. (Settings → Chitgram → Protection also has a “Chat Lock” master toggle that must be on the first time.)",
+                uz: "Istalgan chatni uzoq bosing → context menyudan \"Qulf o'rnatish\"ni tanlang, so'ng 4 xonali PIN yoki istalgan uzunlikdagi parol kiriting. (Sozlamalar → Chitgram → Himoya bo'limida ham \"Chat qulfi\" asosiy switchi birinchi marta yoqilgan bo'lishi kerak.)",
+                ru: "Зажмите любой чат → выберите «Установить замок» в контекстном меню, затем задайте 4-значный PIN или пароль любой длины. (В Настройки → Chitgram → Защита также есть главный переключатель «Блокировка чата», который должен быть включён в первый раз.)",
+                zh: "长按任意聊天 → 在弹出菜单中选择“设置密码”，然后设置 4 位 PIN 码或任意长度的密码。（设置 → Chitgram → 安全防护中还有一个“聊天锁”总开关，首次使用时需要先将其开启。）"
             ),
             works: L3(
                 en: "The locked chat requires your PIN/password (or Face ID / Touch ID, if your device supports it and you enabled biometric unlock) to open. Credentials are stored securely in the iOS Keychain, never on any server.",
@@ -230,10 +230,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "eye.slash.fill", color: .purple,
             title: L3(en: "Hidden Chats", uz: "Yashirin chatlar", ru: "Скрытые чаты", zh: "隐藏聊天"),
             enable: L3(
-                en: "Long-press any chat and choose “Hide” — the first time, you'll be asked to set a separate passcode. Or turn the toggle on directly in Settings → Novagram → Protection → “Hidden Chats”.",
-                uz: "Istalgan chatni uzoq bosib \"Berkitish\"ni tanlang — birinchi marta alohida kod-parol o'rnatishingiz so'raladi. Yoki to'g'ridan-to'g'ri Sozlamalar → Novagram → Himoya → \"Yashirin chatlar\" switchini yoqing.",
-                ru: "Зажмите любой чат и выберите «Скрыть» — в первый раз попросят задать отдельный код-пароль. Либо включите переключатель напрямую в Настройки → Novagram → Защита → «Скрытые чаты».",
-                zh: "长按任意聊天并选择“隐藏”，首次使用时会要求你设置一个单独的密码。也可以直接在设置 → Novagram → 安全防护 → “隐藏聊天”中开启该开关。"
+                en: "Long-press any chat and choose “Hide” — the first time, you'll be asked to set a separate passcode. Or turn the toggle on directly in Settings → Chitgram → Protection → “Hidden Chats”.",
+                uz: "Istalgan chatni uzoq bosib \"Berkitish\"ni tanlang — birinchi marta alohida kod-parol o'rnatishingiz so'raladi. Yoki to'g'ridan-to'g'ri Sozlamalar → Chitgram → Himoya → \"Yashirin chatlar\" switchini yoqing.",
+                ru: "Зажмите любой чат и выберите «Скрыть» — в первый раз попросят задать отдельный код-пароль. Либо включите переключатель напрямую в Настройки → Chitgram → Защита → «Скрытые чаты».",
+                zh: "长按任意聊天并选择“隐藏”，首次使用时会要求你设置一个单独的密码。也可以直接在设置 → Chitgram → 安全防护 → “隐藏聊天”中开启该开关。"
             ),
             works: L3(
                 en: "Hidden chats vanish from your main chat list and are muted automatically. To open them, long-press the “Chats” title and enter your passcode — a separate passcode from Chat Lock.",
@@ -242,10 +242,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
                 zh: "隐藏的聊天会从主聊天列表中消失，并自动设为静音。要打开它们，请长按“聊天”标题并输入密码（此密码与聊天锁的密码相互独立）。"
             ),
             disable: L3(
-                en: "Turn the “Hidden Chats” switch off in Settings → Novagram → Protection. This requires your Chat Lock master PIN and shows a confirmation — turning it off returns every hidden chat to the main list, unmutes them, and deletes the passcode.",
-                uz: "Sozlamalar → Novagram → Himoya bo'limida \"Yashirin chatlar\" switchini o'chiring. Buning uchun Chat qulfi asosiy PIN'i kerak va tasdiqlash so'raladi — o'chirilganda barcha berkitilgan chatlar asosiy ro'yxatga qaytadi, ovozi yoqiladi va kod-parol o'chadi.",
-                ru: "Выключите переключатель «Скрытые чаты» в Настройки → Novagram → Защита. Потребуется главный PIN блокировки чата и подтверждение — после отключения все скрытые чаты вернутся в основной список, звук включится, а код-пароль удалится.",
-                zh: "在设置 → Novagram → 安全防护中关闭“隐藏聊天”开关。此操作需要输入聊天锁主密码并进行确认。关闭后，所有隐藏的聊天都会回到主列表并取消静音，隐藏聊天的密码也会被删除。"
+                en: "Turn the “Hidden Chats” switch off in Settings → Chitgram → Protection. This requires your Chat Lock master PIN and shows a confirmation — turning it off returns every hidden chat to the main list, unmutes them, and deletes the passcode.",
+                uz: "Sozlamalar → Chitgram → Himoya bo'limida \"Yashirin chatlar\" switchini o'chiring. Buning uchun Chat qulfi asosiy PIN'i kerak va tasdiqlash so'raladi — o'chirilganda barcha berkitilgan chatlar asosiy ro'yxatga qaytadi, ovozi yoqiladi va kod-parol o'chadi.",
+                ru: "Выключите переключатель «Скрытые чаты» в Настройки → Chitgram → Защита. Потребуется главный PIN блокировки чата и подтверждение — после отключения все скрытые чаты вернутся в основной список, звук включится, а код-пароль удалится.",
+                zh: "在设置 → Chitgram → 安全防护中关闭“隐藏聊天”开关。此操作需要输入聊天锁主密码并进行确认。关闭后，所有隐藏的聊天都会回到主列表并取消静音，隐藏聊天的密码也会被删除。"
             )
         ),
         // 8. Auto-Text Suffix
@@ -253,10 +253,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "text.append", color: .orange,
             title: L3(en: "Auto-Text Suffix", uz: "Avto-matn qo'shimchasi", ru: "Авто-постфикс", zh: "自动文本后缀"),
             enable: L3(
-                en: "Settings → Novagram → Messages → “Auto-text suffix” → type the text you want and turn it on.",
-                uz: "Sozlamalar → Novagram → Xabarlar → \"Avto-matn qo'shimchasi\" → xohlagan matnni kiriting va yoqing.",
-                ru: "Настройки → Novagram → Сообщения → «Авто-постфикс» → введите нужный текст и включите.",
-                zh: "设置 → Novagram → 消息 → “自动文本后缀” → 输入想要的文字并开启。"
+                en: "Settings → Chitgram → Messages → “Auto-text suffix” → type the text you want and turn it on.",
+                uz: "Sozlamalar → Chitgram → Xabarlar → \"Avto-matn qo'shimchasi\" → xohlagan matnni kiriting va yoqing.",
+                ru: "Настройки → Chitgram → Сообщения → «Авто-постфикс» → введите нужный текст и включите.",
+                zh: "设置 → Chitgram → 消息 → “自动文本后缀” → 输入想要的文字并开启。"
             ),
             works: L3(
                 en: "The text you configured (a signature, hashtag, or anything else) is appended automatically to the end of every outgoing message you send, in every chat.",
@@ -276,10 +276,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "character.bubble.fill", color: .pink,
             title: L3(en: "Auto-Text & Translation", uz: "Avto-matn va tarjima", ru: "Авто-текст и перевод", zh: "自动文本与翻译"),
             enable: L3(
-                en: "Settings → Novagram → Messages → turn on “Translate button” (adds “Translate” to the message context menu) and/or configure “Auto-translate” with your target language.",
-                uz: "Sozlamalar → Novagram → Xabarlar → \"Tarjima tugmasi\"ni yoqing (xabar menyusiga \"Translate\" qo'shiladi) va/yoki \"Avto-tarjima\"ni maqsad til bilan sozlang.",
-                ru: "Настройки → Novagram → Сообщения → включите «Кнопка перевода» (добавляет «Перевести» в меню сообщения) и/или настройте «Авто-перевод» с целевым языком.",
-                zh: "设置 → Novagram → 消息 → 开启“翻译按钮”（在消息菜单中添加“翻译”），和/或为“自动翻译”设置目标语言。"
+                en: "Settings → Chitgram → Messages → turn on “Translate button” (adds “Translate” to the message context menu) and/or configure “Auto-translate” with your target language.",
+                uz: "Sozlamalar → Chitgram → Xabarlar → \"Tarjima tugmasi\"ni yoqing (xabar menyusiga \"Translate\" qo'shiladi) va/yoki \"Avto-tarjima\"ni maqsad til bilan sozlang.",
+                ru: "Настройки → Chitgram → Сообщения → включите «Кнопка перевода» (добавляет «Перевести» в меню сообщения) и/или настройте «Авто-перевод» с целевым языком.",
+                zh: "设置 → Chitgram → 消息 → 开启“翻译按钮”（在消息菜单中添加“翻译”），和/或为“自动翻译”设置目标语言。"
             ),
             works: L3(
                 en: "Long-press any incoming message and tap “Translate” to see it in your chosen language instantly, without leaving the chat. With auto-translate configured, this happens with one tap and no extra menu.",
@@ -299,16 +299,16 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "bell.badge.fill", color: .orange,
             title: L3(en: "Unread Message Reminder", uz: "Xabar eslatmasi", ru: "Напоминание о сообщении", zh: "未读消息提醒"),
             enable: L3(
-                en: "Settings → Novagram → Message reminder → turn on “Unread message reminder”, then pick a “Reminder time” and “Reminder sound”.",
-                uz: "Sozlamalar → Novagram → Xabar eslatmasi → \"O'qilmagan xabar eslatmasi\"ni yoqing, so'ng \"Eslatma vaqti\" va \"Eslatma ovozi\"ni tanlang.",
-                ru: "Настройки → Novagram → Напоминание о сообщении → включите «Напоминание о непрочитанном», затем выберите «Время напоминания» и «Звук напоминания».",
-                zh: "设置 → Novagram → 消息提醒 → 开启“未读消息提醒”，然后选择“提醒时间”和“提醒声音”。"
+                en: "Settings → Chitgram → Message reminder → turn on “Unread message reminder”, then pick a “Reminder time” and “Reminder sound”.",
+                uz: "Sozlamalar → Chitgram → Xabar eslatmasi → \"O'qilmagan xabar eslatmasi\"ni yoqing, so'ng \"Eslatma vaqti\" va \"Eslatma ovozi\"ni tanlang.",
+                ru: "Настройки → Chitgram → Напоминание о сообщении → включите «Напоминание о непрочитанном», затем выберите «Время напоминания» и «Звук напоминания».",
+                zh: "设置 → Chitgram → 消息提醒 → 开启“未读消息提醒”，然后选择“提醒时间”和“提醒声音”。"
             ),
             works: L3(
-                en: "When the app is in the background and a message stays unread for your configured time, Novagram shows a local reminder notification with your chosen sound, so you never forget to reply.",
-                uz: "Ilova fonda bo'lganda va xabar siz belgilagan vaqt davomida o'qilmasa, Novagram tanlangan ovoz bilan mahalliy eslatma bildirishnomasini ko'rsatadi — javob berishni unutmaysiz.",
-                ru: "Когда приложение в фоне и сообщение остаётся непрочитанным заданное вами время, Novagram показывает локальное уведомление-напоминание с выбранным звуком — вы не забудете ответить.",
-                zh: "当应用在后台运行，且某条消息在你设置的时间内一直未读时，Novagram 会用你选择的声音发送一条本地提醒通知，让你不会忘记回复。"
+                en: "When the app is in the background and a message stays unread for your configured time, Chitgram shows a local reminder notification with your chosen sound, so you never forget to reply.",
+                uz: "Ilova fonda bo'lganda va xabar siz belgilagan vaqt davomida o'qilmasa, Chitgram tanlangan ovoz bilan mahalliy eslatma bildirishnomasini ko'rsatadi — javob berishni unutmaysiz.",
+                ru: "Когда приложение в фоне и сообщение остаётся непрочитанным заданное вами время, Chitgram показывает локальное уведомление-напоминание с выбранным звуком — вы не забудете ответить.",
+                zh: "当应用在后台运行，且某条消息在你设置的时间内一直未读时，Chitgram 会用你选择的声音发送一条本地提醒通知，让你不会忘记回复。"
             ),
             disable: L3(
                 en: "Turn the same “Unread message reminder” switch off. No more reminder notifications will be scheduled.",
@@ -322,10 +322,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "folder.badge.plus", color: .blue,
             title: L3(en: "Recommended Folders", uz: "Tavsiya etilgan papkalar", ru: "Рекомендуемые папки", zh: "推荐分组"),
             enable: L3(
-                en: "Settings → Novagram → Features → tap “Recommended folders” (or accept the one-time prompt shown on first launch).",
-                uz: "Sozlamalar → Novagram → Imkoniyatlar → \"Tavsiya etilgan papkalar\"ni bosing (yoki birinchi ishga tushirishda chiqadigan bir martalik taklifni qabul qiling).",
-                ru: "Настройки → Novagram → Функции → нажмите «Рекомендуемые папки» (или примите разовое предложение при первом запуске).",
-                zh: "设置 → Novagram → 功能 → 点按“推荐分组”（或在首次启动时接受一次性提示）。"
+                en: "Settings → Chitgram → Features → tap “Recommended folders” (or accept the one-time prompt shown on first launch).",
+                uz: "Sozlamalar → Chitgram → Imkoniyatlar → \"Tavsiya etilgan papkalar\"ni bosing (yoki birinchi ishga tushirishda chiqadigan bir martalik taklifni qabul qiling).",
+                ru: "Настройки → Chitgram → Функции → нажмите «Рекомендуемые папки» (или примите разовое предложение при первом запуске).",
+                zh: "设置 → Chitgram → 功能 → 点按“推荐分组”（或在首次启动时接受一次性提示）。"
             ),
             works: L3(
                 en: "One tap instantly creates four ready-made chat folders — Personal, Unread, Channels and Bots — so you don't have to build folders from scratch.",
@@ -345,16 +345,16 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "square.grid.2x2.fill", color: .purple,
             title: L3(en: "Folder Display Style", uz: "Papka ko'rinishi", ru: "Стиль папок", zh: "分组显示样式"),
             enable: L3(
-                en: "Settings → Novagram → Features → “Folder display style” → choose Icons, Text, or Automatic.",
-                uz: "Sozlamalar → Novagram → Imkoniyatlar → \"Papka ko'rinishi\" → Ikonkalar, Matn yoki Avtomatikni tanlang.",
-                ru: "Настройки → Novagram → Функции → «Стиль папок» → выберите Иконки, Текст или Авто.",
-                zh: "设置 → Novagram → 功能 → “分组显示样式” → 选择“图标”、“文字”或“自动”。"
+                en: "Settings → Chitgram → Features → “Folder display style” → choose Icons, Text, or Automatic.",
+                uz: "Sozlamalar → Chitgram → Imkoniyatlar → \"Papka ko'rinishi\" → Ikonkalar, Matn yoki Avtomatikni tanlang.",
+                ru: "Настройки → Chitgram → Функции → «Стиль папок» → выберите Иконки, Текст или Авто.",
+                zh: "设置 → Chitgram → 功能 → “分组显示样式” → 选择“图标”、“文字”或“自动”。"
             ),
             works: L3(
-                en: "Controls how folder tabs render above your chat list: “Icons” shows only the folder's emoji, “Text” shows only its name, “Automatic” follows Telegram's normal behavior. (Novagram also unlocks the Premium-only folder icon picker and folder tags for everyone — no extra toggle needed.)",
-                uz: "Chat ro'yxati tepasidagi jild tablari qanday ko'rinishini boshqaradi: \"Ikonkalar\" faqat jild emojisini, \"Matn\" faqat nomini ko'rsatadi, \"Avtomatik\" Telegramning odatiy xatti-harakatiga amal qiladi. (Novagram, shuningdek, Premium-only jild ikonka tanlagichi va jild teglarini hammaga ochadi — qo'shimcha switch kerak emas.)",
-                ru: "Управляет отображением вкладок папок над списком чатов: «Иконки» показывает только эмодзи папки, «Текст» — только название, «Авто» следует обычному поведению Telegram. (Novagram также открывает всем выбор иконки папки и теги папок, доступные только в Premium — без отдельного переключателя.)",
-                zh: "控制聊天列表上方分组栏的显示方式：“图标”只显示分组的表情，“文字”只显示分组名称，“自动”则沿用 Telegram 的默认行为。（Novagram 还为所有人解锁了原本 Premium 专属的分组图标选择器和分组标签，无需额外开关。）"
+                en: "Controls how folder tabs render above your chat list: “Icons” shows only the folder's emoji, “Text” shows only its name, “Automatic” follows Telegram's normal behavior. (Chitgram also unlocks the Premium-only folder icon picker and folder tags for everyone — no extra toggle needed.)",
+                uz: "Chat ro'yxati tepasidagi jild tablari qanday ko'rinishini boshqaradi: \"Ikonkalar\" faqat jild emojisini, \"Matn\" faqat nomini ko'rsatadi, \"Avtomatik\" Telegramning odatiy xatti-harakatiga amal qiladi. (Chitgram, shuningdek, Premium-only jild ikonka tanlagichi va jild teglarini hammaga ochadi — qo'shimcha switch kerak emas.)",
+                ru: "Управляет отображением вкладок папок над списком чатов: «Иконки» показывает только эмодзи папки, «Текст» — только название, «Авто» следует обычному поведению Telegram. (Chitgram также открывает всем выбор иконки папки и теги папок, доступные только в Premium — без отдельного переключателя.)",
+                zh: "控制聊天列表上方分组栏的显示方式：“图标”只显示分组的表情，“文字”只显示分组名称，“自动”则沿用 Telegram 的默认行为。（Chitgram 还为所有人解锁了原本 Premium 专属的分组图标选择器和分组标签，无需额外开关。）"
             ),
             disable: L3(
                 en: "Pick “Automatic” to return to Telegram's default folder-tab behavior.",
@@ -368,10 +368,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "clock.arrow.circlepath", color: .orange,
             title: L3(en: "Channel History Button", uz: "Kanal tarixi tugmasi", ru: "Кнопка истории канала", zh: "频道历史按钮"),
             enable: L3(
-                en: "Settings → Novagram → Features → turn on “Channel history button”.",
-                uz: "Sozlamalar → Novagram → Imkoniyatlar → \"Kanal tarixi tugmasi\"ni yoqing.",
-                ru: "Настройки → Novagram → Функции → включите «Кнопка истории канала».",
-                zh: "设置 → Novagram → 功能 → 开启“频道历史按钮”。"
+                en: "Settings → Chitgram → Features → turn on “Channel history button”.",
+                uz: "Sozlamalar → Chitgram → Imkoniyatlar → \"Kanal tarixi tugmasi\"ni yoqing.",
+                ru: "Настройки → Chitgram → Функции → включите «Кнопка истории канала».",
+                zh: "设置 → Chitgram → 功能 → 开启“频道历史按钮”。"
             ),
             works: L3(
                 en: "Adds a “Recent actions” item to the menu of channels where you're an admin, giving you a quick shortcut to the channel's admin log.",
@@ -391,10 +391,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "checkmark.circle.fill", color: .green,
             title: L3(en: "Auto-Accept Requests", uz: "Avto-qabul qilish", ru: "Авто-принятие запросов", zh: "自动通过入群申请"),
             enable: L3(
-                en: "Settings → Novagram → Features → turn on “Auto-accept requests”.",
-                uz: "Sozlamalar → Novagram → Imkoniyatlar → \"Avto-qabul qilish\"ni yoqing.",
-                ru: "Настройки → Novagram → Функции → включите «Авто-принятие запросов».",
-                zh: "设置 → Novagram → 功能 → 开启“自动通过入群申请”。"
+                en: "Settings → Chitgram → Features → turn on “Auto-accept requests”.",
+                uz: "Sozlamalar → Chitgram → Imkoniyatlar → \"Avto-qabul qilish\"ni yoqing.",
+                ru: "Настройки → Chitgram → Функции → включите «Авто-принятие запросов».",
+                zh: "设置 → Chitgram → 功能 → 开启“自动通过入群申请”。"
             ),
             works: L3(
                 en: "For groups and channels where you're an admin, pending join requests are automatically accepted in the background — no need to open the requests list and tap Accept one by one.",
@@ -414,10 +414,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "arrowshape.turn.up.right.circle.fill", color: .green,
             title: L3(en: "Forward Without Name", uz: "Imzosiz forward", ru: "Пересылка без имени", zh: "隐藏来源转发"),
             enable: L3(
-                en: "Settings → Novagram → Chat → turn on “Forward Without Name”.",
-                uz: "Sozlamalar → Novagram → Chat → \"Imzosiz forward\"ni yoqing.",
-                ru: "Настройки → Novagram → Чат → включите «Пересылка без имени».",
-                zh: "设置 → Novagram → 聊天 → 开启“隐藏来源转发”。"
+                en: "Settings → Chitgram → Chat → turn on “Forward Without Name”.",
+                uz: "Sozlamalar → Chitgram → Chat → \"Imzosiz forward\"ni yoqing.",
+                ru: "Настройки → Chitgram → Чат → включите «Пересылка без имени».",
+                zh: "设置 → Chitgram → 聊天 → 开启“隐藏来源转发”。"
             ),
             works: L3(
                 en: "Adds a “Forward without name” item to the message action menu. Choosing it forwards the message without the “Forwarded from …” attribution, hiding the original sender's name.",
@@ -435,12 +435,12 @@ private func allFeatureSpecs() -> [FeatureSpec] {
         // 16. Novagram Bots
         FeatureSpec(
             symbol: "bolt.circle.fill", color: .teal,
-            title: L3(en: "Novagram Bots", uz: "Novagram Botlar", ru: "Боты Novagram", zh: "Novagram 机器人"),
+            title: L3(en: "Chitgram Bots", uz: "Chitgram Botlar", ru: "Боты Chitgram", zh: "Chitgram 机器人"),
             enable: L3(
-                en: "No toggle needed — open Settings → Novagram and tap the “Novagram Bots” row near the top.",
-                uz: "Switch kerak emas — Sozlamalar → Novagram'ni oching va yuqoridagi \"Novagram Botlar\" qatorini bosing.",
-                ru: "Переключатель не нужен — откройте Настройки → Novagram и нажмите строку «Боты Novagram» в верхней части списка.",
-                zh: "无需开关：打开设置 → Novagram，点按顶部附近的“Novagram 机器人”一行。"
+                en: "No toggle needed — open Settings → Chitgram and tap the “Chitgram Bots” row near the top.",
+                uz: "Switch kerak emas — Sozlamalar → Chitgram'ni oching va yuqoridagi \"Chitgram Botlar\" qatorini bosing.",
+                ru: "Переключатель не нужен — откройте Настройки → Chitgram и нажмите строку «Боты Chitgram» в верхней части списка.",
+                zh: "无需开关：打开设置 → Chitgram，点按顶部附近的“Chitgram 机器人”一行。"
             ),
             works: L3(
                 en: "Shows a curated, categorized directory of useful Telegram bots (utilities, downloaders, tools, etc.) with a short description for each — tap any bot to open a chat with it directly.",
@@ -460,10 +460,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "pin.circle.fill", color: .orange,
             title: L3(en: "Unlimited Pins", uz: "Cheksiz pin", ru: "Безлимитные закрепы", zh: "无限置顶"),
             enable: L3(
-                en: "Settings → Novagram → Interface → turn on “Unlimited Pins”.",
-                uz: "Sozlamalar → Novagram → Interfeys → \"Cheksiz pin\"ni yoqing.",
-                ru: "Настройки → Novagram → Интерфейс → включите «Безлимитные закрепы».",
-                zh: "设置 → Novagram → 界面 → 开启“无限置顶”。"
+                en: "Settings → Chitgram → Interface → turn on “Unlimited Pins”.",
+                uz: "Sozlamalar → Chitgram → Interfeys → \"Cheksiz pin\"ni yoqing.",
+                ru: "Настройки → Chitgram → Интерфейс → включите «Безлимитные закрепы».",
+                zh: "设置 → Chitgram → 界面 → 开启“无限置顶”。"
             ),
             works: L3(
                 en: "Lets you pin more than Telegram's standard 5-chat limit at the top of your chat list. Extra pins beyond the limit are kept locally on this device.",
@@ -481,12 +481,12 @@ private func allFeatureSpecs() -> [FeatureSpec] {
         // 18. Novagram Proxy (auto-proxy)
         FeatureSpec(
             symbol: "lock.shield", color: .green,
-            title: L3(en: "Novagram Proxy", uz: "NovagramProxy", ru: "NovagramProxy", zh: "NovagramProxy"),
+            title: L3(en: "Chitgram Proxy", uz: "ChitgramProxy", ru: "ChitgramProxy", zh: "ChitgramProxy"),
             enable: L3(
-                en: "Settings → Novagram → Protection → turn on “Enable NovagramProxy”.",
-                uz: "Sozlamalar → Novagram → Himoya → \"NovagramProxy'ni yoqish\"ni yoqing.",
-                ru: "Настройки → Novagram → Защита → включите «Включить NovagramProxy».",
-                zh: "设置 → Novagram → 安全防护 → 开启“启用 NovagramProxy”。"
+                en: "Settings → Chitgram → Protection → turn on “Enable ChitgramProxy”.",
+                uz: "Sozlamalar → Chitgram → Himoya → \"ChitgramProxy'ni yoqish\"ni yoqing.",
+                ru: "Настройки → Chitgram → Защита → включите «Включить ChitgramProxy».",
+                zh: "设置 → Chitgram → 安全防护 → 开启“启用 ChitgramProxy”。"
             ),
             works: L3(
                 en: "Automatically connects through a SOCKS5 proxy when Telegram is blocked in your country, using a rotating pool of proxy servers — no manual proxy address needed.",
@@ -506,10 +506,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "person.crop.circle.badge.xmark", color: .orange,
             title: L3(en: "Block Foreign Numbers", uz: "Xorijiy raqamlarni bloklash", ru: "Блокировка иностранных номеров", zh: "屏蔽境外号码"),
             enable: L3(
-                en: "Settings → Novagram → Protection → turn on “Block foreign numbers”.",
-                uz: "Sozlamalar → Novagram → Himoya → \"Xorijiy raqamlarni bloklash\"ni yoqing.",
-                ru: "Настройки → Novagram → Защита → включите «Блокировать иностранные номера».",
-                zh: "设置 → Novagram → 安全防护 → 开启“屏蔽境外号码”。"
+                en: "Settings → Chitgram → Protection → turn on “Block foreign numbers”.",
+                uz: "Sozlamalar → Chitgram → Himoya → \"Xorijiy raqamlarni bloklash\"ni yoqing.",
+                ru: "Настройки → Chitgram → Защита → включите «Блокировать иностранные номера».",
+                zh: "设置 → Chitgram → 安全防护 → 开启“屏蔽境外号码”。"
             ),
             works: L3(
                 en: "Incoming messages from phone numbers registered in other countries are blocked automatically, as basic protection against foreign spam accounts.",
@@ -529,10 +529,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "folder.fill", color: .blue,
             title: L3(en: "Unlimited Folders & Tags", uz: "Cheksiz jildlar va teglar", ru: "Безлимитные папки и теги", zh: "无限分组和标签"),
             enable: L3(
-                en: "Nothing to turn on — this runs automatically for every Novagram user, no Premium subscription required.",
-                uz: "Yoqish shart emas — bu har bir Novagram foydalanuvchisi uchun avtomatik ishlaydi, Premium obuna kerak emas.",
-                ru: "Включать не нужно — это работает автоматически для каждого пользователя Novagram, Premium-подписка не требуется.",
-                zh: "无需开启：所有 Novagram 用户自动享有，无需订阅 Premium。"
+                en: "Nothing to turn on — this runs automatically for every Chitgram user, no Premium subscription required.",
+                uz: "Yoqish shart emas — bu har bir Chitgram foydalanuvchisi uchun avtomatik ishlaydi, Premium obuna kerak emas.",
+                ru: "Включать не нужно — это работает автоматически для каждого пользователя Chitgram, Premium-подписка не требуется.",
+                zh: "无需开启：所有 Chitgram 用户自动享有，无需订阅 Premium。"
             ),
             works: L3(
                 en: "Removes Telegram's Premium-only folder-count cap (create far more than the free limit) and unlocks the “Show Folder Tags” option — a small label under each chat naming which folder it belongs to — for everyone, not just Premium subscribers.",
@@ -552,10 +552,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "video.circle.fill", color: .blue,
             title: L3(en: "Round Video from Gallery", uz: "Galereyadan dumaloq video", ru: "Круглое видео из галереи", zh: "从相册发送圆形视频"),
             enable: L3(
-                en: "Settings → Novagram → Chat → turn on “Round video from gallery”.",
-                uz: "Sozlamalar → Novagram → Chat → \"Galereyadan dumaloq video\"ni yoqing.",
-                ru: "Настройки → Novagram → Чат → включите «Круглое видео из галереи».",
-                zh: "设置 → Novagram → 聊天 → 开启“从相册发送圆形视频”。"
+                en: "Settings → Chitgram → Chat → turn on “Round video from gallery”.",
+                uz: "Sozlamalar → Chitgram → Chat → \"Galereyadan dumaloq video\"ni yoqing.",
+                ru: "Настройки → Chitgram → Чат → включите «Круглое видео из галереи».",
+                zh: "设置 → Chitgram → 聊天 → 开启“从相册发送圆形视频”。"
             ),
             works: L3(
                 en: "Adds a “Photos” option to the round video-message camera menu, so you can pick any existing video from your gallery and send it as a round video message — not just freshly recorded ones.",
@@ -575,10 +575,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "trash.slash.fill", color: .red,
             title: L3(en: "Deleted Messages Marker", uz: "O'chirilgan xabarlar", ru: "Метка удалённых сообщений", zh: "已删除消息标记"),
             enable: L3(
-                en: "Settings → Novagram → Chat → turn on “Deleted messages”.",
-                uz: "Sozlamalar → Novagram → Chat → \"O'chirilgan xabarlar\"ni yoqing.",
-                ru: "Настройки → Novagram → Чат → включите «Удалённые сообщения».",
-                zh: "设置 → Novagram → 聊天 → 开启“已删除的消息”。"
+                en: "Settings → Chitgram → Chat → turn on “Deleted messages”.",
+                uz: "Sozlamalar → Chitgram → Chat → \"O'chirilgan xabarlar\"ni yoqing.",
+                ru: "Настройки → Chitgram → Чат → включите «Удалённые сообщения».",
+                zh: "设置 → Chitgram → 聊天 → 开启“已删除的消息”。"
             ),
             works: L3(
                 en: "When someone deletes a message you've already seen, it stays visible in the chat with a small 🗑 marker instead of disappearing, so you can still tell something was removed.",
@@ -598,10 +598,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "arrow.up.to.line", color: .blue,
             title: L3(en: "Jump to First Message", uz: "Birinchi xabarga o'tish", ru: "К первому сообщению", zh: "跳转到第一条消息"),
             enable: L3(
-                en: "Settings → Novagram → Chat → turn on “Jump to first message”.",
-                uz: "Sozlamalar → Novagram → Chat → \"Birinchi xabarga o'tish\"ni yoqing.",
-                ru: "Настройки → Novagram → Чат → включите «К первому сообщению».",
-                zh: "设置 → Novagram → 聊天 → 开启“跳转到第一条消息”。"
+                en: "Settings → Chitgram → Chat → turn on “Jump to first message”.",
+                uz: "Sozlamalar → Chitgram → Chat → \"Birinchi xabarga o'tish\"ni yoqing.",
+                ru: "Настройки → Chitgram → Чат → включите «К первому сообщению».",
+                zh: "设置 → Chitgram → 聊天 → 开启“跳转到第一条消息”。"
             ),
             works: L3(
                 en: "Adds a “View First Message” entry to any chat's profile menu, letting you jump straight to the very first message ever exchanged in that chat, no matter how long the history is.",
@@ -621,10 +621,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "camera.rotate.fill", color: .orange,
             title: L3(en: "Camera Picker", uz: "Kamerani tanlash", ru: "Выбор камеры", zh: "选择摄像头"),
             enable: L3(
-                en: "Settings → Novagram → Chat → turn on “Camera picker”.",
-                uz: "Sozlamalar → Novagram → Chat → \"Kamerani tanlash\"ni yoqing.",
-                ru: "Настройки → Novagram → Чат → включите «Выбор камеры».",
-                zh: "设置 → Novagram → 聊天 → 开启“选择摄像头”。"
+                en: "Settings → Chitgram → Chat → turn on “Camera picker”.",
+                uz: "Sozlamalar → Chitgram → Chat → \"Kamerani tanlash\"ni yoqing.",
+                ru: "Настройки → Chitgram → Чат → включите «Выбор камеры».",
+                zh: "设置 → Chitgram → 聊天 → 开启“选择摄像头”。"
             ),
             works: L3(
                 en: "Long-press the video-message (circular camera) button in a chat to quickly switch between the front and back camera before recording, instead of only being able to flip mid-recording.",
@@ -644,10 +644,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "person.2.fill", color: .lightBlue,
             title: L3(en: "Mutual Contact Badge", uz: "Mutual kontakt belgisi", ru: "Значок взаимного контакта", zh: "双向联系人标记"),
             enable: L3(
-                en: "Settings → Novagram → Interface → turn on “Mutual contact badge”.",
-                uz: "Sozlamalar → Novagram → Interfeys → \"Mutual kontakt belgisi\"ni yoqing.",
-                ru: "Настройки → Novagram → Интерфейс → включите «Значок взаимного контакта».",
-                zh: "设置 → Novagram → 界面 → 开启“双向联系人标记”。"
+                en: "Settings → Chitgram → Interface → turn on “Mutual contact badge”.",
+                uz: "Sozlamalar → Chitgram → Interfeys → \"Mutual kontakt belgisi\"ni yoqing.",
+                ru: "Настройки → Chitgram → Интерфейс → включите «Значок взаимного контакта».",
+                zh: "设置 → Chitgram → 界面 → 开启“双向联系人标记”。"
             ),
             works: L3(
                 en: "Shows a small 🤝 badge next to contacts who have you saved in their own contacts too, so you can spot mutual contacts at a glance in your contacts list.",
@@ -667,10 +667,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "circle.dashed", color: .violet,
             title: L3(en: "Stories Panel", uz: "Hikoyalar paneli", ru: "Панель историй", zh: "动态栏"),
             enable: L3(
-                en: "Settings → Novagram → Interface → turn “Stories panel” on or off (on by default).",
-                uz: "Sozlamalar → Novagram → Interfeys → \"Hikoyalar paneli\"ni yoqing yoki o'chiring (standart holatda yoqilgan).",
-                ru: "Настройки → Novagram → Интерфейс → включите или выключите «Панель историй» (по умолчанию включено).",
-                zh: "设置 → Novagram → 界面 → 开启或关闭“动态栏”（默认开启）。"
+                en: "Settings → Chitgram → Interface → turn “Stories panel” on or off (on by default).",
+                uz: "Sozlamalar → Chitgram → Interfeys → \"Hikoyalar paneli\"ni yoqing yoki o'chiring (standart holatda yoqilgan).",
+                ru: "Настройки → Chitgram → Интерфейс → включите или выключите «Панель историй» (по умолчанию включено).",
+                zh: "设置 → Chitgram → 界面 → 开启或关闭“动态栏”（默认开启）。"
             ),
             works: L3(
                 en: "Controls whether the row of story avatars appears above your chat list, exactly like Telegram's own Stories bar.",
@@ -690,10 +690,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "folder.badge.minus", color: .lightBlue,
             title: L3(en: "Hide Folders", uz: "Jildlarni yashirish", ru: "Скрыть папки", zh: "隐藏分组"),
             enable: L3(
-                en: "Settings → Novagram → Interface → turn on “Hide folders”.",
-                uz: "Sozlamalar → Novagram → Interfeys → \"Jildlarni yashirish\"ni yoqing.",
-                ru: "Настройки → Novagram → Интерфейс → включите «Скрыть папки».",
-                zh: "设置 → Novagram → 界面 → 开启“隐藏分组”。"
+                en: "Settings → Chitgram → Interface → turn on “Hide folders”.",
+                uz: "Sozlamalar → Chitgram → Interfeys → \"Jildlarni yashirish\"ni yoqing.",
+                ru: "Настройки → Chitgram → Интерфейс → включите «Скрыть папки».",
+                zh: "设置 → Chitgram → 界面 → 开启“隐藏分组”。"
             ),
             works: L3(
                 en: "Temporarily hides the folder tabs row above your chat list — useful when you want a cleaner, distraction-free chat list for a while.",
@@ -713,16 +713,16 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "paintpalette.fill", color: .green,
             title: L3(en: "White Theme Accent", uz: "Oq tema aksenti", ru: "Акцент светлой темы", zh: "浅色主题强调色"),
             enable: L3(
-                en: "Settings → Novagram → Appearance → turn on the accent-color toggle.",
-                uz: "Sozlamalar → Novagram → Ko'rinish → aksent rang switchini yoqing.",
-                ru: "Настройки → Novagram → Внешний вид → включите переключатель акцентного цвета.",
-                zh: "设置 → Novagram → 外观 → 开启强调色开关。"
+                en: "Settings → Chitgram → Appearance → turn on the accent-color toggle.",
+                uz: "Sozlamalar → Chitgram → Ko'rinish → aksent rang switchini yoqing.",
+                ru: "Настройки → Chitgram → Внешний вид → включите переключатель акцентного цвета.",
+                zh: "设置 → Chitgram → 外观 → 开启强调色开关。"
             ),
             works: L3(
-                en: "Adjusts the accent color used across the interface when the light (white) theme is active, for a cleaner look tuned to Novagram's branding.",
-                uz: "Yorug' (oq) tema faol bo'lganda interfeysda ishlatiladigan aksent rangni sozlaydi — Novagram brendiga moslashtirilgan, tozaroq ko'rinish uchun.",
-                ru: "Настраивает акцентный цвет интерфейса при активной светлой (белой) теме — для более чистого вида, адаптированного под брендинг Novagram.",
-                zh: "在浅色（白色）主题下调整整个界面使用的强调色，呈现更简洁、更贴合 Novagram 品牌风格的外观。"
+                en: "Adjusts the accent color used across the interface when the light (white) theme is active, for a cleaner look tuned to Chitgram's branding.",
+                uz: "Yorug' (oq) tema faol bo'lganda interfeysda ishlatiladigan aksent rangni sozlaydi — Chitgram brendiga moslashtirilgan, tozaroq ko'rinish uchun.",
+                ru: "Настраивает акцентный цвет интерфейса при активной светлой (белой) теме — для более чистого вида, адаптированного под брендинг Chitgram.",
+                zh: "在浅色（白色）主题下调整整个界面使用的强调色，呈现更简洁、更贴合 Chitgram 品牌风格的外观。"
             ),
             disable: L3(
                 en: "Turn the switch off to return to Telegram's standard light-theme accent color.",
@@ -736,10 +736,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "heart.fill", color: .red,
             title: L3(en: "Heart Effect", uz: "Yurakcha effekti", ru: "Эффект сердечка", zh: "爱心特效"),
             enable: L3(
-                en: "Settings → Novagram → Messages → turn on “Heart effect”.",
-                uz: "Sozlamalar → Novagram → Xabarlar → \"Yurakcha effekti\"ni yoqing.",
-                ru: "Настройки → Novagram → Сообщения → включите «Эффект сердечка».",
-                zh: "设置 → Novagram → 消息 → 开启“爱心特效”。"
+                en: "Settings → Chitgram → Messages → turn on “Heart effect”.",
+                uz: "Sozlamalar → Chitgram → Xabarlar → \"Yurakcha effekti\"ni yoqing.",
+                ru: "Настройки → Chitgram → Сообщения → включите «Эффект сердечка».",
+                zh: "设置 → Chitgram → 消息 → 开启“爱心特效”。"
             ),
             works: L3(
                 en: "Automatically attaches the animated ❤️ message effect to every text message you send — a small, playful touch with no extra taps.",
@@ -759,16 +759,16 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "face.smiling.inverse", color: .orange,
             title: L3(en: "Auto Sticker", uz: "Avtomatik sticker", ru: "Авто-стикер", zh: "自动贴纸"),
             enable: L3(
-                en: "Settings → Novagram → Messages → turn on “Auto sticker”.",
-                uz: "Sozlamalar → Novagram → Xabarlar → \"Avtomatik sticker\"ni yoqing.",
-                ru: "Настройки → Novagram → Сообщения → включите «Авто-стикер».",
-                zh: "设置 → Novagram → 消息 → 开启“自动贴纸”。"
+                en: "Settings → Chitgram → Messages → turn on “Auto sticker”.",
+                uz: "Sozlamalar → Chitgram → Xabarlar → \"Avtomatik sticker\"ni yoqing.",
+                ru: "Настройки → Chitgram → Сообщения → включите «Авто-стикер».",
+                zh: "设置 → Chitgram → 消息 → 开启“自动贴纸”。"
             ),
             works: L3(
-                en: "After every text message you send, Novagram automatically appends the last sticker you sent — handy if you like following up messages with the same reaction sticker.",
-                uz: "Yuborgan har bir matnli xabaringizdan so'ng, Novagram avtomatik ravishda oxirgi yuborgan stickeringizni qo'shadi — bir xil reaksiya stickeri bilan xabar davom ettirishni yoqtirsangiz qulay.",
-                ru: "После каждого отправленного текстового сообщения Novagram автоматически добавляет последний отправленный вами стикер — удобно, если вы любите сопровождать сообщения одним и тем же стикером-реакцией.",
-                zh: "每发送一条文字消息后，Novagram 都会自动追加你上次发送的贴纸。如果你习惯在消息后跟上同一张回应贴纸，会非常方便。"
+                en: "After every text message you send, Chitgram automatically appends the last sticker you sent — handy if you like following up messages with the same reaction sticker.",
+                uz: "Yuborgan har bir matnli xabaringizdan so'ng, Chitgram avtomatik ravishda oxirgi yuborgan stickeringizni qo'shadi — bir xil reaksiya stickeri bilan xabar davom ettirishni yoqtirsangiz qulay.",
+                ru: "После каждого отправленного текстового сообщения Chitgram автоматически добавляет последний отправленный вами стикер — удобно, если вы любите сопровождать сообщения одним и тем же стикером-реакцией.",
+                zh: "每发送一条文字消息后，Chitgram 都会自动追加你上次发送的贴纸。如果你习惯在消息后跟上同一张回应贴纸，会非常方便。"
             ),
             disable: L3(
                 en: "Turn the same switch off. Text messages are sent alone again, without an extra sticker.",
@@ -782,10 +782,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "hand.raised.fill", color: .purple,
             title: L3(en: "Ask Before Sending", uz: "Yuborishdan oldin so'rash", ru: "Спрашивать перед отправкой", zh: "发送前确认"),
             enable: L3(
-                en: "Settings → Novagram → Protection → turn on “Ask before sending”.",
-                uz: "Sozlamalar → Novagram → Himoya → \"Yuborishdan oldin so'rash\"ni yoqing.",
-                ru: "Настройки → Novagram → Защита → включите «Спрашивать перед отправкой».",
-                zh: "设置 → Novagram → 安全防护 → 开启“发送前确认”。"
+                en: "Settings → Chitgram → Protection → turn on “Ask before sending”.",
+                uz: "Sozlamalar → Chitgram → Himoya → \"Yuborishdan oldin so'rash\"ni yoqing.",
+                ru: "Настройки → Chitgram → Защита → включите «Спрашивать перед отправкой».",
+                zh: "设置 → Chitgram → 安全防护 → 开启“发送前确认”。"
             ),
             works: L3(
                 en: "Shows a small confirmation dialog before sending a voice message, sticker, or gift, helping you avoid accidental sends from a stray tap.",
@@ -805,10 +805,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "questionmark.bubble.fill", color: .orange,
             title: L3(en: "Ask to Translate on Send", uz: "Yuborishda tarjima so'rovi", ru: "Запрос перевода при отправке", zh: "发送时询问翻译"),
             enable: L3(
-                en: "Settings → Novagram → Messages → turn on “Ask to translate on send”. (This is mutually exclusive with the Voice → Text “Translate voice messages” auto-translate — enabling one turns off the other.)",
-                uz: "Sozlamalar → Novagram → Xabarlar → \"Yuborishda tarjima so'rovi\"ni yoqing. (Bu Ovoz → Matn bo'limidagi \"Ovozli xabarlarni tarjima qilish\" avto-tarjima bilan bir-birini istisno qiladi — birini yoqish ikkinchisini o'chiradi.)",
-                ru: "Настройки → Novagram → Сообщения → включите «Запрос перевода при отправке». (Это взаимоисключающая опция с авто-переводом «Переводить голосовые сообщения» в разделе Голос → Текст — включение одной выключает другую.)",
-                zh: "设置 → Novagram → 消息 → 开启“发送时询问翻译”。（此选项与“语音 → 文字”中的“翻译语音消息”自动翻译互斥，开启其中一个会关闭另一个。）"
+                en: "Settings → Chitgram → Messages → turn on “Ask to translate on send”. (This is mutually exclusive with the Voice → Text “Translate voice messages” auto-translate — enabling one turns off the other.)",
+                uz: "Sozlamalar → Chitgram → Xabarlar → \"Yuborishda tarjima so'rovi\"ni yoqing. (Bu Ovoz → Matn bo'limidagi \"Ovozli xabarlarni tarjima qilish\" avto-tarjima bilan bir-birini istisno qiladi — birini yoqish ikkinchisini o'chiradi.)",
+                ru: "Настройки → Chitgram → Сообщения → включите «Запрос перевода при отправке». (Это взаимоисключающая опция с авто-переводом «Переводить голосовые сообщения» в разделе Голос → Текст — включение одной выключает другую.)",
+                zh: "设置 → Chitgram → 消息 → 开启“发送时询问翻译”。（此选项与“语音 → 文字”中的“翻译语音消息”自动翻译互斥，开启其中一个会关闭另一个。）"
             ),
             works: L3(
                 en: "Before sending a message, a dialog asks whether to send the translated version or the original — giving you a manual choice every time instead of automatic translation.",
@@ -828,10 +828,10 @@ private func allFeatureSpecs() -> [FeatureSpec] {
             symbol: "link.circle.fill", color: .teal,
             title: L3(en: "Settings Links", uz: "Sozlamalar havolalari", ru: "Ссылки в настройках", zh: "设置页链接"),
             enable: L3(
-                en: "Nothing to turn on. Settings → Novagram → Features has a “Share Novagram Settings link” row, and every other row answers a long press.",
-                uz: "Hech narsani yoqish shart emas. Sozlamalar → Novagram → Imkoniyatlar bo'limida \"Novagram Settings havolasini ulashish\" qatori bor, qolgan har bir qatorni esa bosib turish kifoya.",
-                ru: "Ничего включать не нужно. В Настройки → Novagram → Функции есть строка «Поделиться ссылкой Novagram Settings», а любую другую строку достаточно нажать и удерживать.",
-                zh: "无需开启。设置 → Novagram → 功能中有“分享 Novagram 设置链接”一行，其他每一行也都支持长按。"
+                en: "Nothing to turn on. Settings → Chitgram → Features has a “Share Chitgram Settings link” row, and every other row answers a long press.",
+                uz: "Hech narsani yoqish shart emas. Sozlamalar → Chitgram → Imkoniyatlar bo'limida \"Chitgram Settings havolasini ulashish\" qatori bor, qolgan har bir qatorni esa bosib turish kifoya.",
+                ru: "Ничего включать не нужно. В Настройки → Chitgram → Функции есть строка «Поделиться ссылкой Chitgram Settings», а любую другую строку достаточно нажать и удерживать.",
+                zh: "无需开启。设置 → Chitgram → 功能中有“分享 Chitgram 设置链接”一行，其他每一行也都支持长按。"
             ),
             works: L3(
                 en: "The share row copies and shares tg://settings/novagrampro, which opens this settings screen. Press and hold any row instead and you get tg://settings/novagrampro/<feature> — that link opens the screen, scrolls straight to that row and traces an outline around it.",

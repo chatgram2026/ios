@@ -35,6 +35,8 @@ class BuildConfiguration:
         self.premium_iap_product_id = premium_iap_product_id
         self.enable_siri = enable_siri
         self.enable_icloud = enable_icloud
+        # Chitgram: the App Review demo login, from optional keys of the configuration (never committed).
+        self.chitgram_demo = {}
 
     def write_to_variables_file(self, bazel_path, use_xcode_managed_codesigning, aps_environment, path):
         string = ''
@@ -53,6 +55,9 @@ class BuildConfiguration:
         string += 'telegram_aps_environment = "{}"\n'.format(aps_environment)
         string += 'telegram_enable_siri = {}\n'.format(self.enable_siri)
         string += 'telegram_enable_icloud = {}\n'.format(self.enable_icloud)
+        # Chitgram: the App Review demo login and the badges' Firestore project ("" when the configuration has none).
+        for key in ['chitgram_demo_phone', 'chitgram_demo_phone_2', 'chitgram_demo_code_url', 'chitgram_demo_code_url_2', 'chitgram_firebase_project_id', 'chitgram_firebase_api_key', 'chitgram_firebase_app_id', 'chitgram_ads_base_url', 'chitgram_ads_api_key']:
+            string += 'telegram_{} = "{}"\n'.format(key, self.chitgram_demo.get(key, '').replace('"', ''))
         string += 'telegram_enable_watch = True\n'
 
         if os.path.exists(path):
@@ -84,7 +89,7 @@ def build_configuration_from_json(path):
         for key in required_keys:
             if key not in configuration_dict:
                 print('Configuration at {} does not contain {}'.format(path, key))
-        return BuildConfiguration(
+        configuration = BuildConfiguration(
             bundle_id=configuration_dict['bundle_id'],
             api_id=configuration_dict['api_id'],
             api_hash=configuration_dict['api_hash'],
@@ -98,6 +103,10 @@ def build_configuration_from_json(path):
             enable_siri=configuration_dict['enable_siri'],
             enable_icloud=configuration_dict['enable_icloud']
         )
+        # Chitgram: optional demo login and Firestore keys.
+        for key in ['chitgram_demo_phone', 'chitgram_demo_phone_2', 'chitgram_demo_code_url', 'chitgram_demo_code_url_2', 'chitgram_firebase_project_id', 'chitgram_firebase_api_key', 'chitgram_firebase_app_id', 'chitgram_ads_base_url', 'chitgram_ads_api_key']:
+            configuration.chitgram_demo[key] = str(configuration_dict.get(key, ''))
+        return configuration
 
 
 def decrypt_codesigning_directory_recursively(source_base_path, destination_base_path, password):

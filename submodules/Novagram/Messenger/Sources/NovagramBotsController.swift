@@ -240,7 +240,7 @@ private func resolveBotAvatarPeers(
 // MARK: - Public factory
 
 /// Pushes a categorised list of Novagram official bots.
-/// Reachable from NovagramSettingsController via the "Novagram Bots" disclosure row.
+/// Reachable from NovagramSettingsController via the "Chitgram Bots" disclosure row.
 /// Tapping any bot row resolves its @username and opens the chat (resolvePeerByName + makeChatController).
 public func novagramBotsController(context: AccountContext) -> ViewController {
     let categories = loadNovagramBots()?.categories ?? []

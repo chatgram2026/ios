@@ -31,7 +31,7 @@ import NovagramLocalization
 /// - Video: both sides' video is followed for the whole recording, also in a voice call (the file is .mp4 if video was
 ///   ever on, .m4a otherwise). Our side is the camera, or our shared screen while we share it. The picture-in-picture
 ///   corner and the big/small swap follow the call screen; while we share our screen, the screen is big.
-/// - Never secret: once a recording really started, "🔴 I'm recording this call (Novagram)" goes to the 1:1 chat with
+/// - Never secret: once a recording really started, "🔴 I'm recording this call (Chitgram)" goes to the 1:1 chat with
 ///   the call's peer, in the app's language, at most once per call (`CallRecordingNoticePolicy`). If it cannot
 ///   be enqueued, the recording is stopped, its file deleted and "Couldn't notify the other person…" shown; the next
 ///   Record in that call then tries the notice again. A later failed delivery does not stop the recording (Mac parity).
@@ -357,7 +357,7 @@ final class NovagramCallRecordingGlue {
 
     // MARK: - Notice
 
-    /// "🔴 I'm recording this call (Novagram)" to the chat with the call's peer, once per call, through TelegramCore's
+    /// "🔴 I'm recording this call (Chitgram)" to the chat with the call's peer, once per call, through TelegramCore's
     /// normal outgoing path (the same as a typed message). Only a failure to enqueue stops the recording.
     private func sendNoticeIfNeeded() {
         // Only 1:1 calls with a user reach the glue; the recorder has just started.

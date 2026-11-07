@@ -13,8 +13,9 @@ public enum NovagramBrandColors {
     public static let brand100 = UIColor(rgb: 0xCFE9FF)
     public static let brand300 = UIColor(rgb: 0x7CC3FD)
     public static let brand400 = UIColor(rgb: 0x36A8FA)
-    public static let brand500 = UIColor(rgb: 0x0A9BF5)   // Primary brand (Novagram blue)
-    public static let brand600 = UIColor(rgb: 0x0A85E8)   // Primary hover / CTA button
+    // Chitgram: the blue of the Android launcher background and logo (`ic_launcher_bg`, `logo_fenix`), #0A84FF.
+    public static let brand500 = UIColor(rgb: 0x0A84FF)   // Primary brand (Chitgram blue)
+    public static let brand600 = UIColor(rgb: 0x0A84FF)   // Primary / CTA button
     public static let brand700 = UIColor(rgb: 0x086FC6)   // Primary deep
     public static let brand900 = UIColor(rgb: 0x07406F)
 
@@ -48,10 +49,10 @@ public enum NovagramBrandColors {
     // We re-use brand500 (Novagram blue #0A9BF5) as the accent — same hue family as the
     // login screen so the brand stays coherent across dark & light modes.
     // Light-theme specific tones for tinting tappable elements and highlights.
-    public static let lightThemeAccent: UIColor = brand500   // #0A9BF5 — primary tint
+    public static let lightThemeAccent: UIColor = brand500   // #0A84FF — primary tint
     // Raw RGB of lightThemeAccent (== brand500). The theme engine's
     // PresentationThemeAccentColor.accentColor wants a UInt32, not a UIColor.
-    public static let lightThemeAccentValue: UInt32 = 0x0A9BF5
+    public static let lightThemeAccentValue: UInt32 = 0x0A84FF
     public static let lightThemeAccentLight: UIColor = brand100   // #CFE9FF — selection bg, badge fill
     public static let lightThemeAccentDeep: UIColor = brand600   // #0A85E8 — pressed / active state
 }

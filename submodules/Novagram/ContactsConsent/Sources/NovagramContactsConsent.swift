@@ -43,10 +43,10 @@ private enum NovagramContactsConsentStrings {
 
     static var messageBody: String {
         localized(
-            en: "Novagram will upload your phone contacts to Telegram servers so you can find friends who already use the app. Your contacts are transmitted encrypted and you can disable Contact Sync anytime in Settings → Privacy and Security → Data Settings.\n\nBy tapping Continue, you agree to our Privacy Policy:",
-            uz: "Novagram ilovadan foydalanayotgan do'stlaringizni topishingiz uchun telefon kontaktlaringizni Telegram serverlariga yuklaydi. Kontaktlaringiz shifrlangan holda uzatiladi va istalgan vaqtda Sozlamalar → Maxfiylik va xavfsizlik → Ma'lumotlar sozlamalari bo'limidan Kontakt sinxronizatsiyasini o'chirib qo'yishingiz mumkin.\n\nDavom etish tugmasini bosish orqali siz Maxfiylik siyosatimizga rozilik bildirasiz:",
-            ru: "Novagram загрузит контакты вашего телефона на серверы Telegram, чтобы вы могли найти друзей, которые уже пользуются приложением. Ваши контакты передаются в зашифрованном виде, и вы можете отключить синхронизацию контактов в любой момент в Настройки → Конфиденциальность и безопасность → Настройки данных.\n\nНажимая «Продолжить», вы соглашаетесь с нашей Политикой конфиденциальности:",
-            zh: "Novagram 会将你手机中的联系人上传到 Telegram 服务器，以便你找到已在使用本应用的好友。联系人以加密方式传输，你可以随时在“设置 → 隐私与安全 → 数据设置”中关闭联系人同步。\n\n点击“继续”即表示你同意我们的隐私政策："
+            en: "Chitgram will upload your phone contacts to Telegram servers so you can find friends who already use the app. Your contacts are transmitted encrypted and you can disable Contact Sync anytime in Settings → Privacy and Security → Data Settings.\n\nBy tapping Continue, you agree to our Privacy Policy:",
+            uz: "Chitgram ilovadan foydalanayotgan do'stlaringizni topishingiz uchun telefon kontaktlaringizni Telegram serverlariga yuklaydi. Kontaktlaringiz shifrlangan holda uzatiladi va istalgan vaqtda Sozlamalar → Maxfiylik va xavfsizlik → Ma'lumotlar sozlamalari bo'limidan Kontakt sinxronizatsiyasini o'chirib qo'yishingiz mumkin.\n\nDavom etish tugmasini bosish orqali siz Maxfiylik siyosatimizga rozilik bildirasiz:",
+            ru: "Chitgram загрузит контакты вашего телефона на серверы Telegram, чтобы вы могли найти друзей, которые уже пользуются приложением. Ваши контакты передаются в зашифрованном виде, и вы можете отключить синхронизацию контактов в любой момент в Настройки → Конфиденциальность и безопасность → Настройки данных.\n\nНажимая «Продолжить», вы соглашаетесь с нашей Политикой конфиденциальности:",
+            zh: "Chitgram 会将你手机中的联系人上传到 Telegram 服务器，以便你找到已在使用本应用的好友。联系人以加密方式传输，你可以随时在“设置 → 隐私与安全 → 数据设置”中关闭联系人同步。\n\n点击“继续”即表示你同意我们的隐私政策："
         )
     }
 
@@ -80,7 +80,8 @@ private enum NovagramContactsConsentStrings {
 
 public enum NovagramContactsConsent {
     private static let consentKey = "Fenixuz.ContactsConsent.v1"
-    private static let privacyPolicyURL = "https://fenixuz.uz/privacy.html"
+    // Chitgram: the contacts go to Telegram's cloud, so the link is Telegram's privacy policy.
+    private static let privacyPolicyURL = "https://telegram.org/privacy"
 
     public static var hasGivenConsent: Bool {
         if UserDefaults.standard.bool(forKey: consentKey) {

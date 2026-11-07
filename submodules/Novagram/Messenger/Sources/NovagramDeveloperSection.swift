@@ -259,10 +259,10 @@ enum NovagramDeveloperStrings {
 
     static func removeAdsTip(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Yoqilsa — bu qurilmada Novagram va Telegram reklamalari ko'rsatilmaydi"
-        case "ru": return "Вкл — на этом устройстве нет рекламы ни Novagram, ни Telegram"
-        case "zh": return "开启后，此设备上不显示 Novagram 和 Telegram 的任何广告"
-        default:   return "On — no Novagram or Telegram ads on this device"
+        case "uz": return "Yoqilsa — bu qurilmada Chitgram va Telegram reklamalari ko'rsatilmaydi"
+        case "ru": return "Вкл — на этом устройстве нет рекламы ни Chitgram, ни Telegram"
+        case "zh": return "开启后，此设备上不显示 Chitgram 和 Telegram 的任何广告"
+        default:   return "On — no Chitgram or Telegram ads on this device"
         }
     }
 
@@ -278,15 +278,15 @@ enum NovagramDeveloperStrings {
     static func adEventsOffTip(langCode: String) -> String {
         switch langCode {
         case "uz":
-            return "Novagram va Telegram reklamalarining ko'rish, bosish va harakat hodisalari serverga yuborilmaydi, " +
+            return "Chitgram va Telegram reklamalarining ko'rish, bosish va harakat hodisalari serverga yuborilmaydi, " +
                    "shuning uchun bir marta ko'rsatiladigan reklama test paytida qayta chiqaveradi. Faqat shu qurilmada."
         case "ru":
-            return "Просмотры, клики и действия по рекламе Novagram и Telegram не отправляются, поэтому реклама " +
+            return "Просмотры, клики и действия по рекламе Chitgram и Telegram не отправляются, поэтому реклама " +
                    "с одним показом на пользователя продолжает показываться во время теста. Только на этом устройстве."
         case "zh":
-            return "不发送 Novagram 和 Telegram 广告的浏览、点击和操作事件，因此每位用户只展示一次的广告在测试期间会继续展示。仅限此设备。"
+            return "不发送 Chitgram 和 Telegram 广告的浏览、点击和操作事件，因此每位用户只展示一次的广告在测试期间会继续展示。仅限此设备。"
         default:
-            return "Views, clicks and actions of Novagram and Telegram ads are not sent, so an ad shown once per user " +
+            return "Views, clicks and actions of Chitgram and Telegram ads are not sent, so an ad shown once per user " +
                    "keeps showing while you test. This device only."
         }
     }
@@ -311,19 +311,19 @@ enum NovagramDeveloperStrings {
 
     static func adsPanelTitle(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Novagram reklama paneli"
-        case "ru": return "Рекламная панель Novagram"
-        case "zh": return "Novagram 广告面板"
-        default:   return "Novagram ads panel"
+        case "uz": return "Chitgram reklama paneli"
+        case "ru": return "Рекламная панель Chitgram"
+        case "zh": return "Chitgram 广告面板"
+        default:   return "Chitgram ads panel"
         }
     }
 
     static func adsPanelTip(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Novagram reklama panelini ko'rsatish"
-        case "ru": return "Показывать рекламную панель Novagram"
-        case "zh": return "显示 Novagram 广告面板"
-        default:   return "Show the Novagram ads panel"
+        case "uz": return "Chitgram reklama panelini ko'rsatish"
+        case "ru": return "Показывать рекламную панель Chitgram"
+        case "zh": return "显示 Chitgram 广告面板"
+        default:   return "Show the Chitgram ads panel"
         }
     }
 

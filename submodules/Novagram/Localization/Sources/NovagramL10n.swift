@@ -152,7 +152,7 @@ public struct NovagramL10n {
     // MARK: - Settings → Novagram screen
     // Section headers, item titles, item subtitles, section footers, generic on/off labels.
 
-    public var settings_title: String { "Novagram" } // Brand name — never translated
+    public var settings_title: String { "Chitgram" } // Brand name — never translated
 
     public var settings_state_enabled: String {
         pick(en: "On", uz: "Yoqilgan", ru: "Включено", zh: "开")
@@ -763,10 +763,10 @@ public struct NovagramL10n {
 
     public var tips_stt_body: String {
         pick(
-            en: "Tap the microphone button next to the text field to convert voice to text instantly. Enable it in Novagram → Voice → Text settings.",
-            uz: "Matn maydonidagi mikrofon tugmasini bosib, ovozingizni darhol matnga aylantiring. Novagram → Ovoz → Matn sozlamalarida yoqing.",
-            ru: "Нажмите кнопку микрофона рядом с полем ввода, чтобы мгновенно преобразовать голос в текст. Включите в настройках Novagram → Голос → Текст.",
-            zh: "点击输入框旁的麦克风按钮，即可将语音即时转为文字。可在“Novagram → 语音 → 文字”设置中开启。"
+            en: "Tap the microphone button next to the text field to convert voice to text instantly. Enable it in Chitgram → Voice → Text settings.",
+            uz: "Matn maydonidagi mikrofon tugmasini bosib, ovozingizni darhol matnga aylantiring. Chitgram → Ovoz → Matn sozlamalarida yoqing.",
+            ru: "Нажмите кнопку микрофона рядом с полем ввода, чтобы мгновенно преобразовать голос в текст. Включите в настройках Chitgram → Голос → Текст.",
+            zh: "点击输入框旁的麦克风按钮，即可将语音即时转为文字。可在“Chitgram → 语音 → 文字”设置中开启。"
         )
     }
 
@@ -819,10 +819,10 @@ public struct NovagramL10n {
 
     public var tips_autoText_body: String {
         pick(
-            en: "Automatically add a custom text at the end of every outgoing message — a signature, hashtag, or anything you like. Configure in Novagram → Messages.",
-            uz: "Har bir chiquvchi xabar oxiriga avtomatik matn qo'shing — imzo, hashtag yoki xohlagan narsa. Novagram → Xabarlar sozlamalarida o'rnatiladi.",
-            ru: "Автоматически добавляйте произвольный текст в конец каждого исходящего сообщения — подпись, хэштег или что угодно. Настраивается в Novagram → Сообщения.",
-            zh: "在每条发出的消息末尾自动添加自定义文字——签名、话题标签或任何你喜欢的内容。可在“Novagram → 消息”中设置。"
+            en: "Automatically add a custom text at the end of every outgoing message — a signature, hashtag, or anything you like. Configure in Chitgram → Messages.",
+            uz: "Har bir chiquvchi xabar oxiriga avtomatik matn qo'shing — imzo, hashtag yoki xohlagan narsa. Chitgram → Xabarlar sozlamalarida o'rnatiladi.",
+            ru: "Автоматически добавляйте произвольный текст в конец каждого исходящего сообщения — подпись, хэштег или что угодно. Настраивается в Chitgram → Сообщения.",
+            zh: "在每条发出的消息末尾自动添加自定义文字——签名、话题标签或任何你喜欢的内容。可在“Chitgram → 消息”中设置。"
         )
     }
 
@@ -833,24 +833,24 @@ public struct NovagramL10n {
 
     public var tips_translate_body: String {
         pick(
-            en: "Translate any message with one tap. Long-press a message and choose \"Translate\". Enable the button in Novagram → Messages settings.",
-            uz: "Har qanday xabarni bir teginishda tarjima qiling. Xabarga uzoq bosib, \"Tarjima\" ni tanlang. Novagram → Xabarlar sozlamalarida yoqiladi.",
-            ru: "Переводите любое сообщение одним нажатием. Зажмите сообщение и выберите «Перевести». Включается в настройках Novagram → Сообщения.",
-            zh: "一键翻译任意消息。长按消息并选择“翻译”。可在“Novagram → 消息”设置中开启该按钮。"
+            en: "Translate any message with one tap. Long-press a message and choose \"Translate\". Enable the button in Chitgram → Messages settings.",
+            uz: "Har qanday xabarni bir teginishda tarjima qiling. Xabarga uzoq bosib, \"Tarjima\" ni tanlang. Chitgram → Xabarlar sozlamalarida yoqiladi.",
+            ru: "Переводите любое сообщение одним нажатием. Зажмите сообщение и выберите «Перевести». Включается в настройках Chitgram → Сообщения.",
+            zh: "一键翻译任意消息。长按消息并选择“翻译”。可在“Chitgram → 消息”设置中开启该按钮。"
         )
     }
 
     // Novagram Settings hub
     public var tips_novagramHub_title: String {
-        pick(en: "Novagram Settings Hub", uz: "Novagram sozlamalari markazi", ru: "Центр настроек Novagram", zh: "Novagram 设置中心")
+        pick(en: "Chitgram Settings Hub", uz: "Chitgram sozlamalari markazi", ru: "Центр настроек Chitgram", zh: "Chitgram 设置中心")
     }
 
     public var tips_novagramHub_body: String {
         pick(
-            en: "All Novagram features in one place. Open your Settings and tap the gold \"Novagram\" row to access Ghost mode, STT, auto-text, translate, chat lock, and more.",
-            uz: "Barcha Novagram imkoniyatlari bir joyda. Sozlamalarga kirib, oltin rang \"Novagram\" qatoriga bosing — Ghost rejimi, STT, avto-matn, tarjima, chat qulfi va boshqalar.",
-            ru: "Все функции Novagram в одном месте. Откройте Настройки и нажмите золотую строку «Novagram» — Ghost-режим, STT, авто-текст, перевод, блокировка чатов и многое другое.",
-            zh: "所有 Novagram 功能集中在一处。打开设置，点击金色的“Novagram”一栏，即可使用幽灵模式、语音转文字、自动后缀、翻译、聊天锁等功能。"
+            en: "All Chitgram features in one place. Open your Settings and tap the gold \"Chitgram\" row to access Ghost mode, STT, auto-text, translate, chat lock, and more.",
+            uz: "Barcha Chitgram imkoniyatlari bir joyda. Sozlamalarga kirib, oltin rang \"Chitgram\" qatoriga bosing — Ghost rejimi, STT, avto-matn, tarjima, chat qulfi va boshqalar.",
+            ru: "Все функции Chitgram в одном месте. Откройте Настройки и нажмите золотую строку «Chitgram» — Ghost-режим, STT, авто-текст, перевод, блокировка чатов и многое другое.",
+            zh: "所有 Chitgram 功能集中在一处。打开设置，点击金色的“Chitgram”一栏，即可使用幽灵模式、语音转文字、自动后缀、翻译、聊天锁等功能。"
         )
     }
 
@@ -932,10 +932,10 @@ public struct NovagramL10n {
 
     public func update_message(version: String) -> String {
         pick(
-            en: "A new version (\(version)) of Novagram is available on the App Store.",
-            uz: "Novagram'ning yangi versiyasi (\(version)) App Store'da mavjud.",
-            ru: "Новая версия Novagram (\(version)) доступна в App Store.",
-            zh: "App Store 上已有 Novagram 新版本（\(version)）。"
+            en: "A new version (\(version)) of Chitgram is available on the App Store.",
+            uz: "Chitgram'ning yangi versiyasi (\(version)) App Store'da mavjud.",
+            ru: "Новая версия Chitgram (\(version)) доступна в App Store.",
+            zh: "App Store 上已有 Chitgram 新版本（\(version)）。"
         )
     }
 
@@ -1061,7 +1061,7 @@ public struct NovagramL10n {
     }
 
     public var analytics_usersCaption: String {
-        pick(en: "Novagram users", uz: "Novagram foydalanuvchilari", ru: "Пользователи Novagram", zh: "Novagram 用户")
+        pick(en: "Chitgram users", uz: "Chitgram foydalanuvchilari", ru: "Пользователи Chitgram", zh: "Chitgram 用户")
     }
 
     public var analytics_accountsCaption: String {
@@ -1070,42 +1070,42 @@ public struct NovagramL10n {
 
     public var analytics_usersInfo: String {
         pick(
-            en: "The number of unique devices that have installed Novagram. Each device is counted once.",
-            uz: "Novagram o'rnatilgan noyob qurilmalar soni. Har bir qurilma bir marta hisoblanadi.",
-            ru: "Количество уникальных устройств, на которых установлен Novagram. Каждое устройство учитывается один раз.",
-            zh: "已安装 Novagram 的唯一设备数量。每台设备只计算一次。"
+            en: "The number of unique devices that have installed Chitgram. Each device is counted once.",
+            uz: "Chitgram o'rnatilgan noyob qurilmalar soni. Har bir qurilma bir marta hisoblanadi.",
+            ru: "Количество уникальных устройств, на которых установлен Chitgram. Каждое устройство учитывается один раз.",
+            zh: "已安装 Chitgram 的唯一设备数量。每台设备只计算一次。"
         )
     }
 
     public var analytics_accountsInfo: String {
         pick(
-            en: "The total number of accounts that have ever signed in to Novagram.",
-            uz: "Novagram'ga hozirgacha kirgan accountlarning umumiy soni.",
-            ru: "Общее число аккаунтов, когда-либо входивших в Novagram.",
-            zh: "曾登录过 Novagram 的账号总数。"
+            en: "The total number of accounts that have ever signed in to Chitgram.",
+            uz: "Chitgram'ga hozirgacha kirgan accountlarning umumiy soni.",
+            ru: "Общее число аккаунтов, когда-либо входивших в Chitgram.",
+            zh: "曾登录过 Chitgram 的账号总数。"
         )
     }
 
     // MARK: - About NovagramPro (Settings → NovagramPro → About)
 
     public var about_rowTitle: String {
-        pick(en: "About Novagram", uz: "Novagram haqida", ru: "О Novagram", zh: "关于 Novagram")
+        pick(en: "About Chitgram", uz: "Chitgram haqida", ru: "О Chitgram", zh: "关于 Chitgram")
     }
 
     public var about_screenTitle: String {
-        pick(en: "About Novagram", uz: "Novagram haqida", ru: "О Novagram", zh: "关于 Novagram")
+        pick(en: "About Chitgram", uz: "Chitgram haqida", ru: "О Chitgram", zh: "关于 Chitgram")
     }
 
     public var about_introHeader: String {
-        pick(en: "WHAT IS NOVAGRAM", uz: "NOVAGRAM NIMA", ru: "ЧТО ТАКОЕ NOVAGRAM", zh: "什么是 Novagram")
+        pick(en: "WHAT IS NOVAGRAM", uz: "NOVAGRAM NIMA", ru: "ЧТО ТАКОЕ NOVAGRAM", zh: "什么是 Chitgram")
     }
 
     public var about_introBody: String {
         pick(
-            en: "Novagram is Telegram with a set of extra tools built on top. Everything below is included — no subscription, no paywall. Each feature can be turned on or off in Novagram Settings.",
-            uz: "Novagram — bu ustiga qo'shimcha vositalar qo'shilgan Telegram. Quyidagilarning barchasi bepul — obuna ham, to'lov ham yo'q. Har bir imkoniyatni Novagram sozlamalarida yoqish yoki o'chirish mumkin.",
-            ru: "Novagram — это Telegram с набором дополнительных инструментов. Всё перечисленное ниже бесплатно — без подписки и без платного доступа. Каждую функцию можно включить или выключить в настройках Novagram.",
-            zh: "Novagram 是在 Telegram 基础上加入了一系列额外工具的客户端。以下所有功能均已包含——无需订阅，也没有付费墙。每项功能都可以在 Novagram 设置中开启或关闭。"
+            en: "Chitgram is Telegram with a set of extra tools built on top. Everything below is included — no subscription, no paywall. Each feature can be turned on or off in Chitgram Settings.",
+            uz: "Chitgram — bu ustiga qo'shimcha vositalar qo'shilgan Telegram. Quyidagilarning barchasi bepul — obuna ham, to'lov ham yo'q. Har bir imkoniyatni Chitgram sozlamalarida yoqish yoki o'chirish mumkin.",
+            ru: "Chitgram — это Telegram с набором дополнительных инструментов. Всё перечисленное ниже бесплатно — без подписки и без платного доступа. Каждую функцию можно включить или выключить в настройках Chitgram.",
+            zh: "Chitgram 是在 Telegram 基础上加入了一系列额外工具的客户端。以下所有功能均已包含——无需订阅，也没有付费墙。每项功能都可以在 Chitgram 设置中开启或关闭。"
         )
     }
 
@@ -1213,10 +1213,10 @@ public struct NovagramL10n {
 
     public var about_footer: String {
         pick(
-            en: "Novagram is built on top of Telegram. All your chats, contacts and data stay in your regular Telegram account.",
-            uz: "Novagram Telegram asosida qurilgan. Barcha chatlaringiz, kontaktlaringiz va ma'lumotlaringiz oddiy Telegram accountingizda qoladi.",
-            ru: "Novagram построен на основе Telegram. Все ваши чаты, контакты и данные остаются в вашем обычном аккаунте Telegram.",
-            zh: "Novagram 基于 Telegram 构建。你的所有聊天、联系人和数据都保留在你原有的 Telegram 账号中。"
+            en: "Chitgram is built on top of Telegram. All your chats, contacts and data stay in your regular Telegram account.",
+            uz: "Chitgram Telegram asosida qurilgan. Barcha chatlaringiz, kontaktlaringiz va ma'lumotlaringiz oddiy Telegram accountingizda qoladi.",
+            ru: "Chitgram построен на основе Telegram. Все ваши чаты, контакты и данные остаются в вашем обычном аккаунте Telegram.",
+            zh: "Chitgram 基于 Telegram 构建。你的所有聊天、联系人和数据都保留在你原有的 Telegram 账号中。"
         )
     }
 }

@@ -1,3 +1,90 @@
+# Chitgram iOS — notes for Claude (read this first)
+
+Chitgram iOS is the iOS port of **Chitgram**, an Uzbek fork of Telegram. The Android original is the source of truth
+for features: `C:\Users\shohj\Documents\Chatgram` (its own code in `TMessagesProj/src/main/java/org/fenixuz/`; read
+its `CLAUDE.md` and `README.md`). Our feature map: `docs/chitgram/feature-map.md` (on branch `chitgram-next`).
+
+## The base: Novagram iOS (since 2026-11-07)
+
+The owner asked to take **Novagram iOS** (`github.com/Novagramorg/iOS`, `main` at c29c0fcf, a Telegram-iOS 13.1.1
+snapshot, ~300K users on the App Store) and make it Chitgram ("shuni ol, bizniki qil … bunda hammasi tayyor"). Novagram
+and Chitgram Android come from the same "Fenixuz" code, so most features match (deleted and edited messages, ghost
+mode, chat lock, hidden chats, folders, multi-account, STT with offline Uzbek, translation, QR and bot-token login,
+unread reminder, auto-accept, …). Branch **`chitgram-nova`** starts from it.
+
+- **Licence.** Telegram-iOS is GPL-2.0, and Novagram's two SDKs (`CallRecordingKit`, `ReviewPromptKit`) are GPL-2.0;
+  they are vendored under `submodules/Novagram/` (no longer submodules). Our tree stays public (`chatgram2026/ios`).
+- **Removed, because they are not Novagram's to give or not ours to use:** the closed binary SDKs `NovagramAds`
+  (ads), `NovagramInsights`/`InsightsUI` (admin statistics), `NovagramServices`/`ServicesUI` (statistics counter,
+  review-login code, currency rates); Novagram's statistics and ad servers; its alternate icons and logo; its bot
+  catalogue (@novagram_* bots); its release scripts, Apple team id and App Store id. The modules the Telegram-owned
+  hooks import (`NovagramSponsored`, `NovagramChannelStats`, `NovagramAnalytics`) remain as no-op stubs with the same
+  API, so the hooks are unchanged; Telegram's own ads still follow the "Remove all ads" switch.
+- **Rewired to Chitgram:** demo login reads `ChitgramDemo*` Info.plist keys from the signed build's configuration
+  (`NovagramDemoCodeFetcher`, timed for the owner's code server); the update check looks up this app's own listing;
+  the Rate row stays hidden until `ReviewPromptLinks.chitgramAppStoreId` is set; the proxy entry points stay hidden
+  while no proxy list is bundled (Novagram's paid list was never in the repo); brand blue is Chitgram's #0A84FF;
+  user-visible "Novagram" became "Chitgram" (type and module names keep `Novagram…`).
+- **The earlier port** (Telegram 13.1.2 + our own `Chitgram…` modules) is kept on `chitgram` / `chitgram-next`. Its
+  Chitgram-only features still have to be brought over: Chitgram Premium (Stars), voice and video roulettes, cloud
+  sync with Android, auto messenger, chat finder, badges, big files, APK shield, share categories, the tab bar
+  editor, keyword watcher, auto answer, and the Android **layout** (the "Chitgram" section in Settings with its rows,
+  the Sozlamalar screen) in place of Novagram's "Novagram Settings" screen.
+- Persisted Novagram identifiers (`pro_messager` suite, `fenix_*` keys, `uz.fenixuz.app.ChatLock` keychain service)
+  stay as they are: they are internal names, and the iOS app has no users yet.
+
+## The owner
+
+Writes in Uzbek, often quick and phonetic. **Answer in Uzbek, plainly.** Not a programmer: say what changed and what
+they must do, give exact commands, never ask them to read code.
+
+## Goal
+
+The owner's words: "funksiyalari joylashuvi android bilan bir xil bo'lsin". Every Chitgram feature, **in the same
+place in the UI as on Android**: the same settings section, rows and order, the same menus and toolbar buttons, the
+same names. Texts come from the Android `org/fenixuz/utils/LanguageCode.kt` (`TitleLanguages(id, en, uz, ru)`).
+
+## Decisions the owner made
+
+- **Roulettes included** and **Premium the same as Android** (Stars paid reaction in @chitgram_org), although App
+  Store guidelines 1.2 and 3.1.1 speak against them. Owner accepted the risks (2026-11-04).
+- **Apple Developer account: the owner's.** Never type their Apple ID or password; signing uses the App Store Connect
+  API key the owner added to Codemagic.
+- **Builds:** signed builds and TestFlight on **Codemagic** (`codemagic.yaml`, workflow "Chitgram TestFlight",
+  started by hand; free plan 500 M2 minutes a month, 120 min a build). Bundle id **`com.chitgram.app`** (owner,
+  2026-11-06; `com.chatgram.messenger` could not be freed), app group `group.com.chitgram.app`. GitHub Actions on
+  the fork is disabled (HTTP 422), so Codemagic is the only compiler today.
+- **Take Novagram as the base** (2026-11-07), keeping the old port on its branches.
+
+## Secrets
+
+- `TELEGRAM_APP_ID` / `TELEGRAM_APP_HASH`, the demo numbers and code URLs, Firebase and ads keys: only in the
+  Codemagic variable group `chitgram` (values prepared in `D:\ChitgramIOS\config\codemagic-variables.txt`). Never
+  commit, print or upload them elsewhere. The build writes them into the configuration JSON outside the repo, and
+  `Telegram/BUILD` (`ChitgramDemoInfoPlist`) puts the demo and Firebase values into Info.plist.
+
+## How we change this tree
+
+- Novagram's modules live in `submodules/Novagram/<Feature>/`; every hook they have in a Telegram-owned file is
+  indexed in `submodules/Novagram/HOOKS.md`. New Chitgram code goes into `submodules/Chitgram…` modules; Telegram files
+  change only at small hook points marked `// Chitgram:`.
+- This PC is Windows: **no Swift compiler or Xcode here.** Every check is a Codemagic build. Read the neighbouring
+  code and the notes below before writing.
+- Bash on this machine mangles backslashes in heredocs: write Python edit scripts with the Write tool instead.
+- Keep everything on D: (drive C is nearly full).
+
+## Git
+
+- `origin` = `chatgram2026/ios` (push only there). Branches: `chitgram-nova` (this base), `chitgram` /
+  `chitgram-next` (the earlier port), `novagram-main` (Novagram's code as fetched, local only).
+- Commit style: imperative summary, a short "why" body, `Co-Authored-By: Claude …`.
+
+---
+
+The rest of this file is **Novagram's own CLAUDE.md**, kept because it describes this tree (its modules, hooks and
+the Telegram notes for 13.1.1). Where it speaks of Novagram's Apple team, bundle ids, `run.sh` / `publish.sh` /
+`release.sh` (removed), ads, analytics or services SDKs (removed), it does not apply to Chitgram.
+
 # CLAUDE.md
 
 This file provides guidance to AI assistants working with the **Novagram fork of Telegram-iOS** (internal codename **Fenixuz** until 2026-10-27; the code now says **Novagram** too).
@@ -8,8 +95,7 @@ This file provides guidance to AI assistants working with the **Novagram fork of
 
 ## Novagram fork — context
 
-- Brand: **Novagram** — the user-visible app name + icon since 2026-06-20 (previously "Fenixuz" / display name "Fenix Uz"). Since 2026-10-27 the code says **Novagram** as well: module paths (`submodules/Novagram/`), Bazel targets and file/type names (`NovagramL10n`, `NovagramDemoCodeFetcher`, `NovagramMessenger`, `NovagramSponsored`, …). The brand is final (~300K users): do not add new `Fenix` / `Fenixuz` / `ProMessager` names. **Persisted identifiers keep their old spelling and must NEVER be renamed**: the bundle id `uz.fenixuz.app` and its extension ids, App Group and Keychain groups, the Keychain services `uz.fenixuz.app.ChatLock` / `uz.fenixuz.app.Analytics`, the `pro_messager` UserDefaults suite and every `fenix_*` / `fenixuz_*` key, `uz.fenixuz.theme`, `fenixuz.unreadReminder`, the provisioning profile files `Fenixuz*.mobileprovision`. Renaming one wipes users' settings or PINs, counts devices twice in statistics or breaks App Store updates (full list: `submodules/Novagram/HOOKS.md` → "Fenixuz → Novagram rename"). Brand accent color: Novagram blue `#0A9BF5`. Organization: **Vipads MCHJ**, Apple Team ID `ZDBP5RSRZF`, Apple ID `vipadsllc@gmail.com`.
-- **Apple team rule** — every Apple reference (certs, App Store Connect, provisioning profiles, App Groups, keychain groups, `DEVELOPMENT_TEAM` in pbxproj/xcconfig) MUST point to Team ID `ZDBP5RSRZF` (Vipads MCHJ). Never a personal team. Development certs may display the individual developer's name in their label ("Apple Development: Azimjon Abdurasulov") because Apple labels Dev certs by Apple ID owner — but the **Team ID** under which they are issued is always `ZDBP5RSRZF`.
+- Brand: **Novagram** — the user-visible app name + icon since 2026-06-20 (previously "Fenixuz" / display name "Fenix Uz"). Since 2026-10-27 the code says **Novagram** as well: module paths (`submodules/Novagram/`), Bazel targets and file/type names (`NovagramL10n`, `NovagramDemoCodeFetcher`, `NovagramMessenger`, `NovagramSponsored`, …). The brand is final (~300K users): do not add new `Fenix` / `Fenixuz` / `ProMessager` names. **Persisted identifiers keep their old spelling and must NEVER be renamed**: the bundle id `uz.fenixuz.app` and its extension ids, App Group and Keychain groups, the Keychain services `uz.fenixuz.app.ChatLock` / `uz.fenixuz.app.Analytics`, the `pro_messager` UserDefaults suite and every `fenix_*` / `fenixuz_*` key, `uz.fenixuz.theme`, `fenixuz.unreadReminder`, the provisioning profile files `Fenixuz*.mobileprovision`. Renaming one wipes users' settings or PINs, counts devices twice in statistics or breaks App Store updates (full list: `submodules/Novagram/HOOKS.md` → "Fenixuz → Novagram rename"). Brand accent color: Novagram blue `#0A9BF5`. (Novagram's organisation and Apple team: not ours.)
 - App Store bundle: `uz.fenixuz.app` (kept in `build-system/appstore-configuration.json` for release builds).
 - Simulator/dev bundle: `ph.telegra.Telegraph` (kept in `build-system/my-config.json`, fake codesigning).
 - All Novagram-specific code lives in `submodules/Novagram/<Feature>/` modules. Telegram source files contain at most 1–3 line `import NovagramX` hooks. **Never** add Novagram feature code into Telegram-owned files (TelegramUI/Sources, ChatListUI/Sources, SettingsUI/Sources, AuthorizationUI/Sources, etc.) — always create or extend a Novagram submodule. When you work on an existing fat hook, move its logic into the module in the same change (backlog: `submodules/Novagram/HOOKS.md`, "Thin hooks and the formatter").

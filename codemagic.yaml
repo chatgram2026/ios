@@ -1,0 +1,347 @@
+# Chitgram: signed build for TestFlight on Codemagic (the owner's choice, 2026-11-04).
+#
+# GitHub Actions keeps doing the free compile checks on every push (.github/workflows/chitgram-ios.yml). This
+# workflow has no trigger: it is started by hand in Codemagic when a build should reach phones, so the monthly
+# free minutes go only to builds that are uploaded.
+#
+# It needs, in Codemagic (Teams > Integrations / Environment variables):
+#   - the App Store Connect API key, added as a Developer Portal integration (the owner's existing one is named
+#     "toping_app_store_connect"; an API key covers every app of the Apple team);
+#   - a variable group "chitgram" holding TELEGRAM_APP_ID, TELEGRAM_APP_HASH, TELEGRAM_TEAM_ID and
+#     CERTIFICATE_PRIVATE_KEY (an RSA key: the distribution certificate is made with it once and then reused),
+#     and, for App Review's demo login, CHITGRAM_DEMO_PHONE, CHITGRAM_DEMO_PHONE_2 and CHITGRAM_DEMO_CODE_URL.
+# And in the Apple Developer account, made by hand first because the API cannot attach an app group to an App ID:
+# the app group group.com.chitgram.app and the seven App IDs below, each with that app group, the main one
+# also with Push Notifications.
+workflows:
+  testflight:
+    name: Chitgram TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 120
+    integrations:
+      app_store_connect: toping_app_store_connect
+    environment:
+      xcode: 27.1
+      groups:
+        - chitgram
+      vars:
+        # The owner's choice (2026-11-06): com.chatgram.messenger was first registered with a capital C and could not
+        # be freed, so the iOS app uses its own id. The app group and the six extensions follow it.
+        BUNDLE_ID: com.chitgram.app
+        CONFIGURATION: release_arm64
+        CACHE_DIR: /Users/builder/telegram-bazel-cache
+        # Codemagic keeps 3 GB of cache per build; the disk cache compresses to about a third.
+        CACHE_LIMIT_MB: "7000"
+    cache:
+      cache_paths:
+        - /Users/builder/telegram-bazel-cache
+    scripts:
+      - name: Fetch submodules
+        script: |
+          set -euo pipefail
+          git submodule sync --recursive
+          git submodule update --init --depth 1 --jobs 8 --recursive
+          git submodule status --recursive | cut -c1-120
+          df -h /
+          sysctl -n hw.ncpu hw.memsize
+          xcodebuild -version
+
+      - name: Write the build configuration
+        script: |
+          set -euo pipefail
+          mkdir -p "$HOME/chitgram-config"
+          python3 - <<'EOF'
+          import json
+          import os
+
+          configuration = {
+              "bundle_id": os.environ["BUNDLE_ID"],
+              "api_id": os.environ["TELEGRAM_APP_ID"].strip(),
+              "api_hash": os.environ["TELEGRAM_APP_HASH"].strip(),
+              "team_id": os.environ["TELEGRAM_TEAM_ID"].strip(),
+              "app_center_id": "0",
+              "is_internal_build": "false",
+              "is_appstore_build": "true",
+              # The app's Apple ID from App Store Connect (App Information). Public: it is in the App Store link.
+              "appstore_id": os.environ.get("CHITGRAM_APPSTORE_ID", "").strip() or "6831325153",
+              "app_specific_url_scheme": "tg",
+              "premium_iap_product_id": "",
+              "enable_siri": False,
+              "enable_icloud": False,
+              # The App Review demo login (optional variables of the same group).
+              "chitgram_demo_phone": os.environ.get("CHITGRAM_DEMO_PHONE", "").strip(),
+              "chitgram_demo_phone_2": os.environ.get("CHITGRAM_DEMO_PHONE_2", "").strip(),
+              "chitgram_demo_code_url": os.environ.get("CHITGRAM_DEMO_CODE_URL", "").strip(),
+              "chitgram_demo_code_url_2": os.environ.get("CHITGRAM_DEMO_CODE_URL_2", "").strip(),
+              # The Firestore project the Chitgram badges live in (Android google-services.json).
+              "chitgram_firebase_project_id": os.environ.get("CHITGRAM_FIREBASE_PROJECT_ID", "").strip(),
+              "chitgram_firebase_api_key": os.environ.get("CHITGRAM_FIREBASE_API_KEY", "").strip(),
+              "chitgram_firebase_app_id": os.environ.get("CHITGRAM_FIREBASE_APP_ID", "").strip(),
+              # The sponsored-channel search ads backend (Android ADS_BASE_URL / ADS_API_KEY).
+              "chitgram_ads_base_url": os.environ.get("CHITGRAM_ADS_BASE_URL", "").strip(),
+              "chitgram_ads_api_key": os.environ.get("CHITGRAM_ADS_API_KEY", "").strip(),
+          }
+          with open(os.path.expanduser("~/chitgram-config/configuration.json"), "w") as file:
+              json.dump(configuration, file, indent=2)
+          print("configuration written for", configuration["bundle_id"])
+          EOF
+
+      - name: Signing files
+        script: |
+          set -euo pipefail
+          # The key is pasted into Codemagic by hand, which can turn its line breaks into spaces or "\n", or it may
+          # come as base64: rebuild a proper PEM file from whatever form it has, and check it before using it.
+          mkdir -p "$HOME/chitgram-config"
+          python3 - <<'PYEOF'
+          import base64, os, re, sys
+          value = os.environ.get("CERTIFICATE_PRIVATE_KEY", "").strip().strip('"').strip("'")
+          value = value.replace("\\n", "\n").replace("\r", "")
+          if "-----BEGIN" not in value:
+              compact = re.sub(r"\s+", "", value)
+              try:
+                  decoded = base64.b64decode(compact + "=" * (-len(compact) % 4))
+              except Exception:
+                  decoded = b""
+              if b"-----BEGIN" in decoded:
+                  value = decoded.decode("utf-8", "replace")
+              elif decoded[:1] == b"\x30":
+                  value = "-----BEGIN RSA PRIVATE KEY-----\n" + compact + "\n-----END RSA PRIVATE KEY-----"
+          match = re.search(r"-----BEGIN ([A-Z ]+)-----(.*?)-----END \1-----", value, re.S)
+          if not match:
+              sys.exit("CERTIFICATE_PRIVATE_KEY does not hold a private key: paste the whole ios_distribution_private_key file")
+          kind = match.group(1)
+          body = re.sub(r"\s+", "", match.group(2))
+          lines = [body[i:i + 64] for i in range(0, len(body), 64)]
+          path = os.path.expanduser("~/chitgram-config/certificate_private_key.pem")
+          with open(path, "w") as output:
+              output.write("-----BEGIN %s-----\n%s\n-----END %s-----\n" % (kind, "\n".join(lines), kind))
+          os.chmod(path, 0o600)
+          print("Certificate key: %s, %d characters" % (kind, len(body)))
+          PYEOF
+          CERTIFICATE_KEY_FILE="$HOME/chitgram-config/certificate_private_key.pem"
+          if ! openssl rsa -in "$CERTIFICATE_KEY_FILE" -check -noout > /dev/null; then
+            echo "CERTIFICATE_PRIVATE_KEY is not a valid RSA private key: paste the whole ios_distribution_private_key file"
+            exit 1
+          fi
+          keychain initialize
+          # Creates the distribution certificate on the first build and an App Store profile for every App ID
+          # that has none yet; later builds download them.
+          for suffix in "" .Share .NotificationContent .NotificationService .SiriIntents .Widget .BroadcastUpload; do
+            app-store-connect fetch-signing-files "$BUNDLE_ID$suffix" \
+              --type IOS_APP_STORE \
+              --certificate-key="@file:$CERTIFICATE_KEY_FILE" \
+              --create
+          done
+          keychain add-certificates
+          # Make.py reads the profiles from <dir>/profiles and names them by their bundle id.
+          rm -rf "$HOME/chitgram-signing"
+          mkdir -p "$HOME/chitgram-signing/profiles" "$HOME/chitgram-signing/certs"
+          # fetch-signing-files saves to Xcode's UserData folder on current Xcode and to MobileDevice on older ones.
+          shopt -s nullglob
+          PROFILES=(
+            "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/"*.mobileprovision
+            "$HOME/Library/MobileDevice/Provisioning Profiles/"*.mobileprovision
+          )
+          shopt -u nullglob
+          if [ "${#PROFILES[@]}" -eq 0 ]; then
+            echo "No provisioning profile found in Xcode/UserData/Provisioning Profiles or MobileDevice/Provisioning Profiles"
+            exit 1
+          fi
+          cp "${PROFILES[@]}" "$HOME/chitgram-signing/profiles/"
+          ls -l "$HOME/chitgram-signing/profiles"
+          # Make.py silently skips every profile whose team differs from team_id, so the build must use the profiles' team.
+          python3 - <<'PYEOF'
+          import glob, json, os, plistlib, subprocess, sys
+          teams = set()
+          for path in glob.glob(os.path.expanduser("~/chitgram-signing/profiles/*.mobileprovision")):
+              data = subprocess.run(["openssl", "smime", "-inform", "der", "-verify", "-noverify", "-in", path],
+                                    stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).stdout
+              profile = plistlib.loads(data)
+              teams.update(profile["TeamIdentifier"])
+          if len(teams) != 1:
+              sys.exit("The profiles belong to %d teams, expected one: %s" % (len(teams), sorted(teams)))
+          team = teams.pop()
+          config_path = os.path.expanduser("~/chitgram-config/configuration.json")
+          with open(config_path) as file:
+              configuration = json.load(file)
+          if configuration["team_id"] == team:
+              print("Team check: the profiles' TeamIdentifier matches TELEGRAM_TEAM_ID")
+          else:
+              # Not a secret; split so that Codemagic's log masking cannot hide which team it is.
+              print("Team check: MISMATCH, TELEGRAM_TEAM_ID differs from the profiles' TeamIdentifier: " + " ".join(team))
+              print("Team check: building with the profiles' team")
+              configuration["team_id"] = team
+              with open(config_path, "w") as file:
+                  json.dump(configuration, file, indent=2)
+          PYEOF
+
+          # Make.py needs the app's own App Store profile with Push Notifications and the app group: keep only the newest
+          # profile of each app (Apple still lists the ones a capability change made invalid, and Make.py takes the
+          # first it meets), say which profile is what, and stop here with what to fix instead of Make.py's bare error.
+          python3 - <<'PYEOF'
+          import glob, json, os, plistlib, subprocess, sys
+          configuration = json.load(open(os.path.expanduser("~/chitgram-config/configuration.json")))
+          team = configuration["team_id"]
+          bundle = configuration["bundle_id"]
+          group = "group." + bundle
+          newest = {}
+          for path in glob.glob(os.path.expanduser("~/chitgram-signing/profiles/*.mobileprovision")):
+              data = subprocess.run(["openssl", "smime", "-inform", "der", "-verify", "-noverify", "-in", path],
+                                    stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).stdout
+              profile = plistlib.loads(data)
+              identifier = profile.get("Entitlements", {}).get("application-identifier", "")
+              key = (identifier, bool(profile.get("ProvisionedDevices")))
+              if key in newest and newest[key][0] >= profile["CreationDate"]:
+                  os.remove(path)
+                  continue
+              if key in newest:
+                  os.remove(newest[key][1])
+              newest[key] = (profile["CreationDate"], path, profile)
+          main = None
+          problems = []
+          for (identifier, devices), (created, path, profile) in sorted(newest.items()):
+              entitlements = profile.get("Entitlements", {})
+              prefix, _, app = identifier.partition(".")
+              groups = entitlements.get("com.apple.security.application-groups", [])
+              print("Profile %s: %s (%s, made %s), prefix is the team: %s, push: %s, app groups: %s" % (
+                  os.path.basename(path)[:8], app, "devices" if devices else "App Store", created.strftime("%Y-%m-%d %H:%M"),
+                  "yes" if prefix == team else "NO", entitlements.get("aps-environment", "NONE"), ",".join(groups) or "none"))
+              if devices:
+                  continue
+              if group not in groups:
+                  if any(g.lower() == group.lower() for g in groups):
+                      problems.append("%s: its app group has other letter case than %s" % (app, group))
+                  else:
+                      problems.append("%s: App Groups with %s is not on" % (app, group))
+              if identifier == team + "." + bundle:
+                  main = entitlements
+          if main is None:
+              sys.exit("No App Store profile for %s itself. Check that the App ID %s exists in the Apple Developer portal "
+                       "in the same team as the App Store Connect key." % (bundle, bundle))
+          if "aps-environment" not in main:
+              problems.append("%s: Push Notifications is not on" % bundle)
+          if problems:
+              for problem in problems:
+                  print("Profile check: " + problem)
+              sys.exit("Fix these in the Apple Developer portal (Identifiers): the app group must be exactly %s, chosen in "
+                       "App Groups of every App ID, and %s needs Push Notifications. Then build again." % (group, bundle))
+          print("Profile check: every App Store profile has %s, and %s has Push Notifications (%s)" % (group, bundle, main["aps-environment"]))
+          PYEOF
+
+      - name: Toolchain (Metal, no ccache)
+        script: |
+          # Since Xcode 26 the Metal compiler is a separate download, and the Codemagic image does not carry it
+          # (the QR Studio shaders failed with "missing Metal Toolchain"). Skip the download when it already works.
+          set -uo pipefail
+          # The image has Homebrew's ccache. TDLib's CMake finds it and makes it the compiler launcher, but the
+          # td genrule runs with PATH=/bin:/usr/bin:/usr/local/bin, so every compile fails "ccache: command not
+          # found" (Error 127). GitHub's runner has no ccache, which is why CI never saw it.
+          if command -v ccache >/dev/null 2>&1 || [ -e /opt/homebrew/bin/ccache ]; then
+            brew uninstall --ignore-dependencies --force ccache || true
+          fi
+          if [ -e /opt/homebrew/bin/ccache ]; then
+            echo "ccache is still installed; TDLib would fail to build"
+            exit 1
+          fi
+          echo "ccache: not installed"
+          metal_works() {
+            echo 'kernel void k() {}' | xcrun metal -x metal -c -o /dev/null - 2>/dev/null
+          }
+          if metal_works; then
+            echo "Metal toolchain: already installed"
+          else
+            xcodebuild -downloadComponent MetalToolchain
+          fi
+          # As upstream does for its own builds (build-system/Make/TartBuild.py): the toolchain only works while its
+          # DMG is mounted, and Xcode mounts it lazily, so `xcrun metal` right after the download can still fail, and
+          # Bazel's parallel Metal compiles can race on it. Mount it once here. Once mounted, xcrun finds every Metal
+          # tool in it except `metal`, which a stub of that name in the Xcode toolchain shadows; the stub only prints
+          # "missing Metal Toolchain", so that name is pointed at the real compiler.
+          METAL_REAL=/Volumes/MetalToolchainCryptex/Metal.xctoolchain/usr/bin/metal
+          for attempt in 1 2 3 4 5 6; do
+            if [ -x "$METAL_REAL" ]; then
+              break
+            fi
+            METAL_DMG="$(ls -t /System/Library/AssetsV2/com_apple_MobileAsset_MetalToolchain/*.asset/AssetData/Restore/*.dmg 2>/dev/null | head -n 1)"
+            if [ -n "$METAL_DMG" ]; then
+              hdiutil attach "$METAL_DMG" -mountpoint /Volumes/MetalToolchainCryptex -nobrowse -quiet || true
+            fi
+            if [ ! -x "$METAL_REAL" ]; then
+              echo "Metal toolchain: not mounted yet (attempt $attempt)"
+              sleep 5
+            fi
+          done
+          if [ -x "$METAL_REAL" ] && ! metal_works; then
+            sudo ln -sf "$METAL_REAL" "$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin/metal" || true
+          fi
+          xcrun metal --version || true
+          xcrun -f metallib || true
+          echo 'kernel void k() {}' | xcrun metal -x metal -c -o /dev/null -
+
+      - name: Build
+        script: |
+          set -uo pipefail
+          mkdir -p "$CACHE_DIR/disk" "$CACHE_DIR/repo" "$CM_BUILD_DIR/build"
+          du -sh "$CACHE_DIR" || true
+          # 8 cores and 12 GB of RAM: keep Bazel from starting more Swift compiles than fit in memory.
+          cat > "$HOME/.bazelrc" <<EOF
+          build --repository_cache=$CACHE_DIR/repo
+          build --jobs=6
+          build --local_resources=memory=HOST_RAM*.75
+          EOF
+          python3 -u build-system/Make/Make.py \
+            --overrideXcodeVersion \
+            --cacheDir="$CACHE_DIR/disk" \
+            build \
+            --configurationPath="$HOME/chitgram-config/configuration.json" \
+            --codesigningInformationPath="$HOME/chitgram-signing" \
+            --configuration="$CONFIGURATION" \
+            --buildNumber="$((BUILD_NUMBER + 1))" \
+            --outputBuildArtifactsPath="$CM_BUILD_DIR/build/artifacts" 2>&1 | tee "$CM_BUILD_DIR/build/build.log"
+          status=${PIPESTATUS[0]}
+          # Trimmed even after a failure, so the next build starts warm and the cache stays inside the limit.
+          python3 - <<'EOF'
+          import os
+
+          root = os.environ["CACHE_DIR"]
+          limit = int(os.environ["CACHE_LIMIT_MB"]) * 1024 * 1024
+          files = []
+          for base, _, names in os.walk(root):
+              for name in names:
+                  path = os.path.join(base, name)
+                  try:
+                      st = os.lstat(path)
+                  except OSError:
+                      continue
+                  files.append((max(st.st_atime, st.st_mtime), st.st_size, path))
+          total = sum(f[1] for f in files)
+          print("cache before: %.1f GB in %d files" % (total / 2**30, len(files)))
+          files.sort()
+          for _, size, path in files:
+              if total <= limit:
+                  break
+              if "/repo/" in path:
+                  continue
+              os.remove(path)
+              total -= size
+          print("cache after: %.1f GB" % (total / 2**30))
+          EOF
+          if [ "$status" -ne 0 ]; then
+            # A failed genrule (td, ffmpeg, …) prints its own error far above Bazel's summary: show what led to it.
+            echo "===== the output around each failed action ====="
+            grep -n -B 60 -A 30 -E "^ERROR: .* failed: " "$CM_BUILD_DIR/build/build.log" \
+              | grep -v -E "^[0-9]+[-:]\[[0-9,]+ / [0-9,]+\]" | tail -n 400
+            echo "===== error lines ====="
+            grep -E "(error:|ERROR:|CMake Error|\*\*\* |fatal)" "$CM_BUILD_DIR/build/build.log" | grep -v "^INFO" | sort -u | head -n 100
+          fi
+          exit "$status"
+
+    artifacts:
+      - build/artifacts/Telegram.ipa
+      - build/artifacts/Telegram.DSYMs.zip
+      - build/build.log
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

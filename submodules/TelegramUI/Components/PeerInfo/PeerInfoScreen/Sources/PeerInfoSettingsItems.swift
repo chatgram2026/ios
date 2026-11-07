@@ -14,10 +14,8 @@ import TelegramStringFormatting
 import PeerNameColorItem
 import NovagramLocalization
 import NovagramMessenger
-import NovagramAnalytics
 import NovagramUpdateCheck
 import NovagramChannelStats
-import NovagramCurrencyRates
 import NovagramReviewPrompt
 import WalletContext
 
@@ -273,29 +271,8 @@ func settingsItems(data: PeerInfoScreenData?, context: AccountContext, presentat
     items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 0, text: NovagramSettingsSectionStrings.settingsRowTitle(langCode: novagramLangCode), titleColor: novagramGold, icon: novagramSettingsIcon(systemName: "flame.fill", color: .gold), longPressDuration: NovagramChannelStatsEntry.revealDuration, longPressAction: NovagramChannelStatsEntry.revealAction(context: context, authorize: NovagramAdsAdminGate.requestAccess), action: {
         interaction.openSettings(.novagramMessenger)
     }))
-    items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 2, text: NovagramSettingsSectionStrings.botsRowTitle(langCode: novagramLangCode), icon: novagramSettingsIcon(systemName: "bolt.circle.fill", color: .teal), action: {
-        interaction.openSettings(.novagramBots)
-    }))
-    items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 1, text: NovagramSettingsSectionStrings.analyticsRowTitle(langCode: novagramLangCode), icon: novagramSettingsIcon(systemName: "chart.bar.fill", color: .lightBlue), action: {
-        interaction.openSettings(.analytics)
-    }))
-    // Novagram: currency rates row under Analytics while the Developer switch is on. See HOOKS.md.
-    if NovagramDeveloperFlags.isCurrencyRatesViewEnabled {
-        items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 4, text: NovagramCurrencyRatesEntry.rowTitle(langCode: novagramLangCode), icon: novagramSettingsIcon(systemName: "dollarsign.circle.fill", color: .green), action: {
-            NovagramCurrencyRatesEntry.open(context: context)
-        }))
-    }
-    // Novagram: the Ads Analytics row (the ads panel) also shows while the Developer switch "Novagram ads
-    // panel" is on; iOS 16+ only, like the hidden reveal. See HOOKS.md.
-    var novagramShowsAdsPanel = NovagramChannelStatsEntry.isRowVisible(context: context)
-    if #available(iOS 16.0, *), NovagramDeveloperFlags.isAdsPanelEnabled {
-        novagramShowsAdsPanel = true
-    }
-    if novagramShowsAdsPanel {
-        items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 3, text: NovagramSettingsSectionStrings.adsAnalyticsRowTitle(langCode: novagramLangCode), icon: novagramSettingsIcon(systemName: "megaphone.fill", color: .violet), action: {
-            NovagramChannelStatsEntry.present(context: context)
-        }))
-    }
+    // Chitgram: Novagram's bot catalogue (its own @novagram_* bots), Analytics, currency rates and ads panel rows are
+    // removed; the last three ran on its closed SDKs and servers.
 
     let notificationsWarning: Bool
     if let settings = data.globalSettings {
@@ -405,9 +382,12 @@ func settingsItems(data: PeerInfoScreenData?, context: AccountContext, presentat
     items[.support]!.append(PeerInfoScreenDisclosureItem(id: 2, text: presentationData.strings.Settings_Tips, icon: PresentationResourcesSettings.tips, action: {
         interaction.openSettings(.tips)
     }))
-    items[.support]!.append(PeerInfoScreenDisclosureItem(id: 3, text: NovagramReviewPrompt.rateRowTitle(langCode: novagramLangCode), icon: novagramSettingsIcon(systemName: "star.fill", color: .yellow), action: {
-        NovagramReviewPrompt.openWriteReview(context: context)
-    })) // Novagram: Rate Novagram (App Store write-review page)
+    // Chitgram: the Rate row only once the app's App Store id is known (ReviewPromptLinks.chitgramAppStoreId).
+    if ReviewPromptLinks.writeReviewURL() != nil {
+        items[.support]!.append(PeerInfoScreenDisclosureItem(id: 3, text: NovagramReviewPrompt.rateRowTitle(langCode: novagramLangCode), icon: novagramSettingsIcon(systemName: "star.fill", color: .yellow), action: {
+            NovagramReviewPrompt.openWriteReview(context: context)
+        })) // Novagram: Rate Novagram (App Store write-review page)
+    }
     // Novagram: app version under the last section; a 20 s hold toggles the Developer section. See HOOKS.md.
     let novagramVersionItem = PeerInfoScreenCommentItem(id: 100, text: NovagramAppVersion.displayText)
     novagramVersionItem.novagramLongPressDuration = NovagramDeveloperSection.revealDuration

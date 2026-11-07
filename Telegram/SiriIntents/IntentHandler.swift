@@ -1074,7 +1074,7 @@ private final class WidgetIntentHandler {
             //let presentationData = WidgetPresentationData.getForExtension()
             
             let error = NSError(domain: "Locked", code: 1, userInfo: [
-                NSLocalizedDescriptionKey: "Open Novagram and enter passcode to edit widget."
+                NSLocalizedDescriptionKey: "Open Chitgram and enter passcode to edit widget."
             ])
             
             completion(nil, error)

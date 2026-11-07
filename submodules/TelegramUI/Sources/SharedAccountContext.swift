@@ -278,7 +278,7 @@ public final class SharedAccountContextImpl: SharedAccountContext {
             guard let self, !current.accounts.contains(where: { $0.0 == accountId }) else {
                 return .single(current)
             }
-            Logger.shared.log("Novagram", "waking suspended account \(accountId.int64) for an incoming call")
+            Logger.shared.log("Chitgram", "waking suspended account \(accountId.int64) for an incoming call")
             self.novagramHoldAccountForCall(accountId)
             // A suspended account opens in ~1-2 s; on timeout the caller gets the accounts without it and
             // falls back to upstream's drop.
@@ -293,7 +293,7 @@ public final class SharedAccountContextImpl: SharedAccountContext {
                 if let context = value.accounts.first(where: { $0.0 == accountId })?.1 {
                     self.novagramReleaseAccountWhenCallsEnd(accountId, context: context)
                 } else {
-                    Logger.shared.log("Novagram", "suspended account \(accountId.int64) did not load in time for the call")
+                    Logger.shared.log("Chitgram", "suspended account \(accountId.int64) did not load in time for the call")
                     self.novagramReleaseAccountForCall(accountId)
                 }
             }
@@ -343,7 +343,7 @@ public final class SharedAccountContextImpl: SharedAccountContext {
         |> take(1)
         |> delay(30.0, queue: .mainQueue())
         |> deliverOnMainQueue).start(next: { [weak self] _ in
-            Logger.shared.log("Novagram", "call over, letting account \(id.int64) sleep again")
+            Logger.shared.log("Chitgram", "call over, letting account \(id.int64) sleep again")
             self?.novagramReleaseAccountForCall(id)
         }))
     }

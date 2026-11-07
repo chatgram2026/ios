@@ -1,7 +1,8 @@
 
 [submodule "submodules/rlottie/rlottie"]
 	path = submodules/rlottie/rlottie
-	url=../rlottie.git
+	# Chitgram: absolute, so a fork (and Codemagic) fetches Telegram's repository.
+	url=https://github.com/TelegramMessenger/rlottie.git
 [submodule "build-system/bazel-rules/rules_apple"]
 	path = build-system/bazel-rules/rules_apple
 url=https://github.com/ali-fareed/rules_apple.git
@@ -13,7 +14,8 @@ url=https://github.com/bazelbuild/rules_swift.git
 	url = https://github.com/bazelbuild/apple_support.git
 [submodule "submodules/TgVoipWebrtc/tgcalls"]
 	path = submodules/TgVoipWebrtc/tgcalls
-url=../tgcalls.git
+# Chitgram: absolute, so a fork (and Codemagic) fetches Telegram's repository.
+	url=https://github.com/TelegramMessenger/tgcalls.git
 [submodule "third-party/libvpx/libvpx"]
 	path = third-party/libvpx/libvpx
 	url = https://github.com/webmproject/libvpx.git
@@ -38,9 +40,3 @@ url=../tgcalls.git
 [submodule "third-party/mtproto-engine"]
 	path = third-party/mtproto-engine
 	url = https://github.com/TelegramMessenger/mtproto-engine.git
-[submodule "submodules/Novagram/CallRecordingKit"]
-	path = submodules/Novagram/CallRecordingKit
-	url = https://github.com/Novagramorg/novagram-call-recording-kit-sdk.git
-[submodule "submodules/Novagram/ReviewPromptKit"]
-	path = submodules/Novagram/ReviewPromptKit
-	url = https://github.com/Novagramorg/novagram-review-prompt-kit-sdk.git

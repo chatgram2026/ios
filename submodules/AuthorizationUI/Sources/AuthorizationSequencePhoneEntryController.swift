@@ -101,11 +101,11 @@ public final class AuthorizationSequencePhoneEntryController: ViewController, MF
         
         if !otherAccountPhoneNumbers.1.isEmpty {
             self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "___close", style: .plain, target: self, action: #selector(self.cancelPressed))
-        } else if let proxyImage = UIImage(systemName: "lock.shield") {
+        } else if NovagramAutoProxyManager.shared.hasProxyPool, let proxyImage = UIImage(systemName: "lock.shield") {
             // Novagram: on first login (no other accounts) the free left slot carries a NovagramProxy
             // entry so a user in a blocked country can enable the proxy before logging in.
             let proxyItem = UIBarButtonItem(image: proxyImage, style: .plain, target: self, action: #selector(self.novagramProxyPressed))
-            proxyItem.accessibilityLabel = "NovagramProxy"
+            proxyItem.accessibilityLabel = "ChitgramProxy"
             self.navigationItem.leftBarButtonItem = proxyItem
         }
         
@@ -145,16 +145,16 @@ public final class AuthorizationSequencePhoneEntryController: ViewController, MF
         let actionTitle: String
         switch langCode {
         case "uz":
-            text = isOn ? "NovagramProxy yoqilgan. Telegram bloklangan hududlarda proksi orqali ulanadi." : "Telegram bloklangan bo'lsa, proksi orqali avtomatik ulanish. Yoqilsinmi?"
+            text = isOn ? "ChitgramProxy yoqilgan. Telegram bloklangan hududlarda proksi orqali ulanadi." : "Telegram bloklangan bo'lsa, proksi orqali avtomatik ulanish. Yoqilsinmi?"
             actionTitle = isOn ? "O'chirish" : "Yoqish"
         case "ru":
-            text = isOn ? "NovagramProxy включён. Подключается через прокси там, где Telegram заблокирован." : "Автоподключение через прокси там, где Telegram заблокирован. Включить?"
+            text = isOn ? "ChitgramProxy включён. Подключается через прокси там, где Telegram заблокирован." : "Автоподключение через прокси там, где Telegram заблокирован. Включить?"
             actionTitle = isOn ? "Выключить" : "Включить"
         case "zh":
-            text = isOn ? "NovagramProxy 已开启。在 Telegram 被封锁的地区会通过代理连接。" : "在 Telegram 被封锁的地区自动通过代理连接。要开启吗？"
+            text = isOn ? "ChitgramProxy 已开启。在 Telegram 被封锁的地区会通过代理连接。" : "在 Telegram 被封锁的地区自动通过代理连接。要开启吗？"
             actionTitle = isOn ? "关闭" : "开启"
         default:
-            text = isOn ? "NovagramProxy is on. It connects through a proxy where Telegram is blocked." : "Automatically connect through a proxy where Telegram is blocked. Enable?"
+            text = isOn ? "ChitgramProxy is on. It connects through a proxy where Telegram is blocked." : "Automatically connect through a proxy where Telegram is blocked. Enable?"
             actionTitle = isOn ? "Turn off" : "Enable"
         }
         let actions: [TextAlertAction] = [
@@ -166,7 +166,7 @@ public final class AuthorizationSequencePhoneEntryController: ViewController, MF
                 NovagramAutoProxyManager.shared.setEnabled(!isOn, sharedContext: self.sharedContext)
             })
         ]
-        let alert = textAlertController(sharedContext: self.sharedContext, title: "NovagramProxy", text: text, actions: actions)
+        let alert = textAlertController(sharedContext: self.sharedContext, title: "ChitgramProxy", text: text, actions: actions)
         (self.navigationController as? NavigationController)?.presentOverlay(controller: alert, inGlobal: true, blockInteraction: true)
     }
 

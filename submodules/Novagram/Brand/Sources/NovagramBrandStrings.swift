@@ -13,13 +13,13 @@ import Foundation
 // What is deliberately NOT rewritten:
 //   * Telegram's own products and entities — see `protectedPhrases`. We do not sell Premium,
 //     Stars, Business or Gifts (the Apple 3.1.1 gate blocks them and points at the official app),
-//     so "Novagram Premium" would be advertising something that does not exist. Passport is a
+//     so "Chitgram Premium" would be advertising something that does not exist. Passport is a
 //     Telegram service; Desktop/Web/App name the official clients; Terms and Team are legal and
 //     organisational references.
 //   * Lowercase `telegram` — it only ever appears inside URLs (`telegram.org`, 41 occurrences).
 //     Matching case-sensitively keeps every link intact without needing a URL parser.
 public enum NovagramBrandStrings {
-    public static let brandName = "Novagram"
+    public static let brandName = "Chitgram"
 
     /// Longest-first: `Telegram Stars` has to be claimed before `Telegram Star` can split it.
     private static let protectedPhrases: [String] = [

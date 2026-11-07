@@ -857,7 +857,7 @@ private func novagramRingingCallContent(_ content: UNMutableNotificationContent,
     do {
         return try content.updating(from: intent)
     } catch let e {
-        Logger.shared.log("NotificationService", "Novagram ringing call content failed: \(e)")
+        Logger.shared.log("NotificationService", "Chitgram ringing call content failed: \(e)")
         return nil
     }
 }

@@ -44,10 +44,10 @@ struct NovagramBotsRoot: Codable {
 enum NovagramBotsStrings {
     static func rowTitle(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Novagram Botlar"
-        case "ru": return "Боты Novagram"
-        case "zh": return "Novagram 机器人"
-        default:   return "Novagram Bots"
+        case "uz": return "Chitgram Botlar"
+        case "ru": return "Боты Chitgram"
+        case "zh": return "Chitgram 机器人"
+        default:   return "Chitgram Bots"
         }
     }
 
@@ -63,10 +63,10 @@ enum NovagramBotsStrings {
 public enum NovagramSettingsSectionStrings {
     public static func settingsRowTitle(langCode: String) -> String {
         switch langCode {
-        case "uz": return "Novagram sozlamalari"
-        case "ru": return "Настройки Novagram"
-        case "zh": return "Novagram 设置"
-        default:   return "Novagram Settings"
+        case "uz": return "Chitgram sozlamalari"
+        case "ru": return "Настройки Chitgram"
+        case "zh": return "Chitgram 设置"
+        default:   return "Chitgram Settings"
         }
     }
 
@@ -101,7 +101,7 @@ private let novagramBotsJSONString = """
 {
   "schemaVersion": 1,
   "updated": "2026-07-02",
-  "note": "Canonical source of truth for the Novagram Bots page (iOS + macOS + web). Each platform bundles a copy in its own resources. 'icon' = SF Symbol name (iOS/macOS). 'emoji' = fallback for web / emoji contexts. Tapping a bot opens its @username via the platform's resolve-username flow.",
+  "note": "Canonical source of truth for the Chitgram Bots page (iOS + macOS + web). Each platform bundles a copy in its own resources. 'icon' = SF Symbol name (iOS/macOS). 'emoji' = fallback for web / emoji contexts. Tapping a bot opens its @username via the platform's resolve-username flow.",
   "categories": [
     {
       "id": "downloaders",

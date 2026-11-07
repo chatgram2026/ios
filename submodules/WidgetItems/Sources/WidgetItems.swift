@@ -398,7 +398,7 @@ public extension WidgetPresentationData {
         autodeleteTimerUpdated: "Auto-delete timer updated",
         autodeleteTimerRemoved: "Auto-delete timer disabled",
         generalLockedTitle: "Locked",
-        generalLockedText: "Open Novagram and enter passcode to edit widget.",
+        generalLockedText: "Open Chitgram and enter passcode to edit widget.",
         chatSavedMessages: "Saved Messages"
     )
 }

@@ -3,10 +3,10 @@
 <plist version="1.0">
 <dict>
 	<!--
-		Novagram Privacy Manifest
+		Chitgram Privacy Manifest
 		See: https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
 		Required since iOS 17 / 2024-05 App Store deadline.
-		Match the disclosures in https://fenixuz.uz/privacy.html nutrition-label section.
+		Match the disclosures in the App Store privacy (nutrition label) section.
 	-->
 
 	<!-- We do NOT track users across apps owned by other companies. -->

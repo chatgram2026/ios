@@ -13,7 +13,7 @@ import AccountContext
 /// - `ChatListControllerImpl.viewDidAppear` calls `chatListDidAppear(...)`, the natural break.
 /// - The SDK decides (5 successes of one feature, 3 days after the start, 14 days apart, once per app version,
 ///   5 new successes after every request) and asks Apple's system prompt only.
-/// - The Settings "Rate Novagram" row opens the write-review page, never the prompt.
+/// - The Settings "Rate Chitgram" row opens the write-review page, never the prompt.
 ///
 /// See `submodules/Novagram/HOOKS.md`, "App Store rating prompt (2026-10-31)".
 public enum NovagramReviewPrompt {
@@ -222,7 +222,7 @@ public enum NovagramReviewPrompt {
 
     // MARK: - Settings row
 
-    /// "Rate Novagram" in the app's language (en, uz, ru, zh; anything else is English).
+    /// "Rate Chitgram" in the app's language (en, uz, ru, zh; anything else is English).
     public static func rateRowTitle(langCode: String) -> String {
         return ReviewPromptStrings(languageCode: langCode).rateTitle
     }
@@ -230,10 +230,10 @@ public enum NovagramReviewPrompt {
     /// The Settings row opens the App Store write-review page through the app's URL opener.
     public static func openWriteReview(context: AccountContext) {
         guard let url = ReviewPromptLinks.writeReviewURL() else {
-            log("Rate Novagram: no write-review URL")
+            log("Rate Chitgram: no write-review URL")
             return
         }
-        log("Rate Novagram: opening \(url.absoluteString)")
+        log("Rate Chitgram: opening \(url.absoluteString)")
         context.sharedContext.applicationBindings.openUrl(url.absoluteString)
     }
 }

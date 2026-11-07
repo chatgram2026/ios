@@ -165,7 +165,7 @@ class CallKitProviderDelegate: NSObject, CXProviderDelegate {
     }
     
     private static func providerConfiguration() -> CXProviderConfiguration {
-        let providerConfiguration = CXProviderConfiguration(localizedName: "Novagram")
+        let providerConfiguration = CXProviderConfiguration(localizedName: "Chitgram")
         
         providerConfiguration.supportsVideo = true
         providerConfiguration.maximumCallsPerCallGroup = 1
