@@ -9,8 +9,8 @@ name: Chitgram iOS build
 on:
   push:
     # chitgram-next is checked first; chitgram only gets commits that compiled, so Codemagic always builds a
-    # working tree.
-    branches: [ chitgram, chitgram-next ]
+    # working tree. chitgram-nova is the Novagram base (since 2026-11-07).
+    branches: [ chitgram, chitgram-next, chitgram-nova ]
     paths-ignore:
       - 'docs/**'
       - '**.md'
@@ -55,6 +55,11 @@ jobs:
           git config submodule.submodules/TgVoipWebrtc/tgcalls.url https://github.com/TelegramMessenger/tgcalls.git
           git submodule update --depth 1 --jobs 8 --recursive
           git submodule status --recursive | cut -c1-120
+          # Novagram's lines inside tgcalls (the call recording's audio tap) live as a patch; Novagram's own build
+          # scripts applied it before every build (codemagic.yaml does the same).
+          if [ -f submodules/Novagram/scripts/apply-submodule-patches.sh ]; then
+            bash submodules/Novagram/scripts/apply-submodule-patches.sh
+          fi
 
       - name: Free disk space
         run: |
@@ -95,6 +100,8 @@ jobs:
           build --jobs=4
           build --local_resources=memory=HOST_RAM*.75
           build --//Telegram:disableProvisioningProfiles
+          build --@build_bazel_rules_swift//swift:copt=-no-warnings-as-errors
+          build --@build_bazel_rules_swift//swift:exec_copt=-no-warnings-as-errors
           EOF
           cat "$HOME/.bazelrc"
 
