@@ -225,19 +225,28 @@ private final class ChitgramGradientView: UIView {
     }
 }
 
-/// A rounded gradient tile with a white icon, in the list and, larger, in the perk sheet (Android `iconTile`).
-private func chitgramIconTile(symbol: String, colors: [UIColor], size: CGFloat, iconSize: CGFloat) -> UIView {
+/// A rounded gradient tile with a white icon, in the list and, larger, in the perk sheet (Android `iconTile`). The
+/// icon is Android's own drawable (`Chitgram/Perk/…`), scaled down to fit the icon box but never up, as Android's
+/// `CENTER_INSIDE` does.
+private func chitgramIconTile(icon: String, colors: [UIColor], size: CGFloat, iconSize: CGFloat) -> UIView {
     let tile = ChitgramGradientView(colors: colors)
     tile.layer.cornerRadius = size * 0.27
     tile.clipsToBounds = true
-    let imageView = UIImageView(image: UIImage(systemName: symbol, withConfiguration: UIImage.SymbolConfiguration(pointSize: iconSize * 0.8, weight: .semibold))?.withRenderingMode(.alwaysTemplate))
+    let image = UIImage(bundleImageName: icon)?.withRenderingMode(.alwaysTemplate)
+    let imageView = UIImageView(image: image)
     imageView.tintColor = .white
-    imageView.contentMode = .center
+    if let image, image.size.width > iconSize || image.size.height > iconSize {
+        imageView.contentMode = .scaleAspectFit
+    } else {
+        imageView.contentMode = .center
+    }
     imageView.translatesAutoresizingMaskIntoConstraints = false
     tile.addSubview(imageView)
     NSLayoutConstraint.activate([
         imageView.centerXAnchor.constraint(equalTo: tile.centerXAnchor),
-        imageView.centerYAnchor.constraint(equalTo: tile.centerYAnchor)
+        imageView.centerYAnchor.constraint(equalTo: tile.centerYAnchor),
+        imageView.widthAnchor.constraint(equalToConstant: iconSize),
+        imageView.heightAnchor.constraint(equalToConstant: iconSize)
     ])
     chitgramFix(tile, width: size, height: size)
     return tile
@@ -531,7 +540,8 @@ private final class ChitgramPremiumSheetView: UIView {
 }
 
 private struct ChitgramPremiumPerk {
-    let symbol: String
+    /// Android's drawable for the perk, in `Chitgram/Perk`.
+    let icon: String
     let colors: [UIColor]
     let title: String
     let text: String
@@ -799,10 +809,11 @@ private final class ChitgramPremiumScreen: ViewController, UIScrollViewDelegate 
     }
 
     private func makeArrow() -> UIView {
-        let arrow = UIImageView(image: UIImage(systemName: "chevron.right", withConfiguration: UIImage.SymbolConfiguration(pointSize: 13.0, weight: .semibold))?.withRenderingMode(.alwaysTemplate))
+        // Android's `msg_arrowright`, at its own 24 pt.
+        let arrow = UIImageView(image: UIImage(bundleImageName: "Chitgram/Perk/Arrow")?.withRenderingMode(.alwaysTemplate))
         arrow.tintColor = self.theme.list.disclosureArrowColor
         arrow.contentMode = .center
-        chitgramFix(arrow, width: 20.0, height: 20.0)
+        chitgramFix(arrow, width: 24.0, height: 24.0)
         return arrow
     }
 
@@ -1015,18 +1026,18 @@ private final class ChitgramPremiumScreen: ViewController, UIScrollViewDelegate 
         let count = 6
         let context = self.context
         return [
-            ChitgramPremiumPerk(symbol: "checkmark.seal.fill", colors: chitgramPerkColors(0, count), title: ChitgramStrings.get(678), text: ChitgramStrings.get(679), free: ChitgramStrings.get(680), premium: ChitgramStrings.get(681), open: { [weak self] in
+            ChitgramPremiumPerk(icon: "Chitgram/Perk/Badge", colors: chitgramPerkColors(0, count), title: ChitgramStrings.get(678), text: ChitgramStrings.get(679), free: ChitgramStrings.get(680), premium: ChitgramStrings.get(681), open: { [weak self] in
                 self?.openBadgePicker()
             }),
-            ChitgramPremiumPerk(symbol: "clock.fill", colors: chitgramPerkColors(1, count), title: ChitgramStrings.get(449), text: ChitgramStrings.get(634), free: ChitgramStrings.get(641), premium: ChitgramStrings.get(642), open: { [weak self] in
+            ChitgramPremiumPerk(icon: "Chitgram/Perk/Clock", colors: chitgramPerkColors(1, count), title: ChitgramStrings.get(449), text: ChitgramStrings.get(634), free: ChitgramStrings.get(641), premium: ChitgramStrings.get(642), open: { [weak self] in
                 self?.push(chitgramAutoPostController(context: context))
             }),
-            ChitgramPremiumPerk(symbol: "bell.fill", colors: chitgramPerkColors(2, count), title: ChitgramStrings.get(568), text: ChitgramStrings.get(635), free: ChitgramStrings.format(643, ChitgramKeywords.freeWords), premium: ChitgramStrings.format(643, ChitgramKeywords.premiumWords), open: { [weak self] in
+            ChitgramPremiumPerk(icon: "Chitgram/Perk/Notifications", colors: chitgramPerkColors(2, count), title: ChitgramStrings.get(568), text: ChitgramStrings.get(635), free: ChitgramStrings.format(643, ChitgramKeywords.freeWords), premium: ChitgramStrings.format(643, ChitgramKeywords.premiumWords), open: { [weak self] in
                 self?.push(chitgramKeywordWatchController(context: context))
             }),
-            ChitgramPremiumPerk(symbol: "person.2.fill", colors: chitgramPerkColors(3, count), title: ChitgramStrings.get(598).replacingOccurrences(of: "%2$d", with: "\(ChitgramLimits.premiumAccounts)"), text: ChitgramStrings.get(636), free: ChitgramStrings.format(644, ChitgramLimits.freeAccounts), premium: ChitgramStrings.format(644, ChitgramLimits.premiumAccounts), open: nil),
-            ChitgramPremiumPerk(symbol: "square.and.arrow.up.fill", colors: chitgramPerkColors(4, count), title: ChitgramStrings.get(637), text: ChitgramStrings.get(638), free: ChitgramStrings.format(645, ChitgramLimits.freeShareBulk), premium: ChitgramStrings.format(645, ChitgramLimits.premiumShareBulk), open: nil),
-            ChitgramPremiumPerk(symbol: "nosign", colors: chitgramPerkColors(5, count), title: ChitgramStrings.get(451), text: ChitgramStrings.get(452), free: ChitgramStrings.get(646), premium: ChitgramStrings.get(451), open: nil)
+            ChitgramPremiumPerk(icon: "Chitgram/Perk/Accounts", colors: chitgramPerkColors(3, count), title: ChitgramStrings.get(598).replacingOccurrences(of: "%2$d", with: "\(ChitgramLimits.premiumAccounts)"), text: ChitgramStrings.get(636), free: ChitgramStrings.format(644, ChitgramLimits.freeAccounts), premium: ChitgramStrings.format(644, ChitgramLimits.premiumAccounts), open: nil),
+            ChitgramPremiumPerk(icon: "Chitgram/Perk/Share", colors: chitgramPerkColors(4, count), title: ChitgramStrings.get(637), text: ChitgramStrings.get(638), free: ChitgramStrings.format(645, ChitgramLimits.freeShareBulk), premium: ChitgramStrings.format(645, ChitgramLimits.premiumShareBulk), open: nil),
+            ChitgramPremiumPerk(icon: "Chitgram/Perk/Block", colors: chitgramPerkColors(5, count), title: ChitgramStrings.get(451), text: ChitgramStrings.get(452), free: ChitgramStrings.get(646), premium: ChitgramStrings.get(451), open: nil)
         ]
     }
 
@@ -1038,7 +1049,7 @@ private final class ChitgramPremiumScreen: ViewController, UIScrollViewDelegate 
                 card.addArrangedSubview(self.makeDivider(inset: 62.0))
             }
             let row = chitgramRow(spacing: 16.0)
-            row.addArrangedSubview(chitgramIconTile(symbol: perk.symbol, colors: perk.colors, size: 30.0, iconSize: 20.0))
+            row.addArrangedSubview(chitgramIconTile(icon: perk.icon, colors: perk.colors, size: 30.0, iconSize: 20.0))
             let texts = chitgramColumn(spacing: 2.0)
             texts.addArrangedSubview(chitgramLabel(perk.title, font: Font.semibold(15.5), color: self.primaryTextColor))
             texts.addArrangedSubview(chitgramLabel(perk.text, font: Font.regular(14.0), color: self.secondaryTextColor))
@@ -1167,7 +1178,7 @@ private final class ChitgramPremiumScreen: ViewController, UIScrollViewDelegate 
     private func showPerk(_ perk: ChitgramPremiumPerk) {
         let isActive = ChitgramPremium.isActive(accountPeerId: self.accountPeerId)
         let column = chitgramColumn()
-        column.addArrangedSubview(chitgramCentered(chitgramIconTile(symbol: perk.symbol, colors: perk.colors, size: 76.0, iconSize: 40.0)))
+        column.addArrangedSubview(chitgramCentered(chitgramIconTile(icon: perk.icon, colors: perk.colors, size: 76.0, iconSize: 40.0)))
         let title = chitgramLabel(perk.title, font: Font.bold(22.0), color: self.primaryTextColor, alignment: .center)
         column.setCustomSpacing(16.0, after: column.arrangedSubviews[0])
         column.addArrangedSubview(title)
