@@ -29,6 +29,10 @@ swift_library(
         "//submodules/AccountContext:AccountContext",
         "//submodules/BuildConfig:BuildConfig",
         "//submodules/TelegramUI/Components/EntityKeyboard",
+        "//submodules/ComponentFlow:ComponentFlow",
+        "//submodules/AppBundle:AppBundle",
+        "//submodules/TelegramUI/Components/Premium/PremiumStarComponent",
+        "//submodules/ConfettiEffect:ConfettiEffect",
     ],
     visibility = [
         "//visibility:public",

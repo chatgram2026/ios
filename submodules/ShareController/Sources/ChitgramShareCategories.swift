@@ -18,8 +18,8 @@ enum ChitgramShareCategory: Equatable {
 }
 
 /// Ticking a whole category is capped, more with Chitgram Premium (Android `FREE_BULK`, `PREMIUM_BULK`).
-let chitgramShareFreeBulk = 10
-let chitgramSharePremiumBulk = 100
+let chitgramShareFreeBulk = ChitgramLimits.freeShareBulk
+let chitgramSharePremiumBulk = ChitgramLimits.premiumShareBulk
 
 /// Past this many chats a share goes out one by one (Android `PACE_FROM`, `SharePacer`).
 let chitgramSharePaceFrom = 10

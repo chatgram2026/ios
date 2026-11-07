@@ -1,4 +1,5 @@
 import Foundation
+import ChitgramCore
 import UIKit
 import Display
 import AccountContext
@@ -229,19 +230,24 @@ extension PeerInfoScreenNode {
                 }
                 // Chitgram: 10 accounts, 32 with Chitgram Premium on any of them (Android UserConfig
                 // MAX_ACCOUNT_DEFAULT_COUNT / MAX_ACCOUNT_COUNT); over the limit the Chitgram Premium page opens.
-                var maximumAvailableAccounts: Int = ChitgramPremium.isActive(accountPeerId: strongSelf.context.account.peerId) ? 32 : 10
+                var maximumAvailableAccounts: Int = ChitgramPremium.isActive(accountPeerId: strongSelf.context.account.peerId) ? ChitgramLimits.premiumAccounts : ChitgramLimits.freeAccounts
                 var count: Int = 1
                 for (accountContext, _, _) in accountsAndPeers {
                     if !accountContext.account.testingEnvironment {
                         if ChitgramPremium.isActive(accountPeerId: accountContext.account.peerId) {
-                            maximumAvailableAccounts = 32
+                            maximumAvailableAccounts = ChitgramLimits.premiumAccounts
                         }
                         count += 1
                     }
                 }
                 
                 if count >= maximumAvailableAccounts {
-                    strongSelf.controller?.push(chitgramSectionController(context: strongSelf.context, row: .premium))
+                    let screen = strongSelf.controller
+                    chitgramShowAccountLimit(context: strongSelf.context, hasPremium: maximumAvailableAccounts > ChitgramLimits.freeAccounts, present: { [weak screen] c in
+                        screen?.present(c, in: .window(.root))
+                    }, push: { [weak screen] c in
+                        screen?.push(c)
+                    })
                 } else if count >= Int.max {
                     var replaceImpl: ((ViewController) -> Void)?
                     let controller = PremiumLimitScreen(context: strongSelf.context, subject: .accounts, count: Int32(count), action: {
