@@ -25,9 +25,13 @@ unread reminder, auto-accept, …). Branch **`chitgram-nova`** starts from it.
   the Rate row opens Chitgram's own App Store page (`ReviewPromptLinks.chitgramAppStoreId` = 6831325153); the proxy entry points stay hidden
   while no proxy list is bundled (Novagram's paid list was never in the repo); brand blue is Chitgram's #0A84FF;
   user-visible "Novagram" became "Chitgram" (type and module names keep `Novagram…`).
+- **Chitgram Premium is ported** (2026-11-07): `ChitgramCore` (whole), `ChitgramEngine` (Premium, cloud sync with
+  Android, owner's notices, badges; started per account by `ChitgramAccountServices` from `AccountContextImpl`),
+  `ChitgramSettings` (the Premium page only), `TelegramCore/Sources/Chitgram` (channel posts, paid reaction, scheduled
+  copies), `Images.xcassets/Chitgram`. Settings shows "Chitgram Premium" under "Chitgram Settings"
+  (`PeerInfoSettingsSection.chitgramPremium`). The TL schema is identical to the old port's (layer 232).
 - **The earlier port** (Telegram 13.1.2 + our own `Chitgram…` modules) is kept on `chitgram` / `chitgram-next`. Its
-  Chitgram-only features still have to be brought over: Chitgram Premium (Stars), voice and video roulettes, cloud
-  sync with Android, auto messenger, chat finder, badges, big files, APK shield, share categories, the tab bar
+  other Chitgram-only features still have to be brought over: voice and video roulettes, auto messenger, chat finder, badges, big files, APK shield, share categories, the tab bar
   editor, keyword watcher, auto answer, and the Android **layout** (the "Chitgram" section in Settings with its rows,
   the Sozlamalar screen) in place of Novagram's "Novagram Settings" screen.
 - Persisted Novagram identifiers (`pro_messager` suite, `fenix_*` keys, `uz.fenixuz.app.ChatLock` keychain service)

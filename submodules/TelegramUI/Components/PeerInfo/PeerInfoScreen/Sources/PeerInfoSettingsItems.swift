@@ -14,6 +14,7 @@ import TelegramStringFormatting
 import PeerNameColorItem
 import NovagramLocalization
 import NovagramMessenger
+import ChitgramCore
 import NovagramUpdateCheck
 import NovagramChannelStats
 import NovagramReviewPrompt
@@ -270,6 +271,11 @@ func settingsItems(data: PeerInfoScreenData?, context: AccountContext, presentat
     let novagramLangCode = NovagramL10n.languageKey(for: presentationData.strings)
     items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 0, text: NovagramSettingsSectionStrings.settingsRowTitle(langCode: novagramLangCode), titleColor: novagramGold, icon: novagramSettingsIcon(systemName: "flame.fill", color: .gold), longPressDuration: NovagramChannelStatsEntry.revealDuration, longPressAction: NovagramChannelStatsEntry.revealAction(context: context, authorize: NovagramAdsAdminGate.requestAccess), action: {
         interaction.openSettings(.novagramMessenger)
+    }))
+    // Chitgram: Chitgram Premium right under Chitgram Settings (Android puts it first in its Chitgram section).
+    ChitgramStrings.setLanguageCode(presentationData.strings.primaryComponent.languageCode)
+    items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 1, text: ChitgramStrings.get(427), icon: novagramSettingsIcon(systemName: "star.fill", color: .violet), action: {
+        interaction.openSettings(.chitgramPremium)
     }))
     // Chitgram: Novagram's bot catalogue (its own @novagram_* bots), Analytics, currency rates and ads panel rows are
     // removed; the last three ran on its closed SDKs and servers.

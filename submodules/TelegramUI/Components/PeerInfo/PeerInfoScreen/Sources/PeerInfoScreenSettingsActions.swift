@@ -17,6 +17,7 @@ import PasswordSetupUI
 import InstantPageCache
 import ContactListUI
 import NovagramMessenger
+import ChitgramSettings
 import WalletContext
 import UndoUI
 
@@ -73,6 +74,8 @@ extension PeerInfoScreenNode {
             ))
         case .novagramMessenger:
             push(novagramSettingsController(context: self.context))
+        case .chitgramPremium:
+            push(chitgramPremiumController(context: self.context))
         case .novagramBots:
             push(novagramBotsController(context: self.context))
         case .novagramAccounts:

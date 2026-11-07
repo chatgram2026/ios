@@ -31,6 +31,7 @@ import WalletContext
 import WalletConnectScreen
 import AlertUI
 import MetalEngine
+import ChitgramEngine
 
 private final class DeviceSpecificContactImportContext {
     let disposable = MetaDisposable()
@@ -191,6 +192,8 @@ public final class AccountContextImpl: AccountContext {
     private var contentSettingsDisposable: Disposable?
     private var appConfigurationDisposable: Disposable?
     private var countriesConfigurationDisposable: Disposable?
+    // Chitgram: Premium and what follows it (badges, notices, settings sync), in the main app only.
+    private var chitgramServices: ChitgramAccountServices?
     
     private let deviceSpecificContactImportContexts: QueueLocalObject<DeviceSpecificContactImportContexts>
     private var managedAppSpecificContactsDisposable: Disposable?
@@ -701,6 +704,11 @@ public final class AccountContextImpl: AccountContext {
                 }
                 return try await requestPasscodeAuthentication(context: self, scope: .resource(namespace: request.namespace), lifetime: request.lifetime, biometricReason: self.sharedContext.currentPresentationData.with { $0 }.strings.Wallet_AuthenticationReason, authenticateBiometrics: authenticateBiometrics)
             }
+        }
+        
+        // Chitgram: the per-account services, in the main app only.
+        if sharedContext.applicationBindings.isMainApp && !temp {
+            self.chitgramServices = ChitgramAccountServices(context: self)
         }
     }
 

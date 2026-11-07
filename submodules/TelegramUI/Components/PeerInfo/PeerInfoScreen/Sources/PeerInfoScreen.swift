@@ -170,6 +170,7 @@ enum PeerInfoSettingsSection {
     case devices
     case chatFolders
     case novagramMessenger
+    case chitgramPremium
     case novagramBots
     case novagramAccounts
     case analytics

@@ -3,6 +3,7 @@ import SwiftSignalKit
 import Display
 import TelegramCore
 import NovagramAnalytics
+import ChitgramCore
 import NovagramAutoProxy
 import NovagramMessenger
 import NovagramCarPlay
@@ -596,6 +597,8 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
         
         let baseAppBundleId = Bundle.main.bundleIdentifier!
         let appGroupName = "group.\(baseAppBundleId)"
+        // Chitgram: our switches and stores live in the app group, where the extensions can read them.
+        chitgramConfigure(appGroupName: appGroupName)
         try! PasscodeEnvironment.shared.configure(PasscodeConfiguration(appGroupIdentifier: appGroupName, processRole: .mainApp, biometricKeychainService: walletBiometricKeychainService), privateAccessGroup: {
             BuildConfig.keychainAccessGroup(baseAppBundleId: baseAppBundleId)
         })

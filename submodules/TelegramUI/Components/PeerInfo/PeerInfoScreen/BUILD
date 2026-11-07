@@ -103,6 +103,8 @@ swift_library(
         "//submodules/TelegramUI/Components/SendInviteLinkScreen",
         "//submodules/SettingsUI",
         "//submodules/Novagram/Messenger:NovagramMessenger",
+        "//submodules/ChitgramCore",
+        "//submodules/ChitgramSettings",
         "//submodules/Novagram/Localization:NovagramLocalization",
         "//submodules/Novagram/Analytics:NovagramAnalytics",
         "//submodules/Novagram/UpdateCheck:NovagramUpdateCheck",

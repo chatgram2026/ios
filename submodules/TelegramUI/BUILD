@@ -69,6 +69,8 @@ swift_library(
     ],
     deps = [
         "//submodules/Novagram/PremiumUnlock:NovagramPremiumUnlock",
+        "//submodules/ChitgramCore",
+        "//submodules/ChitgramEngine",
         "//submodules/Novagram/StoryUnlock:NovagramStoryUnlock",
         "//submodules/Novagram/ChatLock:NovagramChatLock",
         "//submodules/Novagram/SecretVault:NovagramSecretVault",
