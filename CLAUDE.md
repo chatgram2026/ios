@@ -57,7 +57,10 @@ same names. Texts come from the Android `org/fenixuz/utils/LanguageCode.kt` (`Ti
 - **Builds:** signed builds and TestFlight on **Codemagic** (`codemagic.yaml`, workflow "Chitgram TestFlight",
   started by hand; free plan 500 M2 minutes a month, 120 min a build). Bundle id **`com.chitgram.app`** (owner,
   2026-11-06; `com.chatgram.messenger` could not be freed), app group `group.com.chitgram.app`. GitHub Actions on
-  the fork is disabled (HTTP 422), so Codemagic is the only compiler today.
+  the fork is disabled (HTTP 422), so Codemagic is the only compiler today. Codemagic does what Novagram's removed
+  `run.sh` / `publish.sh` did before Bazel: applies `submodules/Novagram/patches/tgcalls.patch` (the call recording's
+  audio tap) and builds with `--keep_going` and `-no-warnings-as-errors`. Start a build on branch `chitgram-nova`;
+  the dialog defaults to another branch.
 - **Take Novagram as the base** (2026-11-07), keeping the old port on its branches.
 
 ## Secrets

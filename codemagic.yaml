@@ -42,6 +42,9 @@ workflows:
           git submodule sync --recursive
           git submodule update --init --depth 1 --jobs 8 --recursive
           git submodule status --recursive | cut -c1-120
+          # Novagram's lines inside tgcalls (the call recording's audio tap, NovagramAudioTap) live as a patch, because
+          # the submodule is Telegram's; Novagram's own build scripts applied it before every build, so this one must.
+          bash submodules/Novagram/scripts/apply-submodule-patches.sh
           df -h /
           sysctl -n hw.ncpu hw.memsize
           xcodebuild -version
@@ -284,10 +287,16 @@ workflows:
           mkdir -p "$CACHE_DIR/disk" "$CACHE_DIR/repo" "$CM_BUILD_DIR/build"
           du -sh "$CACHE_DIR" || true
           # 8 cores and 12 GB of RAM: keep Bazel from starting more Swift compiles than fit in memory.
+          # --keep_going: one build shows every error, not only the first (each build is about an hour).
+          # -no-warnings-as-errors: how Novagram builds this tree (its run.sh / publish.sh): Swift 6.4 (Xcode 27)
+          # warns where older compilers did not, and every module's -warnings-as-errors would turn that into a failure.
           cat > "$HOME/.bazelrc" <<EOF
           build --repository_cache=$CACHE_DIR/repo
           build --jobs=6
           build --local_resources=memory=HOST_RAM*.75
+          build --keep_going
+          build --@build_bazel_rules_swift//swift:copt=-no-warnings-as-errors
+          build --@build_bazel_rules_swift//swift:exec_copt=-no-warnings-as-errors
           EOF
           python3 -u build-system/Make/Make.py \
             --overrideXcodeVersion \
