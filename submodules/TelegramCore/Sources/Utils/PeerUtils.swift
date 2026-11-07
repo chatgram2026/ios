@@ -1,5 +1,6 @@
 import Foundation
 import Postbox
+import ChitgramCore
 
 public let anonymousSavedMessagesId: Int64 = 2666000
 
@@ -341,9 +342,23 @@ public extension Peer {
     var verificationIconFileId: Int64? {
         switch self {
         case let user as TelegramUser:
-            return user.verificationIconFileId
+            // Chitgram: the Chitgram mark before the names of Chitgram Premium members and official Chitgram
+            // accounts, seen only in Chitgram (Android ChitgramBadges); a real icon wins.
+            if let fileId = user.verificationIconFileId {
+                return fileId
+            }
+            if user.id.namespace == Namespaces.Peer.CloudUser, ChitgramBadges.shared.hasMark(userId: user.id.id._internalGetInt64Value()) {
+                return ChitgramBadges.markFileId
+            }
+            return nil
         case let channel as TelegramChannel:
-            return channel.verificationIconFileId
+            if let fileId = channel.verificationIconFileId {
+                return fileId
+            }
+            if ChitgramBadges.isOfficialChat(channel.id.id._internalGetInt64Value()) {
+                return ChitgramBadges.markFileId
+            }
+            return nil
         default:
             return nil
         }
@@ -388,7 +403,15 @@ public extension Peer {
     var emojiStatus: PeerEmojiStatus? {
         switch self {
         case let user as TelegramUser:
-            return user.emojiStatus
+            // Chitgram: a Chitgram Premium member's emoji, seen only in Chitgram (Android ChitgramBadges); a real
+            // emoji status wins.
+            if let status = user.emojiStatus {
+                return status
+            }
+            if user.id.namespace == Namespaces.Peer.CloudUser, let emoji = ChitgramBadges.shared.emoji(forUserId: user.id.id._internalGetInt64Value()) {
+                return PeerEmojiStatus(content: .emoji(fileId: emoji), expirationDate: nil)
+            }
+            return nil
         case let channel as TelegramChannel:
             return channel.emojiStatus
         default:

@@ -1,7 +1,7 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
-# Chitgram's own screens. On the Novagram base (branch chitgram-nova) only the Chitgram Premium page so far; the rest
-# of the old port's screens come over as their features do.
+# Chitgram's own screens. On the Novagram base (branch chitgram-nova) the Chitgram Premium page and About so far; the
+# rest of the old port's screens come over as their features do.
 swift_library(
     name = "ChitgramSettings",
     module_name = "ChitgramSettings",
@@ -30,6 +30,8 @@ swift_library(
         "//submodules/AppBundle:AppBundle",
         "//submodules/TelegramUI/Components/Premium/PremiumStarComponent",
         "//submodules/ConfettiEffect:ConfettiEffect",
+        "//submodules/ShareController:ShareController",
+        "//submodules/Novagram/ReviewPromptKit:NovagramReviewPromptCore",
     ],
     visibility = [
         "//visibility:public",

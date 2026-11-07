@@ -8119,3 +8119,22 @@ Our own scripts, no Telegram file. `run.sh`, `publish.sh` and `release.sh` call 
 
 Verified 2026-11-02 with `./run.sh -r` and a faked older stamp: "Bazel disk cache is 47GB … now 30G", "Xcode changed
 (… 27A9275 -> … 27B52): re-creating Bazel's Xcode repos", build green in 35 s.
+
+## 📌 Chitgram hooks on the Novagram base (branch `chitgram-nova`, 2026-11-07)
+
+Chitgram's own code lives in `submodules/ChitgramCore`, `ChitgramEngine`, `ChitgramSettings` and
+`TelegramCore/Sources/Chitgram`. These are its lines in Telegram-owned and Novagram files; each is marked `// Chitgram:`.
+
+| File | Hook |
+|------|------|
+| `TelegramUI/Sources/AppDelegate.swift` | `import ChitgramCore`; `chitgramConfigure(appGroupName:)` right before `PasscodeEnvironment.shared.configure`. Alternate icons: the closure returns `[]`. |
+| `TelegramUI/Sources/AccountContext.swift` | `import ChitgramEngine`; `chitgramServices: ChitgramAccountServices?`, created at the end of `AccountContextImpl.init` in the main app only (`isMainApp && !temp`): Premium, badges, notices, cloud sync. |
+| `TelegramUI/BUILD` | deps `ChitgramCore`, `ChitgramEngine`. |
+| `PeerInfoScreen/BUILD` | deps `ChitgramCore`, `ChitgramSettings` (CurrencyRates removed). |
+| `PeerInfoScreen/Sources/PeerInfoScreen.swift` | `PeerInfoSettingsSection.chitgramPremium`, `.chitgramAbout` after `.novagramMessenger`. |
+| `PeerInfoScreen/Sources/PeerInfoSettingsItems.swift` | Under "Chitgram Settings" (id 0): "Chitgram Premium" (id 1, violet star) and "About" (id 2, teal info), Android's Chitgram section order; `ChitgramStrings.setLanguageCode` first. Bots, Analytics, currency and ads-panel rows removed; the Rate row only while `ReviewPromptLinks.writeReviewURL()` is non-nil. |
+| `PeerInfoScreen/Sources/PeerInfoScreenSettingsActions.swift` | `import ChitgramSettings`; `.chitgramPremium` → `chitgramPremiumController`, `.chitgramAbout` → `chitgramAboutController`; `.analytics` does nothing. |
+| `TelegramCore/BUILD`, `TelegramCore/Sources/Utils/PeerUtils.swift` | dep and `import ChitgramCore`. `Peer.verificationIconFileId`: a user with a Chitgram badge (`ChitgramBadges.shared.hasMark`) or the official channel gets `ChitgramBadges.markFileId` when Telegram gives no icon. `Peer.emojiStatus`: a member's chosen badge emoji when the user has no emoji status. |
+| `EmojiStatusComponent/BUILD`, `Sources/EmojiStatusComponent.swift`, `Sources/ChitgramMarkImage.swift` | dep and `import ChitgramCore`; after the content switch in `update`, `markFileId` is drawn from `Chitgram/BadgeTile` (`chitgramMarkImage`) instead of being loaded as a custom emoji. |
+| `AuthorizationUI/Sources/AuthorizationSequencePhoneEntryController.swift` | the proxy button only when `NovagramAutoProxyManager.shared.hasProxyPool` (no proxy list is bundled). |
+| `codemagic.yaml` | applies `patches/tgcalls.patch` (`scripts/apply-submodule-patches.sh`) after `git submodule update`, and builds with `--keep_going` and `-no-warnings-as-errors`, as Novagram's removed `run.sh` / `publish.sh` did. |

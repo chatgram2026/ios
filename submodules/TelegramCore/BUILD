@@ -30,6 +30,8 @@ swift_library(
         "//submodules/TelegramCore/FlatBuffers",
         "//submodules/TelegramCore/FlatSerialization",
         "//submodules/MurMurHash32",
+        # Chitgram: the badges its PeerUtils hook reads (Foundation only).
+        "//submodules/ChitgramCore",
     ],
     visibility = [
         "//visibility:public",

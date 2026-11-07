@@ -1,4 +1,5 @@
 import Foundation
+import ChitgramCore
 import UIKit
 import SwiftSignalKit
 import Display
@@ -470,6 +471,11 @@ public final class EmojiStatusComponent: Component {
                 }
             }
             
+            // Chitgram: the Chitgram mark in the verification slot is a picture of ours, not a custom emoji to load.
+            if case let .animation(animationContent, animationSize, _, _, _) = component.content, animationContent.fileId.id == ChitgramBadges.markFileId {
+                iconImage = chitgramMarkImage(size: animationSize)
+                emojiFileId = nil
+            }
             self.component = component
             
             var size = CGSize()

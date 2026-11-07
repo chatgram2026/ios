@@ -21,6 +21,7 @@ swift_library(
         "//submodules/Postbox:Postbox",
         "//submodules/TelegramCore:TelegramCore",
         "//submodules/AppBundle:AppBundle",
+        "//submodules/ChitgramCore",
         "//submodules/TextFormat:TextFormat",
         "//submodules/lottie-ios:Lottie",
         "//submodules/GZip:GZip",

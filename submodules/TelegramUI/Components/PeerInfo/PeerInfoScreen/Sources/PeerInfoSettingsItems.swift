@@ -277,6 +277,9 @@ func settingsItems(data: PeerInfoScreenData?, context: AccountContext, presentat
     items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 1, text: ChitgramStrings.get(427), icon: novagramSettingsIcon(systemName: "star.fill", color: .violet), action: {
         interaction.openSettings(.chitgramPremium)
     }))
+    items[.novagramMessenger]!.append(PeerInfoScreenDisclosureItem(id: 2, text: ChitgramStrings.get(355), icon: novagramSettingsIcon(systemName: "info.circle.fill", color: .teal), action: {
+        interaction.openSettings(.chitgramAbout)
+    }))
     // Chitgram: Novagram's bot catalogue (its own @novagram_* bots), Analytics, currency rates and ads panel rows are
     // removed; the last three ran on its closed SDKs and servers.
 

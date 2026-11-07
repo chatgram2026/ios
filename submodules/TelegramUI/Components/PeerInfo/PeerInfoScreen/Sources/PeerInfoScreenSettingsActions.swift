@@ -76,6 +76,8 @@ extension PeerInfoScreenNode {
             push(novagramSettingsController(context: self.context))
         case .chitgramPremium:
             push(chitgramPremiumController(context: self.context))
+        case .chitgramAbout:
+            push(chitgramAboutController(context: self.context))
         case .novagramBots:
             push(novagramBotsController(context: self.context))
         case .novagramAccounts:
