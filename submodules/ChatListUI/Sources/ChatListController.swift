@@ -7146,6 +7146,15 @@ private final class ChatListLocationContext {
         } else {
             result.append(contentsOf: foldableButtons)
         }
+        // Chitgram: the chat list menu (Android: the header ⋮ menu): the auto messenger, the roulettes once ported.
+        if case .chatList(.root) = self.location, self.rightButton != nil, !isVaultList {
+            result.append(NavigationBarComponent.Button(id: "chitgram_more",
+                content: .more,
+                action: { [weak self] sourceView in
+                    self?.parentController?.chitgramOpenMenu(sourceView: sourceView)
+                }
+            ))
+        }
         return result
     }
     

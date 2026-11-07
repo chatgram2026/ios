@@ -15,6 +15,8 @@ swift_library(
     ],
     deps = [
         "//submodules/Novagram/StoryUnlock:NovagramStoryUnlock",
+        "//submodules/ChitgramCore",
+        "//submodules/ChitgramSettings",
         "//submodules/AsyncDisplayKit:AsyncDisplayKit",
         "//submodules/Display:Display",
         "//submodules/SSignalKit/SwiftSignalKit:SwiftSignalKit",

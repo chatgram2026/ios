@@ -1023,15 +1023,18 @@ private final class ChitgramPremiumScreen: ViewController, UIScrollViewDelegate 
     // MARK: Perks
 
     private func perks() -> [ChitgramPremiumPerk] {
+        let context = self.context
         let count = 6
         return [
             ChitgramPremiumPerk(icon: "Chitgram/Perk/Badge", colors: chitgramPerkColors(0, count), title: ChitgramStrings.get(678), text: ChitgramStrings.get(679), free: ChitgramStrings.get(680), premium: ChitgramStrings.get(681), open: { [weak self] in
                 self?.openBadgePicker()
             }),
-            // Chitgram (Novagram base): the auto messenger and keyword watch screens are not ported yet, so these two
-            // perks show their sheet without an "open" button for now.
-            ChitgramPremiumPerk(icon: "Chitgram/Perk/Clock", colors: chitgramPerkColors(1, count), title: ChitgramStrings.get(449), text: ChitgramStrings.get(634), free: ChitgramStrings.get(641), premium: ChitgramStrings.get(642), open: nil),
-            ChitgramPremiumPerk(icon: "Chitgram/Perk/Notifications", colors: chitgramPerkColors(2, count), title: ChitgramStrings.get(568), text: ChitgramStrings.get(635), free: ChitgramStrings.format(643, ChitgramKeywords.freeWords), premium: ChitgramStrings.format(643, ChitgramKeywords.premiumWords), open: nil),
+            ChitgramPremiumPerk(icon: "Chitgram/Perk/Clock", colors: chitgramPerkColors(1, count), title: ChitgramStrings.get(449), text: ChitgramStrings.get(634), free: ChitgramStrings.get(641), premium: ChitgramStrings.get(642), open: { [weak self] in
+                self?.push(chitgramAutoPostController(context: context))
+            }),
+            ChitgramPremiumPerk(icon: "Chitgram/Perk/Notifications", colors: chitgramPerkColors(2, count), title: ChitgramStrings.get(568), text: ChitgramStrings.get(635), free: ChitgramStrings.format(643, ChitgramKeywords.freeWords), premium: ChitgramStrings.format(643, ChitgramKeywords.premiumWords), open: { [weak self] in
+                self?.push(chitgramKeywordWatchController(context: context))
+            }),
             ChitgramPremiumPerk(icon: "Chitgram/Perk/Accounts", colors: chitgramPerkColors(3, count), title: ChitgramStrings.get(598).replacingOccurrences(of: "%2$d", with: "\(ChitgramLimits.premiumAccounts)"), text: ChitgramStrings.get(636), free: ChitgramStrings.format(644, ChitgramLimits.freeAccounts), premium: ChitgramStrings.format(644, ChitgramLimits.premiumAccounts), open: nil),
             ChitgramPremiumPerk(icon: "Chitgram/Perk/Share", colors: chitgramPerkColors(4, count), title: ChitgramStrings.get(637), text: ChitgramStrings.get(638), free: ChitgramStrings.format(645, ChitgramLimits.freeShareBulk), premium: ChitgramStrings.format(645, ChitgramLimits.premiumShareBulk), open: nil),
             ChitgramPremiumPerk(icon: "Chitgram/Perk/Block", colors: chitgramPerkColors(5, count), title: ChitgramStrings.get(451), text: ChitgramStrings.get(452), free: ChitgramStrings.get(646), premium: ChitgramStrings.get(451), open: nil)

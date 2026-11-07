@@ -71,6 +71,7 @@ swift_library(
         "//submodules/Novagram/PremiumUnlock:NovagramPremiumUnlock",
         "//submodules/ChitgramCore",
         "//submodules/ChitgramEngine",
+        "//submodules/ChitgramSettings",
         "//submodules/Novagram/StoryUnlock:NovagramStoryUnlock",
         "//submodules/Novagram/ChatLock:NovagramChatLock",
         "//submodules/Novagram/SecretVault:NovagramSecretVault",

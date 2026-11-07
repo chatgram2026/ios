@@ -10,11 +10,14 @@ import ChitgramCore
 /// On the Novagram base (branch chitgram-nova) only Chitgram Premium and what follows it run here: the prices and this
 /// account's status, the badges, the owner's notices from the channel pins and the settings shared with the account's
 /// other devices (the Premium payment locks among them). Novagram's own modules do the rest of the old port's work
-/// (auto accept, admin folders, unread reminder); auto answer, auto messenger and keyword watch are not ported yet.
+/// (auto accept, admin folders, unread reminder). The auto messenger and the keyword watch run here too; the auto
+/// answer is not ported yet.
 public final class ChitgramAccountServices {
+    private let keywordWatch: ChitgramKeywordWatch
     private var foregroundObserver: NSObjectProtocol?
 
     public init(context: AccountContext) {
+        self.keywordWatch = ChitgramKeywordWatch(context: context)
         // Chitgram badges: lookups through Firestore, and this account's own badge.
         ChitgramBadgeService.start(context: context)
         // Chitgram Premium: the prices and this account's status, read again at every launch (Android: on resume).
@@ -26,16 +29,19 @@ public final class ChitgramAccountServices {
             ChitgramKeywords.shared.isPremium = ChitgramPremium.isActive(accountPeerId: accountPeerId)
             // The own badge follows Premium (created with it, its end date kept current).
             ChitgramBadges.shared.refresh(accountPeerId.id._internalGetInt64Value())
+            // Auto messenger: tops the server queue up; the limits it applies depend on Premium.
+            ChitgramAutoPost.refill(context: context)
             // The owner's notices from the same pins: maintenance, a required or a newer version.
             ChitgramAppNotices.show(context: context)
             // Chitgram's settings shared with the account's other devices (Android ChitgramCloud).
             ChitgramCloud.onResume(context: context)
         })
-        // Android does these on every resume (each throttled on its own).
+        // Android does these on every resume (each throttled on its own; the auto messenger to once in 10 minutes).
         self.foregroundObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main, using: { [weak context] _ in
             guard let context else {
                 return
             }
+            ChitgramAutoPost.refill(context: context)
             ChitgramAppNotices.show(context: context)
             ChitgramCloud.onResume(context: context)
         })

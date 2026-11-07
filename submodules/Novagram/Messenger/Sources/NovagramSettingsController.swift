@@ -22,6 +22,8 @@ import NovagramStoryUnlock
 import NovagramPremiumUnlock
 import NovagramCalls
 import NovagramCallRecordingCore
+import ChitgramCore
+import ChitgramSettings
 
 private enum NovagramSection: Int32 {
     case accounts = 5
@@ -86,6 +88,8 @@ private enum NovagramEntry: ItemListNodeEntry {
     case autoStickerEnabled(PresentationTheme, String, String, Bool)
     // Feature #34: Heart effect auto-attach to sent messages
     case heartEffectEnabled(PresentationTheme, String, String, Bool)
+    // Chitgram: the keyword watch (Android: Chitgram settings, "Keyword watch").
+    case keywordWatch(PresentationTheme, String)
     case messagingFooter(PresentationTheme, String)
 
     // — STT Section —
@@ -187,7 +191,7 @@ private enum NovagramEntry: ItemListNodeEntry {
             return NovagramSection.chat.rawValue
         case .interfaceHeader, .hideFolders, .showStories, .showMutualContactSymbol, .unlimitedPins, .interfaceFooter:
             return NovagramSection.interface.rawValue
-        case .messagingHeader, .textStyle, .autoText, .autoTranslate, .translateToggle, .translateMessages, .sendTranslateConfirm, .autoStickerEnabled, .heartEffectEnabled, .messagingFooter:
+        case .messagingHeader, .textStyle, .autoText, .autoTranslate, .translateToggle, .translateMessages, .sendTranslateConfirm, .autoStickerEnabled, .heartEffectEnabled, .keywordWatch, .messagingFooter:
             return NovagramSection.messaging.rawValue
         case .sttHeader, .sttEnabled, .sttLanguage, .voiceTranslate:
             return NovagramSection.stt.rawValue
@@ -245,6 +249,7 @@ private enum NovagramEntry: ItemListNodeEntry {
         case .sendTranslateConfirm:      return 26
         case .autoStickerEnabled:        return 27
         case .heartEffectEnabled:        return 28
+        case .keywordWatch:              return 99
         case .messagingFooter:           return 29
         // STT
         case .sttHeader:                 return 30
@@ -319,6 +324,8 @@ private enum NovagramEntry: ItemListNodeEntry {
             return 97 * 10 + 5
         case .callRecording:
             return 8 * 10 + 5
+        case .keywordWatch:
+            return 28 * 10 + 5
         default:
             return Int(self.stableId) * 10
         }
@@ -383,6 +390,8 @@ private enum NovagramEntry: ItemListNodeEntry {
             if case let .autoStickerEnabled(rhsTheme, rhsTitle, rhsText, rhsValue) = rhs, lhsTheme === rhsTheme, lhsTitle == rhsTitle, lhsText == rhsText, lhsValue == rhsValue { return true } else { return false }
         case let .heartEffectEnabled(lhsTheme, lhsTitle, lhsText, lhsValue):
             if case let .heartEffectEnabled(rhsTheme, rhsTitle, rhsText, rhsValue) = rhs, lhsTheme === rhsTheme, lhsTitle == rhsTitle, lhsText == rhsText, lhsValue == rhsValue { return true } else { return false }
+        case let .keywordWatch(lhsTheme, lhsTitle):
+            if case let .keywordWatch(rhsTheme, rhsTitle) = rhs, lhsTheme === rhsTheme, lhsTitle == rhsTitle { return true } else { return false }
         case let .messagingFooter(lhsTheme, lhsText):
             if case let .messagingFooter(rhsTheme, rhsText) = rhs, lhsTheme === rhsTheme, lhsText == rhsText { return true } else { return false }
 
@@ -737,6 +746,10 @@ private enum NovagramEntry: ItemListNodeEntry {
             // Feature #34: Heart effect — auto-attaches the ❤️ message effect to sent text messages
             return ItemListSwitchItem(presentationData: presentationData, icon: novagramSettingsIcon(systemName: "heart.fill", color: .red), title: title, text: text, value: value, sectionId: self.section, style: .blocks, updated: { val in
                 arguments.updateHeartEffectEnabled(val)
+            }, tag: self.novagramTag)
+        case let .keywordWatch(_, title):
+            return ItemListDisclosureItem(presentationData: presentationData, icon: novagramSettingsIcon(systemName: "bell.badge.fill", color: .orange), title: title, label: "", sectionId: self.section, style: .blocks, action: {
+                arguments.openKeywordWatch()
             }, tag: self.novagramTag)
         case let .messagingFooter(_, text):
             return ItemListTextItem(presentationData: presentationData, text: .plain(text), sectionId: self.section)
@@ -1566,6 +1579,9 @@ private func novagramSettingsEntries(presentationData: PresentationData, state: 
     // Feature #34: Heart effect toggle
     entries.append(.heartEffectEnabled(presentationData.theme, NovagramHeartEffectStrings.toggleTitle(langCode: langCode), NovagramHeartEffectStrings.toggleSubtitle(langCode: langCode), state.heartEffectEnabled))
 
+    ChitgramStrings.setLanguageCode(presentationData.strings.primaryComponent.languageCode)
+    entries.append(.keywordWatch(presentationData.theme, ChitgramStrings.get(568)))
+
     entries.append(.messagingFooter(presentationData.theme, l10n.settings_messaging_footer))
 
     // ─── VOICE → TEXT ───
@@ -1744,6 +1760,8 @@ private final class NovagramSettingsArguments {
     let openCarPlay: () -> Void
     // The Call recording row, set after init (HOOKS.md, "Call recording").
     var openCallRecordingSettings: () -> Void = {}
+    // Chitgram: the keyword watch row, set after init like the one above.
+    var openKeywordWatch: () -> Void = {}
 
     init(openAccounts: @escaping () -> Void, openAbout: @escaping () -> Void, openNovagramBots: @escaping () -> Void, openCalls: @escaping () -> Void, updateShowDeletedMessages: @escaping (Bool) -> Void, updateHideFolders: @escaping (Bool) -> Void, updateShowStories: @escaping (Bool) -> Void, updateShowMutualContactSymbol: @escaping (Bool) -> Void, updateShowGhostMode: @escaping (Bool) -> Void, updateShowViewFirstMessage: @escaping (Bool) -> Void, updateLongPressCameraSelection: @escaping (Bool) -> Void, updateEditedHistoryEnabled: @escaping (Bool) -> Void, updateRoundVideoFromGallery: @escaping (Bool) -> Void, updateForwardHideNames: @escaping (Bool) -> Void, updateUnlimitedPins: @escaping (Bool) -> Void, updateCallDataSaving: @escaping (Bool) -> Void, updateTranslateMessages: @escaping (Bool) -> Void, openTranslationSettings: @escaping () -> Void, openTextStyleSettings: @escaping () -> Void, openAutoTextSettings: @escaping () -> Void, openAutoTranslateSettings: @escaping () -> Void, updateSttEnabled: @escaping (Bool) -> Void, openSttLanguageSettings: @escaping () -> Void, updateBlockForeignUsers: @escaping (Bool) -> Void, updateEnableNovagramProxy: @escaping (Bool) -> Void, updateChatLockMaster: @escaping (Bool) -> Void, updateSecretVault: @escaping (Bool) -> Void, updateSecretVaultBiometric: @escaping (Bool) -> Void, updateWhiteThemeAccent: @escaping (Bool) -> Void, updateVoiceTranslate: @escaping (Bool) -> Void, updateAutoDownloadDisabled: @escaping (Bool) -> Void, updateSendTranslateConfirm: @escaping (Bool) -> Void, updateSendConfirmEnabled: @escaping (Bool) -> Void, updateAutoStickerEnabled: @escaping (Bool) -> Void, updateHeartEffectEnabled: @escaping (Bool) -> Void, updateReminderEnabled: @escaping (Bool) -> Void, openReminderTimeSettings: @escaping () -> Void, openReminderSoundSettings: @escaping () -> Void, addRecommendedFolders: @escaping () -> Void, openFolderStyle: @escaping () -> Void, updateChannelHistory: @escaping (Bool) -> Void, updateSettingsLinks: @escaping (Bool) -> Void, shareNovagramProLink: @escaping () -> Void, updateAutoAccept: @escaping (Bool) -> Void, updateAdminFolders: @escaping (Bool) -> Void, updateFoldersPrompt: @escaping (Bool) -> Void, updateShowAds: @escaping (Bool) -> Void, updateAdEventsOff: @escaping (Bool) -> Void, updateCurrencyRatesView: @escaping (Bool) -> Void, updateAdsPanel: @escaping (Bool) -> Void, updateStoryUnlock: @escaping (Bool) -> Void, updateTranslateChatsUnlock: @escaping (Bool) -> Void, openCarPlay: @escaping () -> Void) {
         self.openAccounts = openAccounts
@@ -2511,6 +2529,9 @@ public func novagramSettingsController(context: AccountContext, highlightFeature
     })
     arguments.openCallRecordingSettings = {
         pushControllerImpl?(novagramCallRecordingSettingsController(context: context))
+    }
+    arguments.openKeywordWatch = {
+        pushControllerImpl?(chitgramKeywordWatchController(context: context))
     }
     let refreshDeveloperFlags: () -> Void = {
         updateState { state in

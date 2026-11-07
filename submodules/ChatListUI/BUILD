@@ -13,6 +13,8 @@ swift_library(
     ],
     deps = [
         "//submodules/Novagram/StoryUnlock:NovagramStoryUnlock",
+        "//submodules/ChitgramCore",
+        "//submodules/ChitgramSettings",
         "//submodules/Novagram/ChatLock:NovagramChatLock",
         "//submodules/Novagram/SecretVault:NovagramSecretVault",
         "//submodules/Novagram/ForeignUserBlock:NovagramForeignUserBlock",
