@@ -257,6 +257,7 @@ final class AuthorizedApplicationContext {
         if let tabsController = self.rootController.viewControllers.first as? TabBarController, !tabsController.controllers.isEmpty, tabsController.selectedIndex >= 0 {
             let controller = tabsController.controllers[tabsController.selectedIndex]
             // Chitgram: temporary, for ChitgramLaunchOverlay.
+            ChitgramLaunchOverlay.note("selected", "\(tabsController.selectedIndex) \(type(of: controller))")
             let chitgramTabsReady: Signal<Bool, NoError> = tabsController.ready.get()
             |> beforeNext { value -> Void in
                 ChitgramLaunchOverlay.note("tabs", "\(value)")

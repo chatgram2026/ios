@@ -249,9 +249,14 @@ public final class TelegramRootController: NavigationController, TelegramRootCon
         // Chitgram: the user's tab order and visibility, and the tab to open on (Settings ▸ Chitgram ▸ Tab bar).
         controllers = self.chitgramArrangeTabs(controllers, contacts: contactsController, calls: callListController, chats: chatListController, settings: accountSettingsController)
         self.chitgramObserveTabs(showCallsTab: showCallsTab, showNewsTab: showNewsTab)
-        let chatsIndex = self.chitgramStartIndex(controllers, contacts: contactsController, calls: callListController, chats: chatListController, settings: accountSettingsController) ?? controllers.firstIndex(where: { $0 === chatListController }) ?? 0
+        // The launch waits for the selected tab, and only Chats gets ready before it is on screen, so the app opens on
+        // Chats and moves to the user's start tab once it is shown (another start tab kept the launch white).
+        let chatsIndex = controllers.firstIndex(where: { $0 === chatListController }) ?? 0
         let settingsIndex = controllers.firstIndex(where: { $0 === accountSettingsController }) ?? (controllers.count - 1)
         tabBarController.setControllers(controllers, selectedIndex: restoreSettignsController != nil ? settingsIndex : chatsIndex)
+        if restoreSettignsController == nil, let startIndex = self.chitgramStartIndex(controllers, contacts: contactsController, calls: callListController, chats: chatListController, settings: accountSettingsController), startIndex != chatsIndex {
+            self.chitgramOpenStartTab(tabBarController: tabBarController, chats: chatListController, target: controllers[startIndex])
+        }
         
         self.contactsController = contactsController
         self.callListController = callListController
